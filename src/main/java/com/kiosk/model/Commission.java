@@ -25,4 +25,9 @@ public class Commission {
         }
         return String.valueOf(commissionValue);
     }
+
+    @Override
+    public String toString() {
+        return getDisplayText();
+    }
 }

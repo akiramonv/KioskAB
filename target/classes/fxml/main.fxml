@@ -17,6 +17,8 @@
                 <TextField fx:id="searchField" promptText="🔍  Поиск услуг..." styleClass="search-field"
                            prefWidth="300"/>
                 <Region HBox.hgrow="ALWAYS"/>
+                <ToggleButton fx:id="themeToggle" text="Темная тема" styleClass="btn-outline"
+                              onAction="#onThemeToggle"/>
                 <Button fx:id="loginBtn" text="Войти" styleClass="btn-outline"
                         onAction="#onLoginClicked"/>
                 <Label fx:id="userLabel" text="" styleClass="user-label" visible="false"/>
@@ -43,11 +45,10 @@
 
             <!-- RIGHT: контент -->
             <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
-                <!-- Breadcrumb + фильтр -->
+                <!-- Breadcrumb + действия -->
                 <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
                     <Label fx:id="breadcrumb" text="Все услуги" styleClass="breadcrumb"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <ComboBox fx:id="providerFilter" promptText="Провайдер" styleClass="filter-combo"/>
                     <Button fx:id="clearFilterBtn" text="✕ Сбросить" styleClass="btn-small"
                             onAction="#onClearFilters"/>
                 </HBox>
@@ -75,6 +76,32 @@
                         </VBox>
                     </VBox>
                 </ScrollPane>
+            </VBox>
+
+            <!-- RIGHT: корзина -->
+            <VBox fx:id="cartSidebar" styleClass="cart-sidebar" prefWidth="280" spacing="12">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="Корзина" styleClass="sidebar-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="cartCountLabel" text="0" styleClass="cart-count"/>
+                </HBox>
+                <Label fx:id="cartHelpLabel"
+                       text="Выберите услугу, укажите сумму и добавьте её к оплате."
+                       styleClass="detail-hint" wrapText="true"/>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="sidebar-scroll">
+                    <VBox fx:id="cartItemsBox" spacing="8"/>
+                </ScrollPane>
+                <Separator/>
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Итого" styleClass="field-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="cartTotalLabel" text="0.00 сом" styleClass="cart-total"/>
+                </HBox>
+                <Button fx:id="payCartBtn" text="Перейти к подтверждению" styleClass="btn-primary"
+                        maxWidth="Infinity" onAction="#onCheckout" disable="true"/>
+                <Button text="Очистить корзину" styleClass="btn-outline"
+                        maxWidth="Infinity" onAction="#onClearCart"/>
             </VBox>
         </HBox>
     </center>

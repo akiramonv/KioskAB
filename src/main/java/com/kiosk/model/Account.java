@@ -8,6 +8,7 @@ public class Account {
     private String name;
     private String ownerName;
     private String provId;
+    private String providerName;
 
     public Account() {}
 
@@ -19,4 +20,11 @@ public class Account {
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
     public String getProvId() { return provId; }
     public void setProvId(String provId) { this.provId = provId; }
+    public String getProviderName() { return providerName; }
+    public void setProviderName(String providerName) { this.providerName = providerName; }
+
+    @Override
+    public String toString() {
+        return name != null ? name : "—";
+    }
 }

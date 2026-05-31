@@ -31,13 +31,21 @@
 
     <Separator/>
 
-    <Label text="Для продолжения обратитесь к оператору или введите данные на терминале."
+    <VBox spacing="8">
+        <Label text="Сумма платежа" styleClass="field-label"/>
+        <TextField fx:id="amountField" promptText="Например: 250.00" styleClass="dialog-field"/>
+        <Label fx:id="detailErrorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
+    </VBox>
+
+    <Label text="Проверьте услугу и сумму. После добавления ее можно убрать из корзины."
            styleClass="detail-hint" wrapText="true"/>
 
     <HBox spacing="12" alignment="CENTER_RIGHT">
         <Button fx:id="favoriteBtn" text="☆ В избранное" styleClass="btn-outline"
                 onAction="#onFavorite"/>
-        <Button text="Закрыть" styleClass="btn-primary"
+        <Button text="Добавить к оплате" styleClass="btn-primary"
+                onAction="#onAddToCart"/>
+        <Button text="Закрыть" styleClass="btn-outline"
                 onAction="#onClose"/>
     </HBox>
 </VBox>

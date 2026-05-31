@@ -6,18 +6,25 @@ import com.kiosk.model.ProviderService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 public class ServiceDetailController {
 
     @FXML private Label serviceNameLabel, categoryLabel, providerLabel, accountLabel, commissionLabel;
+    @FXML private Label detailErrorLabel;
+    @FXML private TextField amountField;
     @FXML private Button favoriteBtn;
 
     private Stage stage;
+    private ProviderService service;
+    private BiConsumer<ProviderService, BigDecimal> onAddToCart;
     private static final Set<String> favorites = new HashSet<>();
 
     public void setStage(Stage stage) {
@@ -25,30 +32,27 @@ public class ServiceDetailController {
     }
 
     public void setService(ProviderService service, List<Provider> providers, List<CategoryService> categories) {
+        this.service = service;
         serviceNameLabel.setText(service.getName());
 
-        // Категория
-        String catName = categories.stream()
+        String catName = service.getCategoryName() != null ? service.getCategoryName() : categories.stream()
                 .filter(c -> c.getId().equals(service.getCategoryId()))
                 .findFirst()
                 .map(CategoryService::getName)
                 .orElse("—");
         categoryLabel.setText(catName);
 
-        // Провайдер
-        String provName = providers.stream()
+        String provName = service.getProviderName() != null ? service.getProviderName() : providers.stream()
                 .filter(p -> p.getId().equals(service.getProvId()))
                 .findFirst()
                 .map(Provider::toString)
                 .orElse("—");
         providerLabel.setText(provName);
 
-        // Счёт
-        accountLabel.setText(service.getAccountId() != null ? service.getAccountId() : "—");
+        accountLabel.setText(service.getDisplayAccount());
 
-        // Комиссия
-        commissionLabel.setText(service.getCommId() != null
-                ? "Индивидуальная (ID: " + service.getCommId() + ")"
+        commissionLabel.setText(service.getCommission() != null
+                ? service.getCommission().getDisplayText()
                 : "По умолчанию провайдера");
 
         // Кнопка избранного
@@ -61,6 +65,10 @@ public class ServiceDetailController {
             }
             updateFavoriteBtn(service.getId());
         });
+    }
+
+    public void setOnAddToCart(BiConsumer<ProviderService, BigDecimal> onAddToCart) {
+        this.onAddToCart = onAddToCart;
     }
 
     private void updateFavoriteBtn(String serviceId) {
@@ -81,6 +89,28 @@ public class ServiceDetailController {
     @FXML
     private void onClose() {
         if (stage != null) stage.close();
+    }
+
+    @FXML
+    private void onAddToCart() {
+        try {
+            BigDecimal amount = new BigDecimal(amountField.getText().trim().replace(',', '.'));
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                showDetailError("Введите сумму больше 0.");
+                return;
+            }
+            if (onAddToCart != null && service != null) {
+                onAddToCart.accept(service, amount);
+            }
+            if (stage != null) stage.close();
+        } catch (NumberFormatException e) {
+            showDetailError("Сумма должна быть числом, например 250.00.");
+        }
+    }
+
+    private void showDetailError(String text) {
+        detailErrorLabel.setText(text);
+        detailErrorLabel.setVisible(true);
     }
 
     public static Set<String> getFavorites() {

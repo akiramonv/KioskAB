@@ -4,6 +4,7 @@ module com.kiosk {
     requires javafx.web;
     requires com.fasterxml.jackson.databind;
     requires java.net.http;
+    requires java.logging;
 
     opens com.kiosk to javafx.fxml;
     opens com.kiosk.ui.controllers to javafx.fxml;

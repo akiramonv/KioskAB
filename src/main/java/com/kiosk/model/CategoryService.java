@@ -8,6 +8,8 @@ public class CategoryService {
     private String name;
     private String prntCategory; // может быть null
     private String provId;
+    private String parentCategoryName;
+    private String providerName;
 
     public CategoryService() {}
 
@@ -19,8 +21,18 @@ public class CategoryService {
     public void setPrntCategory(String prntCategory) { this.prntCategory = prntCategory; }
     public String getProvId() { return provId; }
     public void setProvId(String provId) { this.provId = provId; }
+    public String getParentCategoryName() { return parentCategoryName; }
+    public void setParentCategoryName(String parentCategoryName) { this.parentCategoryName = parentCategoryName; }
+    public String getProviderName() { return providerName; }
+    public void setProviderName(String providerName) { this.providerName = providerName; }
 
     public boolean isRootCategory() {
-        return prntCategory == null || prntCategory.isEmpty();
+        return (prntCategory == null || prntCategory.isEmpty())
+                && (parentCategoryName == null || parentCategoryName.isBlank());
+    }
+
+    @Override
+    public String toString() {
+        return name != null ? name : "—";
     }
 }

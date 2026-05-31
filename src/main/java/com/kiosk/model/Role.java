@@ -20,4 +20,9 @@ public class Role {
     public boolean isSuperAdmin() {
         return "superAdmin".equals(name);
     }
+
+    @Override
+    public String toString() {
+        return name != null ? name : "—";
+    }
 }

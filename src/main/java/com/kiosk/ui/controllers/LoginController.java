@@ -1,10 +1,13 @@
 package com.kiosk.ui.controllers;
 
+import com.kiosk.KioskApp;
 import com.kiosk.model.Role;
 import com.kiosk.model.Specialization;
 import com.kiosk.model.User;
 import com.kiosk.service.ApiService;
+import com.kiosk.util.AppLogger;
 import com.kiosk.util.SessionManager;
+import com.kiosk.util.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -12,6 +15,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoginController {
 
@@ -19,6 +23,7 @@ public class LoginController {
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginBtn;
+    @FXML private ToggleButton themeToggle;
 
     private Stage stage;
 
@@ -26,6 +31,14 @@ public class LoginController {
         this.stage = stage;
         // Вход по Enter
         passwordField.setOnAction(e -> onLogin());
+    }
+
+    @FXML
+    public void initialize() {
+        if (themeToggle != null) {
+            themeToggle.setSelected(ThemeManager.isDarkMode());
+            themeToggle.setText(ThemeManager.isDarkMode() ? "Светлая тема" : "Темная тема");
+        }
     }
 
     @FXML
@@ -64,9 +77,16 @@ public class LoginController {
                 session.setCurrentUser(user);
                 session.setCurrentUserRoles(roles);
                 session.setCurrentUserSpecializations(specs);
+                AppLogger.info("Вход пользователя: " + user.getEmail());
 
                 Platform.runLater(() -> {
-                    if (stage != null) stage.close();
+                    try {
+                        KioskApp.showMain();
+                    } catch (Exception e) {
+                        showError("Не удалось открыть главный экран: " + e.getMessage());
+                        loginBtn.setDisable(false);
+                        loginBtn.setText("Войти");
+                    }
                 });
 
             } catch (Exception e) {
@@ -81,35 +101,61 @@ public class LoginController {
 
     private List<Role> loadUserRoles(String userId) {
         try {
-            // Используем emulator execute для получения данных UserRole
-            // В реальном API: GET /api/users/{userId}/roles
-            // Пробуем через emulator
-            var result = ApiService.executeOperation("USER_BY_ID", java.util.Map.of("id", userId));
-            // Пока возвращаем дефолтную роль user
-            Role defaultRole = new Role();
-            defaultRole.setId("default");
-            defaultRole.setName("user");
-            return List.of(defaultRole);
+            User user = ApiService.getUserById(userId);
+            if (user != null && user.getRoles() != null && !user.getRoles().isEmpty()) {
+                return user.getRoles().stream().map(name -> {
+                    Role role = new Role();
+                    role.setName(name);
+                    return role;
+                }).collect(Collectors.toList());
+            }
+            List<Role> roles = ApiService.getRolesByUser(userId);
+            if (!roles.isEmpty()) {
+                return roles;
+            }
         } catch (Exception e) {
-            return new ArrayList<>();
+            AppLogger.warn("Не удалось загрузить роли пользователя " + userId, e);
         }
+        Role defaultRole = new Role();
+        defaultRole.setName("user");
+        return List.of(defaultRole);
     }
 
     private List<Specialization> loadUserSpecializations(String userId) {
         try {
-            return ApiService.getAllSpecializations(); // фильтруем по userId через emulator
+            User user = ApiService.getUserById(userId);
+            if (user != null && user.getSpecializations() != null) {
+                return user.getSpecializations().stream().map(name -> {
+                    Specialization specialization = new Specialization();
+                    specialization.setName(name);
+                    return specialization;
+                }).collect(Collectors.toList());
+            }
         } catch (Exception e) {
-            return new ArrayList<>();
+            AppLogger.warn("Не удалось загрузить специализации пользователя " + userId, e);
         }
+        return new ArrayList<>();
     }
 
     @FXML
     private void onCancel() {
-        if (stage != null) stage.close();
+        Platform.exit();
+    }
+
+    @FXML
+    private void onThemeToggle() {
+        ThemeManager.toggle();
+        if (themeToggle != null) {
+            themeToggle.setSelected(ThemeManager.isDarkMode());
+            themeToggle.setText(ThemeManager.isDarkMode() ? "Светлая тема" : "Темная тема");
+        }
+        if (stage != null && stage.getScene() != null) {
+            ThemeManager.apply(stage.getScene());
+        }
     }
 
     private void showError(String message) {
-        errorLabel.setText("⚠ " + message);
+        errorLabel.setText("! " + message);
         errorLabel.setVisible(true);
     }
 }

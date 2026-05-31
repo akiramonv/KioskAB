@@ -7,6 +7,7 @@ public class Specialization {
     private String id;
     private String name;
     private String provId;
+    private String providerName;
 
     public Specialization() {}
 
@@ -16,4 +17,11 @@ public class Specialization {
     public void setName(String name) { this.name = name; }
     public String getProvId() { return provId; }
     public void setProvId(String provId) { this.provId = provId; }
+    public String getProviderName() { return providerName; }
+    public void setProviderName(String providerName) { this.providerName = providerName; }
+
+    @Override
+    public String toString() {
+        return name != null ? name : "—";
+    }
 }

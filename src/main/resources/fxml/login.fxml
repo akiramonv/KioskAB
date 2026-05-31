@@ -11,8 +11,14 @@
 
     <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
 
-    <Label text="🔐 Авторизация" styleClass="dialog-title"/>
-    <Label text="Введите данные для входа" styleClass="dialog-subtitle"/>
+    <HBox alignment="CENTER_RIGHT" maxWidth="Infinity">
+        <ToggleButton fx:id="themeToggle" text="Темная тема" styleClass="btn-small"
+                      onAction="#onThemeToggle"/>
+    </HBox>
+
+    <Label text="Авторизация" styleClass="dialog-title"/>
+    <Label text="Войдите под нужным пользователем, чтобы открыть доступные услуги и админку."
+           styleClass="dialog-subtitle" wrapText="true"/>
 
     <VBox spacing="8">
         <Label text="Email" styleClass="field-label"/>
@@ -31,6 +37,6 @@
     <Button fx:id="loginBtn" text="Войти" styleClass="btn-primary"
             maxWidth="Infinity" onAction="#onLogin"/>
 
-    <Button text="Отмена" styleClass="btn-outline"
+    <Button text="Закрыть" styleClass="btn-outline"
             maxWidth="Infinity" onAction="#onCancel"/>
 </VBox>

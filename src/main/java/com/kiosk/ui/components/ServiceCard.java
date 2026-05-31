@@ -38,7 +38,7 @@ public class ServiceCard extends VBox {
         nameLabel.setWrapText(true);
 
         // Провайдер
-        String provName = providers.stream()
+        String provName = service.getProviderName() != null ? service.getProviderName() : providers.stream()
                 .filter(p -> p.getId().equals(service.getProvId()))
                 .findFirst()
                 .map(Provider::toString)
@@ -47,7 +47,7 @@ public class ServiceCard extends VBox {
         provLabel.getStyleClass().add("card-provider");
 
         // Категория
-        String catName = categories.stream()
+        String catName = service.getCategoryName() != null ? service.getCategoryName() : categories.stream()
                 .filter(c -> c.getId().equals(service.getCategoryId()))
                 .findFirst()
                 .map(CategoryService::getName)

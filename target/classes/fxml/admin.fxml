@@ -29,6 +29,8 @@
                     maxWidth="Infinity" onAction="#showProviders"/>
             <Button text="🎓 Специализации" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showSpecializations"/>
+            <Button text="💳 Платежи" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showPayments"/>
         </VBox>
     </left>
 
@@ -41,6 +43,19 @@
                 <TextField fx:id="adminSearchField" promptText="🔍 Поиск..."
                            styleClass="search-field" prefWidth="220"
                            onKeyReleased="#onAdminSearch"/>
+                <HBox fx:id="paymentFilters" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false">
+                    <ComboBox fx:id="paymentStatusFilter" promptText="Статус" prefWidth="130"
+                              styleClass="filter-combo" onAction="#onAdminSearch"/>
+                    <TextField fx:id="minAmountField" promptText="Сумма от" prefWidth="95"
+                               styleClass="dialog-field" onKeyReleased="#onAdminSearch"/>
+                    <TextField fx:id="maxAmountField" promptText="до" prefWidth="80"
+                               styleClass="dialog-field" onKeyReleased="#onAdminSearch"/>
+                    <DatePicker fx:id="dateFromPicker" promptText="Дата от" prefWidth="130"
+                                onAction="#onAdminSearch"/>
+                    <DatePicker fx:id="dateToPicker" promptText="до" prefWidth="120"
+                                onAction="#onAdminSearch"/>
+                    <Button text="Сброс" styleClass="btn-small" onAction="#onResetPaymentFilters"/>
+                </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="addBtn" text="+ Добавить" styleClass="btn-primary"
                         onAction="#onAdd"/>
