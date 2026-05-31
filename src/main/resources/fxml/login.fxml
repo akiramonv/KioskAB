@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.kiosk.ui.controllers.LoginController"
+      styleClass="login-dialog"
+      spacing="20" alignment="CENTER"
+      prefWidth="420" prefHeight="480">
+
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <Label text="🔐 Авторизация" styleClass="dialog-title"/>
+    <Label text="Введите данные для входа" styleClass="dialog-subtitle"/>
+
+    <VBox spacing="8">
+        <Label text="Email" styleClass="field-label"/>
+        <TextField fx:id="emailField" promptText="user@example.com"
+                   styleClass="dialog-field"/>
+    </VBox>
+
+    <VBox spacing="8">
+        <Label text="Пароль" styleClass="field-label"/>
+        <PasswordField fx:id="passwordField" promptText="••••••••"
+                       styleClass="dialog-field"/>
+    </VBox>
+
+    <Label fx:id="errorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
+
+    <Button fx:id="loginBtn" text="Войти" styleClass="btn-primary"
+            maxWidth="Infinity" onAction="#onLogin"/>
+
+    <Button text="Отмена" styleClass="btn-outline"
+            maxWidth="Infinity" onAction="#onCancel"/>
+</VBox>

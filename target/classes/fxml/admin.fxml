@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.kiosk.ui.controllers.AdminController"
+            styleClass="admin-panel"
+            prefWidth="900" prefHeight="650">
+
+    <top>
+        <HBox styleClass="admin-header" alignment="CENTER_LEFT" spacing="16">
+            <Label text="⚙ Панель администратора" styleClass="admin-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕ Закрыть" styleClass="btn-danger" onAction="#onClose"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox styleClass="admin-sidebar" spacing="4">
+            <padding><Insets top="16" right="0" bottom="16" left="0"/></padding>
+            <Button text="👥 Пользователи" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showUsers"/>
+            <Button text="📦 Услуги" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showServices"/>
+            <Button text="🏷 Категории" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showCategories"/>
+            <Button text="🏢 Провайдеры" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showProviders"/>
+            <Button text="🎓 Специализации" styleClass="admin-nav-btn"
+                    maxWidth="Infinity" onAction="#showSpecializations"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="admin-content" spacing="12">
+            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+            <!-- Toolbar: поиск + кнопки -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="adminSearchField" promptText="🔍 Поиск..."
+                           styleClass="search-field" prefWidth="220"
+                           onKeyReleased="#onAdminSearch"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="addBtn" text="+ Добавить" styleClass="btn-primary"
+                        onAction="#onAdd"/>
+                <Button fx:id="editBtn" text="✏ Изменить" styleClass="btn-outline"
+                        onAction="#onEdit" disable="true"/>
+                <Button fx:id="deleteBtn" text="🗑 Удалить" styleClass="btn-danger"
+                        onAction="#onDelete" disable="true"/>
+            </HBox>
+
+            <!-- Таблица -->
+            <TableView fx:id="adminTable" VBox.vgrow="ALWAYS" styleClass="admin-table">
+                <placeholder>
+                    <Label text="Выберите раздел в меню слева" styleClass="empty-label"/>
+                </placeholder>
+            </TableView>
+
+            <Label fx:id="adminStatus" text="" styleClass="status-text"/>
+        </VBox>
+    </center>
+</BorderPane>

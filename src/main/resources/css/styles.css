@@ -1,0 +1,473 @@
+/* ================================================
+   KIOSK APP — Бело-зелёная тема
+   ================================================ */
+
+/* ---------- Переменные цветов ---------- */
+* {
+    -fx-primary: #16a34a;        /* зелёный */
+    -fx-primary-dark: #15803d;
+    -fx-primary-light: #bbf7d0;
+    -fx-accent: #22c55e;
+    -fx-bg: #f0fdf4;
+    -fx-surface: #ffffff;
+    -fx-border: #d1fae5;
+    -fx-text-main: #14532d;
+    -fx-text-muted: #6b7280;
+    -fx-danger: #dc2626;
+    -fx-font-main: "Segoe UI", "Arial", sans-serif;
+}
+
+/* ---------- КОРЕНЬ / ОБЩЕЕ ---------- */
+.root {
+    -fx-background-color: #f0fdf4;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* ---------- ШАПКА ---------- */
+.header-bar {
+    -fx-background-color: #16a34a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
+}
+
+.header-inner {
+    -fx-padding: 14 24 14 24;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- ПОИСК ---------- */
+.search-field {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 24;
+    -fx-border-color: rgba(255,255,255,0.4);
+    -fx-border-radius: 24;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.7);
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 14px;
+}
+
+.search-field:focused {
+    -fx-background-color: rgba(255,255,255,0.25);
+    -fx-border-color: white;
+}
+
+/* ---------- КНОПКИ ШАПКИ ---------- */
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-padding: 7 18 7 18;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.btn-outline:hover {
+    -fx-background-color: rgba(255,255,255,0.15);
+}
+
+.btn-danger {
+    -fx-background-color: #dc2626;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-padding: 7 18 7 18;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #b91c1c;
+}
+
+.btn-admin {
+    -fx-background-color: #fbbf24;
+    -fx-background-radius: 20;
+    -fx-text-fill: #92400e;
+    -fx-font-weight: bold;
+    -fx-padding: 7 18 7 18;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-admin:hover {
+    -fx-background-color: #f59e0b;
+}
+
+.user-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- БОКОВАЯ ПАНЕЛЬ КАТЕГОРИЙ ---------- */
+.sidebar {
+    -fx-background-color: white;
+    -fx-border-color: #d1fae5;
+    -fx-border-width: 0 1 0 0;
+    -fx-min-width: 210;
+    -fx-max-width: 240;
+}
+
+.sidebar-title {
+    -fx-text-fill: #14532d;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 16 16 8 16;
+}
+
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.category-list {
+    -fx-background-color: transparent;
+}
+
+.category-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #374151;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 10;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.category-btn:hover {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #16a34a;
+}
+
+.category-btn-active {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #16a34a;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 10;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+/* ---------- ОСНОВНОЙ КОНТЕНТ ---------- */
+.content-area {
+    -fx-background-color: #f0fdf4;
+}
+
+.content-toolbar {
+    -fx-background-color: white;
+    -fx-border-color: #d1fae5;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 20 10 20;
+}
+
+.breadcrumb {
+    -fx-text-fill: #14532d;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.filter-combo {
+    -fx-background-color: white;
+    -fx-border-color: #d1fae5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 4 8 4 8;
+}
+
+.btn-small {
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 5 12 5 12;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.btn-small:hover {
+    -fx-background-color: #e5e7eb;
+}
+
+/* ---------- КАРТОЧКИ УСЛУГ ---------- */
+.services-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.services-flow {
+    -fx-background-color: transparent;
+    -fx-padding: 0 16 0 0;
+}
+
+.section-label {
+    -fx-text-fill: #374151;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.service-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #d1fae5;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 6, 0, 0, 2);
+}
+
+.service-card:hover {
+    -fx-border-color: #16a34a;
+    -fx-effect: dropshadow(gaussian, rgba(22,163,74,0.18), 12, 0, 0, 4);
+    -fx-background-color: #f0fdf4;
+}
+
+.card-icon {
+    -fx-font-size: 28px;
+}
+
+.card-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+    -fx-wrap-text: true;
+}
+
+.card-provider {
+    -fx-font-size: 12px;
+    -fx-text-fill: #16a34a;
+    -fx-font-weight: bold;
+}
+
+.card-category {
+    -fx-font-size: 11px;
+    -fx-text-fill: #9ca3af;
+}
+
+.card-favorite {
+    -fx-text-fill: #fbbf24;
+    -fx-font-size: 16px;
+}
+
+.empty-label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 16px;
+    -fx-padding: 40 0 0 0;
+}
+
+/* ---------- СТАТУС-БАР ---------- */
+.status-bar {
+    -fx-background-color: white;
+    -fx-border-color: #d1fae5;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 6 20 6 20;
+}
+
+.status-text {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+
+.status-connected {
+    -fx-text-fill: #16a34a;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status-disconnected {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- ДИАЛОГ ЛОГИНА ---------- */
+.login-dialog {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+}
+
+.dialog-title {
+    -fx-text-fill: #14532d;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.dialog-subtitle {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 14px;
+}
+
+.field-label {
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.dialog-field {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 14px;
+}
+
+.dialog-field:focused {
+    -fx-border-color: #16a34a;
+    -fx-background-color: #f0fdf4;
+}
+
+.btn-primary {
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24 12 24;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #15803d;
+}
+
+.error-label {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 13px;
+    -fx-background-color: #fef2f2;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 8;
+}
+
+/* ---------- ДИАЛОГ ДЕТАЛЕЙ ---------- */
+.detail-dialog {
+    -fx-background-color: white;
+}
+
+.detail-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14532d;
+}
+
+.detail-key {
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.detail-val {
+    -fx-text-fill: #16a34a;
+}
+
+.detail-hint {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.btn-favorite-active {
+    -fx-border-color: #fbbf24;
+    -fx-text-fill: #fbbf24;
+}
+
+/* ---------- ADMIN PANEL ---------- */
+.admin-panel {
+    -fx-background-color: #f9fafb;
+}
+
+.admin-header {
+    -fx-background-color: #14532d;
+    -fx-padding: 14 24 14 24;
+}
+
+.admin-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.admin-sidebar {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #d1fae5;
+    -fx-border-width: 0 1 0 0;
+    -fx-min-width: 200;
+    -fx-padding: 0 8 0 8;
+}
+
+.admin-nav-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #374151;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 11 16 11 16;
+    -fx-background-radius: 10;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.admin-nav-btn:hover {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #16a34a;
+}
+
+.admin-content {
+    -fx-background-color: #f9fafb;
+}
+
+.admin-table {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.admin-table .column-header {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #14532d;
+    -fx-font-weight: bold;
+}
+
+.admin-table .table-row-cell:selected {
+    -fx-background-color: #dcfce7;
+}
+
+/* ---------- SCROLLBAR ---------- */
+.scroll-bar:vertical {
+    -fx-pref-width: 6px;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #d1fae5;
+    -fx-background-radius: 3;
+}
+
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #16a34a;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-pref-height: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-pref-height: 0;
+}

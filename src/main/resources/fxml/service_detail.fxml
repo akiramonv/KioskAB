@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.kiosk.ui.controllers.ServiceDetailController"
+      styleClass="detail-dialog"
+      spacing="16"
+      prefWidth="480">
+
+    <padding><Insets top="32" right="40" bottom="32" left="40"/></padding>
+
+    <Label fx:id="serviceNameLabel" text="" styleClass="detail-title" wrapText="true"/>
+
+    <Separator/>
+
+    <GridPane hgap="12" vgap="10" styleClass="detail-grid">
+        <Label text="Категория:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="categoryLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Провайдер:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="providerLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Счёт:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="accountLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Комиссия:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="commissionLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <Separator/>
+
+    <Label text="Для продолжения обратитесь к оператору или введите данные на терминале."
+           styleClass="detail-hint" wrapText="true"/>
+
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button fx:id="favoriteBtn" text="☆ В избранное" styleClass="btn-outline"
+                onAction="#onFavorite"/>
+        <Button text="Закрыть" styleClass="btn-primary"
+                onAction="#onClose"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.kiosk.ui.controllers.MainController"
+            stylesheets="@../css/styles.css"
+            fx:id="rootPane">
+
+    <!-- TOP: Шапка -->
+    <top>
+        <VBox styleClass="header-bar">
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-inner">
+                <Label text="🏦 Киоск самообслуживания" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="searchField" promptText="🔍  Поиск услуг..." styleClass="search-field"
+                           prefWidth="300"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="loginBtn" text="Войти" styleClass="btn-outline"
+                        onAction="#onLoginClicked"/>
+                <Label fx:id="userLabel" text="" styleClass="user-label" visible="false"/>
+                <Button fx:id="logoutBtn" text="Выйти" styleClass="btn-danger"
+                        onAction="#onLogoutClicked" visible="false"/>
+                <Button fx:id="adminBtn" text="⚙ Админ" styleClass="btn-admin"
+                        onAction="#onAdminClicked" visible="false"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER: основной контент -->
+    <center>
+        <HBox>
+            <!-- LEFT: категории -->
+            <VBox fx:id="categorySidebar" styleClass="sidebar" prefWidth="220">
+                <Label text="Категории" styleClass="sidebar-title"/>
+                <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="categoryList" styleClass="category-list" spacing="6">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- RIGHT: контент -->
+            <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+                <!-- Breadcrumb + фильтр -->
+                <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="breadcrumb" text="Все услуги" styleClass="breadcrumb"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="providerFilter" promptText="Провайдер" styleClass="filter-combo"/>
+                    <Button fx:id="clearFilterBtn" text="✕ Сбросить" styleClass="btn-small"
+                            onAction="#onClearFilters"/>
+                </HBox>
+
+                <!-- Сетка услуг -->
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
+                    <VBox>
+                        <!-- Рекомендованные / популярные -->
+                        <VBox fx:id="featuredSection" spacing="8">
+                            <padding><Insets top="16" right="16" bottom="0" left="16"/></padding>
+                            <Label fx:id="featuredLabel" text="⭐ Популярные услуги" styleClass="section-label"/>
+                            <FlowPane fx:id="featuredPane" hgap="12" vgap="12" styleClass="services-flow">
+                                <padding><Insets top="4" right="0" bottom="0" left="0"/></padding>
+                            </FlowPane>
+                        </VBox>
+
+                        <!-- Все / отфильтрованные услуги -->
+                        <VBox spacing="8">
+                            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                            <Label fx:id="servicesLabel" text="Все услуги" styleClass="section-label"/>
+                            <FlowPane fx:id="servicesPane" hgap="12" vgap="12" styleClass="services-flow">
+                            </FlowPane>
+                            <Label fx:id="emptyLabel" text="Услуги не найдены" styleClass="empty-label"
+                                   visible="false"/>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- BOTTOM: статус бар -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="statusLabel" text="Готово" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="connectionLabel" text="● Подключено" styleClass="status-connected"/>
+        </HBox>
+    </bottom>
+</BorderPane>
