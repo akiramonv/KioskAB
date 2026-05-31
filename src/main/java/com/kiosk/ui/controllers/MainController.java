@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -31,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -314,30 +316,88 @@ public class MainController {
 
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("Подтверждение платежа");
-        ButtonType back = new ButtonType("Назад к корзине", ButtonBar.ButtonData.CANCEL_CLOSE);
+        styleDialog(dialog, "payment-dialog-pane");
+        ButtonType back = new ButtonType("Вернуться к корзине", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType confirm = new ButtonType("Создать платеж", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(back, confirm);
 
-        VBox content = new VBox(10);
-        content.setPadding(new Insets(16));
-        content.getChildren().add(new Label("Проверьте услуги и суммы перед созданием платежа."));
+        VBox content = new VBox(16);
+        content.getStyleClass().add("payment-shell");
+        content.setPadding(new Insets(24));
 
-        cart.forEach(item -> content.getChildren().add(new Label(
-                item.getService().getName() + " — " + item.getService().getDisplayProvider()
-                        + " — " + formatMoney(item.getAmount())
-        )));
+        Label step = new Label("Шаг 1 из 2");
+        step.getStyleClass().add("payment-step");
+        Label title = new Label("Подтверждение платежа");
+        title.getStyleClass().add("payment-title");
+        Label subtitle = new Label("Проверьте услуги, провайдеров и суммы. Если нужно исправить платеж, вернитесь к корзине.");
+        subtitle.getStyleClass().add("payment-subtitle");
+        subtitle.setWrapText(true);
+        content.getChildren().addAll(step, title, subtitle);
 
-        content.getChildren().add(new Separator());
-        content.getChildren().add(new Label("Итого: " + formatMoney(cartTotal())));
+        for (Map.Entry<String, List<CartItem>> entry : groups.entrySet()) {
+            content.getChildren().add(buildCheckoutProviderBlock(entry.getKey(), entry.getValue()));
+        }
+
+        HBox totalRow = new HBox(12);
+        totalRow.setAlignment(Pos.CENTER_LEFT);
+        totalRow.getStyleClass().add("payment-total-row");
+        Label totalLabel = new Label("Итого к созданию");
+        totalLabel.getStyleClass().add("payment-total-label");
+        Label totalValue = new Label(formatMoney(cartTotal()));
+        totalValue.getStyleClass().add("payment-total-value");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        totalRow.getChildren().addAll(totalLabel, spacer, totalValue);
+        content.getChildren().add(totalRow);
+
         if (groups.size() > 1) {
             Label hint = new Label("В корзине услуги разных провайдеров, поэтому ApiAB создаст несколько платежей.");
             hint.setWrapText(true);
-            hint.getStyleClass().add("detail-hint");
+            hint.getStyleClass().add("payment-hint");
             content.getChildren().add(hint);
         }
-        dialog.getDialogPane().setContent(content);
+
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setPrefWidth(680);
+        scroll.setPrefHeight(620);
+        scroll.getStyleClass().add("payment-scroll");
+        dialog.getDialogPane().setContent(scroll);
         dialog.setResultConverter(btn -> btn == confirm);
         dialog.showAndWait().filter(Boolean::booleanValue).ifPresent(v -> createPayments(groups));
+    }
+
+    private VBox buildCheckoutProviderBlock(String providerId, List<CartItem> items) {
+        VBox block = new VBox(10);
+        block.getStyleClass().add("checkout-provider-block");
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label provider = new Label(providerName(providerId));
+        provider.getStyleClass().add("checkout-provider-name");
+        Label count = new Label(items.size() + " услуг");
+        count.getStyleClass().add("checkout-count-pill");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label subtotal = new Label(formatMoney(sumItems(items)));
+        subtotal.getStyleClass().add("checkout-subtotal");
+        header.getChildren().addAll(provider, count, spacer, subtotal);
+        block.getChildren().add(header);
+
+        for (CartItem item : items) {
+            HBox row = new HBox(10);
+            row.setAlignment(Pos.CENTER_LEFT);
+            Label service = new Label(item.getService().getName());
+            service.setWrapText(true);
+            service.getStyleClass().add("checkout-service-name");
+            Region rowSpacer = new Region();
+            HBox.setHgrow(rowSpacer, Priority.ALWAYS);
+            Label amount = new Label(formatMoney(item.getAmount()));
+            amount.getStyleClass().add("checkout-service-amount");
+            row.getChildren().addAll(service, rowSpacer, amount);
+            block.getChildren().add(row);
+        }
+        return block;
     }
 
     private Map<String, List<CartItem>> groupCartByProvider() {
@@ -351,6 +411,12 @@ public class MainController {
 
     private BigDecimal cartTotal() {
         return cart.stream()
+                .map(CartItem::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal sumItems(List<CartItem> items) {
+        return items.stream()
                 .map(CartItem::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -392,47 +458,116 @@ public class MainController {
     private void showPaymentResult(List<Payment> payments) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("QR-код платежа");
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        styleDialog(dialog, "payment-dialog-pane");
+        ButtonType close = new ButtonType("Готово", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(close);
 
-        VBox content = new VBox(14);
-        content.setPadding(new Insets(16));
+        VBox content = new VBox(18);
+        content.getStyleClass().add("payment-shell");
+        content.setPadding(new Insets(24));
 
         if (payments.isEmpty()) {
-            content.getChildren().add(new Label("ApiAB не вернул данные платежа. Проверьте журнал и повторите."));
+            Label empty = new Label("ApiAB не вернул данные платежа. Проверьте журнал и повторите.");
+            empty.getStyleClass().add("payment-error-text");
+            empty.setWrapText(true);
+            content.getChildren().add(empty);
         }
 
+        Label step = new Label("Шаг 2 из 2");
+        step.getStyleClass().add("payment-step");
+        Label title = new Label(payments.size() > 1 ? "Платежи созданы" : "Платеж создан");
+        title.getStyleClass().add("payment-title");
+        Label subtitle = new Label("Покажите QR-код сканеру или используйте данные QR ниже. Не закрывайте окно, пока клиент не завершит оплату.");
+        subtitle.getStyleClass().add("payment-subtitle");
+        subtitle.setWrapText(true);
+        content.getChildren().addAll(step, title, subtitle);
+
         for (Payment payment : payments) {
-            VBox block = new VBox(8);
+            HBox block = new HBox(22);
             block.getStyleClass().add("payment-result");
-            block.getChildren().add(new Label("Платеж " + payment.getId()));
-            block.getChildren().add(new Label("Провайдер: " + nullToEmpty(payment.getProviderName())));
-            block.getChildren().add(new Label("Сумма: " + formatMoney(payment.getSum())
-                    + ", комиссия: " + formatMoney(payment.getFee())
-                    + ", всего: " + formatMoney(payment.getTotal())));
-            block.getChildren().add(new Label("Статус: " + payment.getStatus()));
+            block.setAlignment(Pos.CENTER_LEFT);
+
+            VBox qrBox = new VBox(10);
+            qrBox.setAlignment(Pos.CENTER);
+            qrBox.getStyleClass().add("qr-box");
 
             if (payment.getQrCode() != null && !payment.getQrCode().isBlank()) {
-                byte[] bytes = Base64.getDecoder().decode(payment.getQrCode());
-                ImageView qr = new ImageView(new Image(new ByteArrayInputStream(bytes)));
-                qr.setFitWidth(220);
-                qr.setFitHeight(220);
-                qr.setPreserveRatio(true);
-                block.getChildren().add(qr);
+                try {
+                    byte[] bytes = Base64.getDecoder().decode(payment.getQrCode());
+                    ImageView qr = new ImageView(new Image(new ByteArrayInputStream(bytes)));
+                    qr.setFitWidth(300);
+                    qr.setFitHeight(300);
+                    qr.setPreserveRatio(true);
+                    qr.getStyleClass().add("qr-image");
+                    qrBox.getChildren().add(qr);
+                } catch (IllegalArgumentException e) {
+                    Label noQr = new Label("QR-код поврежден");
+                    noQr.getStyleClass().add("payment-error-text");
+                    qrBox.getChildren().add(noQr);
+                }
+            } else {
+                Label noQr = new Label("QR-код не получен");
+                noQr.getStyleClass().add("payment-error-text");
+                qrBox.getChildren().add(noQr);
             }
 
-            Label qrData = new Label("Данные QR: " + nullToEmpty(payment.getQrLink()));
+            Label scanHint = new Label("Сканируйте этот код");
+            scanHint.getStyleClass().add("qr-scan-hint");
+            qrBox.getChildren().add(scanHint);
+
+            VBox info = new VBox(12);
+            info.getStyleClass().add("payment-info");
+            HBox statusRow = new HBox(8);
+            statusRow.setAlignment(Pos.CENTER_LEFT);
+            Label status = new Label(statusLabel(payment.getStatus()));
+            status.getStyleClass().addAll("payment-status-pill", statusClass(payment.getStatus()));
+            Label provider = new Label(nullToEmpty(payment.getProviderName()).isBlank()
+                    ? "Провайдер не указан"
+                    : payment.getProviderName());
+            provider.getStyleClass().add("payment-provider-name");
+            statusRow.getChildren().addAll(status, provider);
+
+            Label id = new Label("ID платежа: " + nullToEmpty(payment.getId()));
+            id.getStyleClass().add("payment-muted-line");
+            Label amount = new Label("Сумма: " + formatMoney(payment.getSum()));
+            amount.getStyleClass().add("payment-amount-line");
+            Label fee = new Label("Комиссия: " + formatMoney(payment.getFee()));
+            fee.getStyleClass().add("payment-muted-line");
+            Label total = new Label("К оплате: " + formatMoney(payment.getTotal()));
+            total.getStyleClass().add("payment-grand-total");
+
+            Label qrCaption = new Label("Данные QR");
+            qrCaption.getStyleClass().add("payment-qr-caption");
+            Label qrData = new Label(nullToEmpty(payment.getQrLink()).isBlank()
+                    ? "ApiAB не вернул ссылку QR"
+                    : payment.getQrLink());
             qrData.setWrapText(true);
-            qrData.getStyleClass().add("detail-hint");
-            block.getChildren().add(qrData);
+            qrData.getStyleClass().add("payment-qr-data");
+
+            info.getChildren().addAll(statusRow, id, amount, fee, total, qrCaption, qrData);
+            HBox.setHgrow(info, Priority.ALWAYS);
+
+            block.getChildren().addAll(qrBox, info);
             content.getChildren().add(block);
         }
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
-        scroll.setPrefWidth(560);
-        scroll.setPrefHeight(560);
+        scroll.setPrefWidth(820);
+        scroll.setPrefHeight(700);
+        scroll.getStyleClass().add("payment-scroll");
         dialog.getDialogPane().setContent(scroll);
         dialog.showAndWait();
+    }
+
+    private void styleDialog(Dialog<?> dialog, String styleClass) {
+        dialog.getDialogPane().getStylesheets().add(
+                Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm()
+        );
+        dialog.getDialogPane().getStyleClass().add(styleClass);
+        if (ThemeManager.isDarkMode()) {
+            dialog.getDialogPane().getStyleClass().add("dark");
+        }
     }
 
     @FXML
@@ -547,6 +682,31 @@ public class MainController {
 
     private String formatMoney(BigDecimal value) {
         return value.setScale(2, RoundingMode.HALF_UP) + " сом";
+    }
+
+    private String providerName(String providerId) {
+        return allProviders.stream()
+                .filter(provider -> Objects.equals(provider.getId(), providerId))
+                .findFirst()
+                .map(Provider::toString)
+                .orElse("Провайдер " + providerId);
+    }
+
+    private String statusLabel(String status) {
+        return switch (nullToEmpty(status)) {
+            case "processing" -> "Ожидает оплаты";
+            case "success" -> "Оплачен";
+            case "cancel" -> "Отменен";
+            default -> "Статус неизвестен";
+        };
+    }
+
+    private String statusClass(String status) {
+        return switch (nullToEmpty(status)) {
+            case "success" -> "payment-status-success";
+            case "cancel" -> "payment-status-cancel";
+            default -> "payment-status-processing";
+        };
     }
 
     private String nullToEmpty(String value) {

@@ -1,0 +1,22 @@
+мая 31, 2026 3:32:55 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 3:33:08 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com
+мая 31, 2026 3:33:23 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: user1@test.com
+мая 31, 2026 3:33:33 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет, сумма 123
+мая 31, 2026 3:33:36 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет, сумма 123
+мая 31, 2026 3:33:48 PM com.kiosk.util.AppLogger info
+INFO: Создан платеж 98b1de53-f86c-4bd1-8d17-11918e8fd5be, сумма 246.0
+мая 31, 2026 3:56:02 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 3:57:07 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет, сумма 250
+мая 31, 2026 3:57:12 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду, сумма 250
+мая 31, 2026 3:57:21 PM com.kiosk.util.AppLogger info
+INFO: Создан платеж 396b0d09-0cc2-4baf-ab61-35be4c6ab945, сумма 250.0
+мая 31, 2026 3:57:21 PM com.kiosk.util.AppLogger info
+INFO: Создан платеж d43337e3-96c1-477b-b0b3-3b5f5e25af2c, сумма 250.0
