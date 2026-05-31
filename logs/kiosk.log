@@ -20,3 +20,41 @@ INFO: Услуга добавлена в корзину: Оплата за во�
 INFO: Создан платеж 396b0d09-0cc2-4baf-ab61-35be4c6ab945, сумма 250.0
 мая 31, 2026 3:57:21 PM com.kiosk.util.AppLogger info
 INFO: Создан платеж d43337e3-96c1-477b-b0b3-3b5f5e25af2c, сумма 250.0
+мая 31, 2026 4:01:24 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: operator1@test.com
+мая 31, 2026 4:03:23 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: operator1@test.com
+мая 31, 2026 4:03:34 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 4:08:05 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com
+мая 31, 2026 4:08:18 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 4:08:22 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com
+мая 31, 2026 4:13:34 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: user1@test.com
+мая 31, 2026 4:13:57 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: user1@test.com
+мая 31, 2026 4:14:06 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 4:14:29 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Пополнение мобильного, сумма 50, количество 3
+мая 31, 2026 4:14:40 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду, сумма 25, количество 3
+мая 31, 2026 4:15:06 PM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 0d15610e-a0bf-44b7-9a63-499859db27f1, сумма 225.0
+мая 31, 2026 4:16:24 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду, сумма 12, количество 1
+мая 31, 2026 4:18:06 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду, сумма 12, количество 1
+мая 31, 2026 4:22:31 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+мая 31, 2026 4:22:57 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет, сумма 123, количество 1
+мая 31, 2026 4:23:00 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено), сумма 123, количество 1
+мая 31, 2026 4:23:03 PM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж ec9c1bb9-f9c1-4078-9298-6af70aff8f92, сумма 246.0
+мая 31, 2026 4:24:28 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com

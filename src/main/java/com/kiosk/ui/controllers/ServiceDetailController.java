@@ -13,18 +13,17 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 public class ServiceDetailController {
 
     @FXML private Label serviceNameLabel, categoryLabel, providerLabel, accountLabel, commissionLabel;
     @FXML private Label detailErrorLabel;
-    @FXML private TextField amountField;
+    @FXML private TextField amountField, quantityField;
     @FXML private Button favoriteBtn;
 
     private Stage stage;
     private ProviderService service;
-    private BiConsumer<ProviderService, BigDecimal> onAddToCart;
+    private CartAddHandler onAddToCart;
     private static final Set<String> favorites = new HashSet<>();
 
     public void setStage(Stage stage) {
@@ -32,9 +31,11 @@ public class ServiceDetailController {
     }
 
     public void setService(ProviderService service, List<Provider> providers, List<CategoryService> categories) {
+        // Услуга передается сюда из карточки на главном экране.
         this.service = service;
         serviceNameLabel.setText(service.getName());
 
+        // В новом ApiAB категория может прийти названием, а в старых данных только id.
         String catName = service.getCategoryName() != null ? service.getCategoryName() : categories.stream()
                 .filter(c -> c.getId().equals(service.getCategoryId()))
                 .findFirst()
@@ -42,6 +43,7 @@ public class ServiceDetailController {
                 .orElse("—");
         categoryLabel.setText(catName);
 
+        // Провайдера тоже сначала берем из DTO, а если его нет, ищем в списке по provId.
         String provName = service.getProviderName() != null ? service.getProviderName() : providers.stream()
                 .filter(p -> p.getId().equals(service.getProvId()))
                 .findFirst()
@@ -67,7 +69,7 @@ public class ServiceDetailController {
         });
     }
 
-    public void setOnAddToCart(BiConsumer<ProviderService, BigDecimal> onAddToCart) {
+    public void setOnAddToCart(CartAddHandler onAddToCart) {
         this.onAddToCart = onAddToCart;
     }
 
@@ -94,17 +96,24 @@ public class ServiceDetailController {
     @FXML
     private void onAddToCart() {
         try {
+            // Сумма вводится за одну единицу услуги.
             BigDecimal amount = new BigDecimal(amountField.getText().trim().replace(',', '.'));
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 showDetailError("Введите сумму больше 0.");
                 return;
             }
+            // Количество умножится на сумму уже в CartItem.
+            int quantity = Integer.parseInt(quantityField.getText().trim());
+            if (quantity <= 0) {
+                showDetailError("Количество должно быть больше 0.");
+                return;
+            }
             if (onAddToCart != null && service != null) {
-                onAddToCart.accept(service, amount);
+                onAddToCart.add(service, amount, quantity);
             }
             if (stage != null) stage.close();
         } catch (NumberFormatException e) {
-            showDetailError("Сумма должна быть числом, например 250.00.");
+            showDetailError("Проверьте сумму и количество. Например: сумма 250.00, количество 2.");
         }
     }
 
@@ -115,5 +124,10 @@ public class ServiceDetailController {
 
     public static Set<String> getFavorites() {
         return favorites;
+    }
+
+    @FunctionalInterface
+    public interface CartAddHandler {
+        void add(ProviderService service, BigDecimal amount, int quantity);
     }
 }

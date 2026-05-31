@@ -16,8 +16,6 @@ import java.util.List;
  */
 public class ServiceCard extends VBox {
 
-    private static final String[] CARD_ICONS = {"💳", "🏦", "📱", "🏠", "🚗", "⚡", "💧", "📡", "🎓", "🏥"};
-
     public ServiceCard(ProviderService service, List<Provider> providers, List<CategoryService> categories) {
         getStyleClass().add("service-card");
         setPrefWidth(200);
@@ -26,11 +24,6 @@ public class ServiceCard extends VBox {
         setPadding(new Insets(16));
         setSpacing(8);
         setAlignment(Pos.TOP_LEFT);
-
-        // Иконка — выбирается по хэшу имени
-        String icon = CARD_ICONS[Math.abs(service.getName().hashCode()) % CARD_ICONS.length];
-        Label iconLabel = new Label(icon);
-        iconLabel.getStyleClass().add("card-icon");
 
         // Название услуги
         Label nameLabel = new Label(service.getName());
@@ -59,9 +52,9 @@ public class ServiceCard extends VBox {
         if (ServiceDetailController.getFavorites().contains(service.getId())) {
             Label favLabel = new Label("★");
             favLabel.getStyleClass().add("card-favorite");
-            getChildren().addAll(iconLabel, nameLabel, provLabel, catLabel, favLabel);
+            getChildren().addAll(nameLabel, provLabel, catLabel, favLabel);
         } else {
-            getChildren().addAll(iconLabel, nameLabel, provLabel, catLabel);
+            getChildren().addAll(nameLabel, provLabel, catLabel);
         }
 
         // Hover-курсор

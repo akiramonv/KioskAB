@@ -15,11 +15,13 @@ import java.util.Map;
 
 public class ApiService {
 
+    // Используем mapper из ApiClient, чтобы все ответы ApiAB разбирались одинаково.
     private static final ObjectMapper mapper = ApiClient.getMapper();
 
     // ==================== SERVICES ====================
 
     public static List<ProviderService> getAllServices() throws Exception {
+        // Услуги тянутся напрямую из нового REST endpoint эмулятора.
         return parseList(ApiClient.get("/api/services"), ProviderService.class);
     }
 
@@ -193,11 +195,17 @@ public class ApiService {
         return parseList(ApiClient.get("/api/payments/by-status/" + status), Payment.class);
     }
 
+    public static List<Payment> getPaymentsByProvider(String providerId) throws Exception {
+        // Для админа организации берем только платежи его провайдера.
+        return parseList(ApiClient.get("/api/payments/by-provider/" + providerId), Payment.class);
+    }
+
     public static Payment getPaymentById(String id) throws Exception {
         return parseData(ApiClient.get("/api/payments/" + id), Payment.class);
     }
 
     public static Payment createPayment(BigDecimal sum, String providerId) throws Exception {
+        // ApiAB принимает один платеж на провайдера: сумма уже посчитана по всей корзине.
         Map<String, Object> data = new HashMap<>();
         data.put("sum", sum);
         data.put("status", "processing");
@@ -222,6 +230,7 @@ public class ApiService {
     // ==================== AUTH ====================
 
     public static User authenticate(String email, String password) throws Exception {
+        // В эмуляторе нет отдельного auth endpoint, поэтому вход проверяем по списку пользователей.
         List<User> users = getAllUsers();
         return users.stream()
                 .filter(u -> email.equalsIgnoreCase(nullToEmpty(u.getEmail()))
@@ -233,6 +242,7 @@ public class ApiService {
     // ==================== HELPERS ====================
 
     private static <T> List<T> parseList(JsonNode root, Class<T> clazz) {
+        // Все ответы ApiAB лежат внутри поля data, поэтому сначала забираем именно его.
         JsonNode data = root.path("data");
         if (data.isMissingNode() || data.isNull()) {
             return new ArrayList<>();
@@ -246,6 +256,7 @@ public class ApiService {
     }
 
     private static <T> T parseData(JsonNode root, Class<T> clazz) {
+        // Для одиночной записи схема та же: GenericResponse.data -> нужная модель.
         JsonNode data = root.path("data");
         if (data.isMissingNode() || data.isNull()) {
             return null;

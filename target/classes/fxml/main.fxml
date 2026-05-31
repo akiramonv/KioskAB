@@ -12,19 +12,19 @@
     <top>
         <VBox styleClass="header-bar">
             <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-inner">
-                <Label text="🏦 Киоск самообслуживания" styleClass="header-title"/>
+                <Label text="Киоск самообслуживания" styleClass="header-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="searchField" promptText="🔍  Поиск услуг..." styleClass="search-field"
+                <TextField fx:id="searchField" promptText="Поиск услуг..." styleClass="search-field"
                            prefWidth="300"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ToggleButton fx:id="themeToggle" text="Темная тема" styleClass="btn-outline"
                               onAction="#onThemeToggle"/>
                 <Button fx:id="loginBtn" text="Войти" styleClass="btn-outline"
                         onAction="#onLoginClicked"/>
-                <Label fx:id="userLabel" text="" styleClass="user-label" visible="false"/>
+                <Label fx:id="userLabel" text="" styleClass="user-label" visible="false" managed="false"/>
                 <Button fx:id="logoutBtn" text="Выйти" styleClass="btn-danger"
                         onAction="#onLogoutClicked" visible="false"/>
-                <Button fx:id="adminBtn" text="⚙ Админ" styleClass="btn-admin"
+                <Button fx:id="adminBtn" text="Админ" styleClass="btn-admin"
                         onAction="#onAdminClicked" visible="false"/>
             </HBox>
         </VBox>
@@ -49,7 +49,7 @@
                 <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
                     <Label fx:id="breadcrumb" text="Все услуги" styleClass="breadcrumb"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="clearFilterBtn" text="✕ Сбросить" styleClass="btn-small"
+                    <Button fx:id="clearFilterBtn" text="Сбросить" styleClass="btn-small"
                             onAction="#onClearFilters"/>
                 </HBox>
 
@@ -59,7 +59,7 @@
                         <!-- Рекомендованные / популярные -->
                         <VBox fx:id="featuredSection" spacing="8">
                             <padding><Insets top="16" right="16" bottom="0" left="16"/></padding>
-                            <Label fx:id="featuredLabel" text="⭐ Популярные услуги" styleClass="section-label"/>
+                            <Label fx:id="featuredLabel" text="Популярные услуги" styleClass="section-label"/>
                             <FlowPane fx:id="featuredPane" hgap="12" vgap="12" styleClass="services-flow">
                                 <padding><Insets top="4" right="0" bottom="0" left="0"/></padding>
                             </FlowPane>

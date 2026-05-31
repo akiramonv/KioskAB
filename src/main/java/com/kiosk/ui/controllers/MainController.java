@@ -95,8 +95,10 @@ public class MainController {
         setStatus("Загрузка данных...");
         new Thread(() -> {
             try {
+                // Справочники нужны для отображения названий и сопоставления провайдера услуги.
                 List<Provider> providers = ApiService.getAllProviders();
                 List<CategoryService> categories = ApiService.getAllCategories();
+                // Обычному пользователю показываем услуги по специализации, администратору — все доступные.
                 List<ProviderService> services = shouldLoadUserServices()
                         ? ApiService.getServicesByUser(SessionManager.getInstance().getCurrentUser().getId())
                         : ApiService.getAllServices();
@@ -129,12 +131,14 @@ public class MainController {
 
     private boolean shouldLoadUserServices() {
         SessionManager session = SessionManager.getInstance();
+        // Фильтр по специализации включаем только для неадминов.
         return session.isLoggedIn() && session.hasSpecializations() && !session.isAdmin();
     }
 
     private void buildCategoryList() {
         categoryList.getChildren().clear();
 
+        // Кнопка "Все услуги" сбрасывает выбранную категорию.
         Button allBtn = new Button("Все услуги");
         allBtn.getStyleClass().add("category-btn-active");
         allBtn.setMaxWidth(Double.MAX_VALUE);
@@ -150,6 +154,7 @@ public class MainController {
         allCategories.stream()
                 .sorted((a, b) -> nullToEmpty(a.getName()).compareToIgnoreCase(nullToEmpty(b.getName())))
                 .forEach(cat -> {
+                    // Категории приходят из ApiAB, поэтому строим меню динамически.
                     CategoryButton btn = new CategoryButton(cat);
                     btn.setMaxWidth(Double.MAX_VALUE);
                     btn.setOnAction(e -> {
@@ -176,6 +181,7 @@ public class MainController {
     private void applyFilters() {
         List<ProviderService> filtered = allServices;
 
+        // Категорию проверяем по имени и по id, потому что новый DTO часто отдает именно имя.
         if (selectedCategoryName != null && !selectedCategoryName.isBlank()) {
             filtered = filtered.stream()
                     .filter(s -> selectedCategoryName.equalsIgnoreCase(nullToEmpty(s.getCategoryName()))
@@ -183,6 +189,7 @@ public class MainController {
                     .collect(Collectors.toList());
         }
 
+        // Поиск идет по услуге, провайдеру и категории, чтобы пользователю было проще найти нужное.
         if (!searchQuery.isEmpty()) {
             String q = searchQuery;
             filtered = filtered.stream()
@@ -218,6 +225,7 @@ public class MainController {
 
     private void openServiceDetail(ProviderService service) {
         try {
+            // Окно деталей открываем отдельно, потому что там вводятся сумма и количество.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/service_detail.fxml"));
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -240,7 +248,8 @@ public class MainController {
         }
     }
 
-    private void addToCart(ProviderService service, BigDecimal amount) {
+    private void addToCart(ProviderService service, BigDecimal amount, int quantity) {
+        // Перед добавлением проверяем провайдера, потому что платеж в ApiAB требует provId.
         Optional<Provider> provider = resolveProvider(service);
         if (provider.isEmpty()) {
             showError("Нужен провайдер",
@@ -249,18 +258,20 @@ public class MainController {
             return;
         }
         service.setProvId(provider.get().getId());
-        cart.add(new CartItem(service, amount));
+        cart.add(new CartItem(service, amount, quantity));
         renderCart();
-        setStatus("Добавлено к оплате: " + service.getName() + " — " + formatMoney(amount));
-        AppLogger.info("Услуга добавлена в корзину: " + service.getName() + ", сумма " + amount);
+        setStatus("Добавлено к оплате: " + service.getName() + " x" + quantity + " — " + formatMoney(amount.multiply(BigDecimal.valueOf(quantity))));
+        AppLogger.info("Услуга добавлена в корзину: " + service.getName() + ", сумма " + amount + ", количество " + quantity);
     }
 
     private Optional<Provider> resolveProvider(ProviderService service) {
+        // Если в услуге уже есть provId, используем его как самый надежный вариант.
         if (service.getProvId() != null && !service.getProvId().isBlank()) {
             return allProviders.stream()
                     .filter(p -> service.getProvId().equals(p.getId()))
                     .findFirst();
         }
+        // Если provId нет, сопоставляем провайдера по названию из DTO.
         return allProviders.stream()
                 .filter(p -> p.matchesName(service.getProviderName()))
                 .findFirst();
@@ -271,7 +282,8 @@ public class MainController {
         BigDecimal total = BigDecimal.ZERO;
 
         for (CartItem item : cart) {
-            total = total.add(item.getAmount());
+            // Итог корзины складывается из итогов позиций: сумма за единицу * количество.
+            total = total.add(item.getTotal());
             VBox row = new VBox(6);
             row.getStyleClass().add("cart-item");
 
@@ -279,7 +291,10 @@ public class MainController {
             name.getStyleClass().add("cart-item-title");
             name.setWrapText(true);
 
-            Label meta = new Label(item.getService().getDisplayProvider() + " • " + formatMoney(item.getAmount()));
+            Label meta = new Label(item.getService().getDisplayProvider()
+                    + " • " + formatMoney(item.getAmount())
+                    + " x " + item.getQuantity()
+                    + " = " + formatMoney(item.getTotal()));
             meta.getStyleClass().add("cart-item-meta");
 
             Button remove = new Button("Убрать");
@@ -308,9 +323,12 @@ public class MainController {
 
         Map<String, List<CartItem>> groups = groupCartByProvider();
         int groupedItems = groups.values().stream().mapToInt(List::size).sum();
-        if (groups.isEmpty() || groupedItems != cart.size()) {
+        // Общий платеж создаем на организацию текущего пользователя.
+        String paymentProviderId = paymentProviderId();
+        if (groups.isEmpty() || groupedItems != cart.size() || paymentProviderId == null) {
             showError("Нельзя создать платеж",
-                    "Не удалось определить провайдера для услуг в корзине. Проверьте данные услуг.");
+                    "Не удалось определить организацию для общего платежа. Войдите под пользователем организации "
+                            + "или проверьте провайдера у услуг.");
             return;
         }
 
@@ -329,7 +347,8 @@ public class MainController {
         step.getStyleClass().add("payment-step");
         Label title = new Label("Подтверждение платежа");
         title.getStyleClass().add("payment-title");
-        Label subtitle = new Label("Проверьте услуги, провайдеров и суммы. Если нужно исправить платеж, вернитесь к корзине.");
+        Label subtitle = new Label("Проверьте услуги, количество и суммы. ApiAB получит один общий платеж на организацию: "
+                + providerName(paymentProviderId) + ".");
         subtitle.getStyleClass().add("payment-subtitle");
         subtitle.setWrapText(true);
         content.getChildren().addAll(step, title, subtitle);
@@ -351,7 +370,7 @@ public class MainController {
         content.getChildren().add(totalRow);
 
         if (groups.size() > 1) {
-            Label hint = new Label("В корзине услуги разных провайдеров, поэтому ApiAB создаст несколько платежей.");
+            Label hint = new Label("В корзине услуги разных провайдеров. ApiAB все равно получит один общий платеж на итоговую сумму.");
             hint.setWrapText(true);
             hint.getStyleClass().add("payment-hint");
             content.getChildren().add(hint);
@@ -364,7 +383,7 @@ public class MainController {
         scroll.getStyleClass().add("payment-scroll");
         dialog.getDialogPane().setContent(scroll);
         dialog.setResultConverter(btn -> btn == confirm);
-        dialog.showAndWait().filter(Boolean::booleanValue).ifPresent(v -> createPayments(groups));
+        dialog.showAndWait().filter(Boolean::booleanValue).ifPresent(v -> createPayment(paymentProviderId));
     }
 
     private VBox buildCheckoutProviderBlock(String providerId, List<CartItem> items) {
@@ -375,7 +394,7 @@ public class MainController {
         header.setAlignment(Pos.CENTER_LEFT);
         Label provider = new Label(providerName(providerId));
         provider.getStyleClass().add("checkout-provider-name");
-        Label count = new Label(items.size() + " услуг");
+        Label count = new Label(items.stream().mapToInt(CartItem::getQuantity).sum() + " шт.");
         count.getStyleClass().add("checkout-count-pill");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -392,7 +411,8 @@ public class MainController {
             service.getStyleClass().add("checkout-service-name");
             Region rowSpacer = new Region();
             HBox.setHgrow(rowSpacer, Priority.ALWAYS);
-            Label amount = new Label(formatMoney(item.getAmount()));
+            Label amount = new Label(formatMoney(item.getAmount()) + " x " + item.getQuantity()
+                    + " = " + formatMoney(item.getTotal()));
             amount.getStyleClass().add("checkout-service-amount");
             row.getChildren().addAll(service, rowSpacer, amount);
             block.getChildren().add(row);
@@ -403,6 +423,7 @@ public class MainController {
     private Map<String, List<CartItem>> groupCartByProvider() {
         Map<String, List<CartItem>> result = new LinkedHashMap<>();
         for (CartItem item : cart) {
+            // Группировка нужна только для красивого подтверждения, платеж все равно общий.
             Optional<Provider> provider = resolveProvider(item.getService());
             provider.ifPresent(p -> result.computeIfAbsent(p.getId(), id -> new ArrayList<>()).add(item));
         }
@@ -410,32 +431,29 @@ public class MainController {
     }
 
     private BigDecimal cartTotal() {
+        // Общая сумма платежа — это сумма всех строк корзины.
         return cart.stream()
-                .map(CartItem::getAmount)
+                .map(CartItem::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BigDecimal sumItems(List<CartItem> items) {
         return items.stream()
-                .map(CartItem::getAmount)
+                .map(CartItem::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private void createPayments(Map<String, List<CartItem>> groups) {
+    private void createPayment(String providerId) {
         payCartBtn.setDisable(true);
         setStatus("Создание платежа в ApiAB...");
         new Thread(() -> {
             try {
+                // В ApiAB отправляется один платеж на весь итог корзины.
+                Payment payment = ApiService.createPayment(cartTotal(), providerId);
                 List<Payment> created = new ArrayList<>();
-                for (Map.Entry<String, List<CartItem>> entry : groups.entrySet()) {
-                    BigDecimal sum = entry.getValue().stream()
-                            .map(CartItem::getAmount)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    Payment payment = ApiService.createPayment(sum, entry.getKey());
-                    if (payment != null) {
-                        created.add(payment);
-                        AppLogger.info("Создан платеж " + payment.getId() + ", сумма " + payment.getSum());
-                    }
+                if (payment != null) {
+                    created.add(payment);
+                    AppLogger.info("Создан общий платеж " + payment.getId() + ", сумма " + payment.getSum());
                 }
                 Platform.runLater(() -> {
                     cart.clear();
@@ -456,6 +474,7 @@ public class MainController {
     }
 
     private void showPaymentResult(List<Payment> payments) {
+        // После создания платежа показываем QR, который вернул ApiAB.
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("QR-код платежа");
         styleDialog(dialog, "payment-dialog-pane");
@@ -600,12 +619,15 @@ public class MainController {
         boolean loggedIn = session.isLoggedIn();
         loginBtn.setVisible(!loggedIn);
         logoutBtn.setVisible(loggedIn);
-        userLabel.setVisible(loggedIn);
+        userLabel.setVisible(false);
+        userLabel.setManaged(false);
         adminBtn.setVisible(loggedIn && session.isAdmin());
 
         if (loggedIn) {
-            userLabel.setText("Пользователь: " + session.getCurrentUser().getName());
-            setStatus("Добро пожаловать, " + session.getCurrentUser().getName() + "!");
+            String provider = session.getCurrentProviderName() == null || session.getCurrentProviderName().isBlank()
+                    ? ""
+                    : " • " + session.getCurrentProviderName();
+            setStatus("Вход выполнен: " + session.getCurrentUser().getName() + provider);
         }
     }
 
@@ -690,6 +712,23 @@ public class MainController {
                 .findFirst()
                 .map(Provider::toString)
                 .orElse("Провайдер " + providerId);
+    }
+
+    private String paymentProviderId() {
+        SessionManager session = SessionManager.getInstance();
+        // В первую очередь берем организацию вошедшего пользователя из сессии.
+        if (session.hasProvider()) {
+            return session.getCurrentProviderId();
+        }
+        // Запасной вариант: если сессия без провайдера, берем провайдера первой услуги в корзине.
+        return cart.stream()
+                .map(CartItem::getService)
+                .map(this::resolveProvider)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Provider::getId)
+                .findFirst()
+                .orElse(null);
     }
 
     private String statusLabel(String status) {

@@ -15,6 +15,10 @@ public class SessionManager {
     private static SessionManager instance;
 
     private User currentUser;
+    // ID организации сохраняем в сессии, потому что админка и общий платеж фильтруются по нему.
+    private String currentProviderId;
+    // Название организации нужно только для понятного текста в статусе и интерфейсе.
+    private String currentProviderName;
     private List<Role> currentUserRoles = new ArrayList<>();
     private List<Specialization> currentUserSpecializations = new ArrayList<>();
 
@@ -33,6 +37,15 @@ public class SessionManager {
 
     public User getCurrentUser() { return currentUser; }
     public void setCurrentUser(User user) { this.currentUser = user; }
+    public String getCurrentProviderId() { return currentProviderId; }
+    public void setCurrentProviderId(String currentProviderId) { this.currentProviderId = currentProviderId; }
+    public String getCurrentProviderName() { return currentProviderName; }
+    public void setCurrentProviderName(String currentProviderName) { this.currentProviderName = currentProviderName; }
+
+    public boolean hasProvider() {
+        // Если провайдер не определился при входе, обычный админ не должен видеть чужие данные.
+        return currentProviderId != null && !currentProviderId.isBlank();
+    }
 
     public List<Role> getCurrentUserRoles() { return currentUserRoles; }
     public void setCurrentUserRoles(List<Role> roles) {
@@ -45,6 +58,7 @@ public class SessionManager {
     }
 
     public boolean isAdmin() {
+        // Роли приходят из ApiAB вместе с пользователем, здесь просто проверяем текущую сессию.
         return currentUserRoles.stream().anyMatch(Role::isAdmin);
     }
 
@@ -57,7 +71,10 @@ public class SessionManager {
     }
 
     public void logout() {
+        // При выходе чистим все данные сессии, чтобы следующий пользователь не видел чужой контекст.
         currentUser = null;
+        currentProviderId = null;
+        currentProviderName = null;
         currentUserRoles.clear();
         currentUserSpecializations.clear();
     }

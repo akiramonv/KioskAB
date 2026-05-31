@@ -3,6 +3,7 @@ package com.kiosk.ui.controllers;
 import com.kiosk.model.*;
 import com.kiosk.service.ApiService;
 import com.kiosk.util.AppLogger;
+import com.kiosk.util.SessionManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -67,7 +68,8 @@ public class AdminController {
         adminTable.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
             boolean hasSelection = selected != null;
             editBtn.setDisable(!hasSelection || currentSection.isBlank());
-            deleteBtn.setDisable(!hasSelection || currentSection.isBlank());
+            deleteBtn.setDisable(!hasSelection || currentSection.isBlank()
+                    || ("providers".equals(currentSection) && isOrganizationBound()));
         });
     }
 
@@ -86,11 +88,13 @@ public class AdminController {
         currentSection = section;
         setStatus(status);
         adminSearchField.clear();
+        // Фильтры суммы/даты нужны только для раздела платежей.
         boolean payments = "payments".equals(section);
         paymentFilters.setVisible(payments);
         paymentFilters.setManaged(payments);
-        addBtn.setDisable(payments);
-        editBtn.setText(payments ? "Статус" : "✏ Изменить");
+        // Обычный админ видит своего провайдера, но не может создать новую организацию.
+        addBtn.setDisable(payments || ("providers".equals(section) && isOrganizationBound()));
+        editBtn.setText(payments ? "Статус" : "Изменить");
         editBtn.setDisable(true);
         deleteBtn.setDisable(true);
     }
@@ -99,7 +103,10 @@ public class AdminController {
         prepareSection("users", "Загрузка пользователей...");
         new Thread(() -> {
             try {
-                List<User> users = ApiService.getAllUsers();
+                // Админ организации видит пользователей только своего провайдера.
+                List<User> users = isOrganizationBound() && hasCurrentProvider()
+                        ? ApiService.getUsersByProvider(currentProviderId())
+                        : isOrganizationBound() ? List.of() : ApiService.getAllUsers();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(users);
                     setupUsersTable(users);
@@ -115,7 +122,10 @@ public class AdminController {
         prepareSection("services", "Загрузка услуг...");
         new Thread(() -> {
             try {
-                List<ProviderService> services = ApiService.getAllServices();
+                // Услуги для обычного админа тянутся по providerId из сессии.
+                List<ProviderService> services = isOrganizationBound() && hasCurrentProvider()
+                        ? ApiService.getServicesByProvider(currentProviderId())
+                        : isOrganizationBound() ? List.of() : ApiService.getAllServices();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(services);
                     setupServicesTable(services);
@@ -131,7 +141,10 @@ public class AdminController {
         prepareSection("categories", "Загрузка категорий...");
         new Thread(() -> {
             try {
-                List<CategoryService> items = ApiService.getAllCategories();
+                // Категории тоже ограничиваем организацией, чтобы админ не видел чужие справочники.
+                List<CategoryService> items = isOrganizationBound() && hasCurrentProvider()
+                        ? ApiService.getCategoriesByProvider(currentProviderId())
+                        : isOrganizationBound() ? List.of() : ApiService.getAllCategories();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(items);
                     setupCategoriesTable(items);
@@ -147,7 +160,10 @@ public class AdminController {
         prepareSection("providers", "Загрузка провайдеров...");
         new Thread(() -> {
             try {
-                List<Provider> items = ApiService.getAllProviders();
+                // Обычный admin получает только свою организацию, superAdmin получает все.
+                List<Provider> items = isOrganizationBound()
+                        ? currentProviderAsList()
+                        : ApiService.getAllProviders();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(items);
                     setupProvidersTable(items);
@@ -163,7 +179,10 @@ public class AdminController {
         prepareSection("specializations", "Загрузка специализаций...");
         new Thread(() -> {
             try {
-                List<Specialization> items = ApiService.getAllSpecializations();
+                // Специализации являются справочником организации, поэтому фильтруем по providerId.
+                List<Specialization> items = isOrganizationBound() && hasCurrentProvider()
+                        ? ApiService.getSpecializationsByProvider(currentProviderId())
+                        : isOrganizationBound() ? List.of() : ApiService.getAllSpecializations();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(items);
                     setupSpecializationsTable(items);
@@ -179,7 +198,10 @@ public class AdminController {
         prepareSection("payments", "Загрузка платежей...");
         new Thread(() -> {
             try {
-                List<Payment> items = ApiService.getAllPayments();
+                // Платежи админ организации смотрит только по своей организации.
+                List<Payment> items = isOrganizationBound() && hasCurrentProvider()
+                        ? ApiService.getPaymentsByProvider(currentProviderId())
+                        : isOrganizationBound() ? List.of() : ApiService.getAllPayments();
                 Platform.runLater(() -> {
                     currentData = new ArrayList<>(items);
                     setupPaymentsTable(items);
@@ -334,6 +356,10 @@ public class AdminController {
         if (selected == null) {
             return;
         }
+        if (selected instanceof Provider && isOrganizationBound()) {
+            showInfo("Удаление организации недоступно", "Админ организации может редактировать свою организацию, но не удалять ее.");
+            return;
+        }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Удаление");
@@ -371,6 +397,7 @@ public class AdminController {
 
     private void showInputDialog(String title, Object existingItem) {
         try {
+            // Перед формой загружаем справочники, потому что ComboBox берет значения из них.
             refreshLookups();
         } catch (Exception e) {
             showError("Справочники не загружены", "Не удалось загрузить данные для формы: " + readableError(e));
@@ -399,9 +426,11 @@ public class AdminController {
     private void buildForm(GridPane grid, Object item, Dialog<Map<String, Object>> dialog) {
         if ("services".equals(currentSection) || item instanceof ProviderService) {
             ProviderService service = item instanceof ProviderService s ? s : null;
+            // Форма услуги собирается из справочников: категория, провайдер, счет, комиссия, специализации.
             TextField name = textField(service == null ? "" : service.getName());
             ComboBox<CategoryService> category = combo(categories, findByName(categories, CategoryService::getName, service == null ? null : service.getCategoryName()));
             ComboBox<Provider> provider = combo(providers, findProvider(service == null ? null : service.getProviderName()));
+            lockProviderCombo(provider);
             ComboBox<Account> account = combo(accounts, findByName(accounts, Account::getName, service == null ? null : service.getAccountName()));
             ComboBox<Commission> commission = combo(commissions, findCommission(service == null ? null : service.getCommission()));
             commission.setPromptText("По умолчанию");
@@ -424,6 +453,7 @@ public class AdminController {
                     return Map.of();
                 }
                 Map<String, Object> data = new HashMap<>();
+                // ApiAB ожидает id справочников, поэтому из ComboBox отправляем именно id.
                 data.put("name", name.getText().trim());
                 data.put("categoryId", category.getValue().getId());
                 data.put("provId", provider.getValue().getId());
@@ -438,10 +468,12 @@ public class AdminController {
 
         if ("categories".equals(currentSection) || item instanceof CategoryService) {
             CategoryService categoryItem = item instanceof CategoryService c ? c : null;
+            // Категория привязывается к провайдеру, поэтому в форме всегда есть provider.
             TextField name = textField(categoryItem == null ? "" : categoryItem.getName());
             ComboBox<CategoryService> parent = combo(categories, findByName(categories, CategoryService::getName, categoryItem == null ? null : categoryItem.getParentCategoryName()));
             parent.setPromptText("Без родителя");
             ComboBox<Provider> provider = combo(providers, findProvider(categoryItem == null ? null : categoryItem.getProviderName()));
+            lockProviderCombo(provider);
             addRow(grid, 0, "Название", name);
             addRow(grid, 1, "Родитель", parent);
             addRow(grid, 2, "Провайдер", provider);
@@ -459,6 +491,7 @@ public class AdminController {
 
         if ("providers".equals(currentSection) || item instanceof Provider) {
             Provider providerItem = item instanceof Provider p ? p : null;
+            // Провайдер хранит уровень комиссии и саму комиссию, поэтому подтягиваем оба справочника.
             TextField fullName = textField(providerItem == null ? "" : providerItem.getFullName());
             TextField shortName = textField(providerItem == null ? "" : providerItem.getShortName());
             ComboBox<CommissionLevel> level = combo(commissionLevels, findByName(commissionLevels, CommissionLevel::getName, providerItem == null ? null : providerItem.getCommLvl()));
@@ -483,8 +516,10 @@ public class AdminController {
 
         if ("specializations".equals(currentSection) || item instanceof Specialization) {
             Specialization spec = item instanceof Specialization s ? s : null;
+            // Специализация принадлежит провайдеру, обычному админу провайдер фиксируем.
             TextField name = textField(spec == null ? "" : spec.getName());
             ComboBox<Provider> provider = combo(providers, findProvider(spec == null ? null : spec.getProviderName()));
+            lockProviderCombo(provider);
             addRow(grid, 0, "Название", name);
             addRow(grid, 1, "Провайдер", provider);
             dialog.setResultConverter(btn -> {
@@ -497,10 +532,12 @@ public class AdminController {
 
         if ("users".equals(currentSection) || item instanceof User) {
             User user = item instanceof User u ? u : null;
+            // Пользователь связан с провайдером, ролями и специализациями.
             TextField name = textField(user == null ? "" : user.getName());
             TextField email = textField(user == null ? "" : user.getEmail());
             TextField password = textField(user == null ? "" : user.getPassword());
             ComboBox<Provider> provider = combo(providers, findProvider(user == null ? null : user.getProviderName()));
+            lockProviderCombo(provider);
             ListView<Role> roleList = listView(roles);
             ListView<Specialization> specList = listView(specializations);
             if (user != null) {
@@ -535,6 +572,7 @@ public class AdminController {
     private void performSave(Object existingItem, Map<String, Object> data) {
         new Thread(() -> {
             try {
+                // Если записи еще нет, вызываем create нужного раздела.
                 if (existingItem == null) {
                     switch (currentSection) {
                         case "services" -> ApiService.createService(data);
@@ -544,6 +582,7 @@ public class AdminController {
                         case "users" -> ApiService.createUser(data);
                         default -> throw new IllegalStateException("Выберите раздел для добавления");
                     }
+                // Если запись есть, обновляем ее по id.
                 } else if (existingItem instanceof ProviderService s) ApiService.updateService(s.getId(), data);
                 else if (existingItem instanceof CategoryService c) ApiService.updateCategory(c.getId(), data);
                 else if (existingItem instanceof Provider p) ApiService.updateProvider(p.getId(), data);
@@ -562,6 +601,7 @@ public class AdminController {
     }
 
     private void showPaymentStatusDialog(Payment payment) {
+        // В админке платеж не создается, здесь только меняется его статус.
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Изменить статус платежа");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -649,13 +689,37 @@ public class AdminController {
     // ==================== HELPERS ====================
 
     private void refreshLookups() throws Exception {
-        providers = ApiService.getAllProviders();
-        categories = ApiService.getAllCategories();
-        accounts = ApiService.getAllAccounts();
+        // Справочники для обычного админа заранее режем по его организации.
+        providers = isOrganizationBound() ? currentProviderAsList() : ApiService.getAllProviders();
+        categories = isOrganizationBound() && hasCurrentProvider() ? ApiService.getCategoriesByProvider(currentProviderId()) : isOrganizationBound() ? List.of() : ApiService.getAllCategories();
+        accounts = isOrganizationBound() && hasCurrentProvider() ? ApiService.getAccountsByProvider(currentProviderId()) : isOrganizationBound() ? List.of() : ApiService.getAllAccounts();
         commissions = ApiService.getAllCommissions();
         commissionLevels = ApiService.getAllCommissionLevels();
         roles = ApiService.getAllRoles();
-        specializations = ApiService.getAllSpecializations();
+        specializations = isOrganizationBound() && hasCurrentProvider() ? ApiService.getSpecializationsByProvider(currentProviderId()) : isOrganizationBound() ? List.of() : ApiService.getAllSpecializations();
+    }
+
+    private boolean isOrganizationBound() {
+        SessionManager session = SessionManager.getInstance();
+        // superAdmin видит все, обычный admin ограничен своей организацией.
+        return session.isAdmin() && !session.isSuperAdmin();
+    }
+
+    private boolean hasCurrentProvider() {
+        return currentProviderId() != null && !currentProviderId().isBlank();
+    }
+
+    private String currentProviderId() {
+        return SessionManager.getInstance().getCurrentProviderId();
+    }
+
+    private List<Provider> currentProviderAsList() throws Exception {
+        String providerId = currentProviderId();
+        if (providerId == null || providerId.isBlank()) {
+            return List.of();
+        }
+        Provider provider = ApiService.getProviderById(providerId);
+        return provider == null ? List.of() : List.of(provider);
     }
 
     private TextField textField(String value) {
@@ -672,6 +736,17 @@ public class AdminController {
             combo.getSelectionModel().select(selected);
         }
         return combo;
+    }
+
+    private void lockProviderCombo(ComboBox<Provider> combo) {
+        if (!isOrganizationBound()) {
+            return;
+        }
+        // Обычный админ не выбирает провайдера вручную: он всегда работает только со своей организацией.
+        if (!providers.isEmpty()) {
+            combo.getSelectionModel().select(providers.get(0));
+        }
+        combo.setDisable(true);
     }
 
     private <T> ListView<T> listView(List<T> items) {

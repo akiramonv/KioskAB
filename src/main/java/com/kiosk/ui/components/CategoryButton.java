@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
  */
 public class CategoryButton extends Button {
 
-    private static final String[] CAT_ICONS = {"📋", "🏷", "📦", "🎯", "🔧", "📊", "🌐", "🎓", "🏥", "🚀"};
+    private static final String[] CAT_ICONS = {"•", "◆", "●", "■", "▲", "◇", "○", "□"};
 
     public CategoryButton(CategoryService category) {
         String icon = CAT_ICONS[Math.abs(category.getName().hashCode()) % CAT_ICONS.length];

@@ -32,12 +32,14 @@
     <Separator/>
 
     <VBox spacing="8">
-        <Label text="Сумма платежа" styleClass="field-label"/>
+        <Label text="Сумма за единицу" styleClass="field-label"/>
         <TextField fx:id="amountField" promptText="Например: 250.00" styleClass="dialog-field"/>
+        <Label text="Количество" styleClass="field-label"/>
+        <TextField fx:id="quantityField" promptText="Например: 1" text="1" styleClass="dialog-field"/>
         <Label fx:id="detailErrorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
     </VBox>
 
-    <Label text="Проверьте услугу и сумму. После добавления ее можно убрать из корзины."
+    <Label text="Проверьте услугу, сумму и количество. После добавления позицию можно убрать из корзины."
            styleClass="detail-hint" wrapText="true"/>
 
     <HBox spacing="12" alignment="CENTER_RIGHT">
