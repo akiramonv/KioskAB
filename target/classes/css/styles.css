@@ -264,6 +264,12 @@
     -fx-text-fill: #9ca3af;
 }
 
+.card-price {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #15803d;
+}
+
 .card-favorite {
     -fx-text-fill: #fbbf24;
     -fx-font-size: 16px;
@@ -337,6 +343,13 @@
 .dialog-field:focused {
     -fx-border-color: #16a34a;
     -fx-background-color: #f0fdf4;
+}
+
+.dialog-field:read-only {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #e5e7eb;
+    -fx-text-fill: #374151;
+    -fx-opacity: 0.85;
 }
 
 .btn-primary {
@@ -535,6 +548,13 @@
     -fx-text-fill: #14532d;
     -fx-font-size: 28px;
     -fx-font-weight: bold;
+}
+
+.payment-section-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14532d;
+    -fx-padding: 4 0 0 0;
 }
 
 .payment-subtitle {
@@ -800,8 +820,13 @@
 }
 
 .dark .card-provider,
+.dark .card-price,
 .dark .detail-val {
     -fx-text-fill: #4ade80;
+}
+
+.dark .payment-section-header {
+    -fx-text-fill: #86efac;
 }
 
 .dark .category-btn:hover,
@@ -818,6 +843,13 @@
     -fx-border-color: #1f5f3e;
     -fx-text-fill: #e5f7eb;
     -fx-prompt-text-fill: #9fb7aa;
+}
+
+.dark .dialog-field:read-only {
+    -fx-background-color: #0d1f14;
+    -fx-border-color: #1a3a27;
+    -fx-text-fill: #9fb7aa;
+    -fx-opacity: 0.85;
 }
 
 .dark .btn-outline {

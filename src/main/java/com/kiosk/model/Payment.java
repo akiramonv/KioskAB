@@ -11,6 +11,8 @@ public class Payment {
     private BigDecimal fee = BigDecimal.ZERO;
     private String status;
     private String providerName;
+    private String inn;
+    private String fio;
     private String qrLink;
     private String qrCode;
     private String createdAt;
@@ -28,6 +30,10 @@ public class Payment {
     public void setStatus(String status) { this.status = status; }
     public String getProviderName() { return providerName; }
     public void setProviderName(String providerName) { this.providerName = providerName; }
+    public String getInn() { return inn; }
+    public void setInn(String inn) { this.inn = inn; }
+    public String getFio() { return fio; }
+    public void setFio(String fio) { this.fio = fio; }
     public String getQrLink() { return qrLink; }
     public void setQrLink(String qrLink) { this.qrLink = qrLink; }
     public String getQrCode() { return qrCode; }

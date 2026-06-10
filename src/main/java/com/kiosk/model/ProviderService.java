@@ -2,6 +2,8 @@ package com.kiosk.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
 public class ProviderService {
     private String id;
     private String name;
+    private BigDecimal price = BigDecimal.ZERO;
     private String categoryId;
     private String provId;
     private String accountId;
@@ -25,6 +28,12 @@ public class ProviderService {
     public void setId(String id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public BigDecimal getPrice() { return price != null ? price : BigDecimal.ZERO; }
+    public void setPrice(BigDecimal price) { this.price = price != null ? price : BigDecimal.ZERO; }
+    public boolean hasFixedPrice() { return getPrice().compareTo(BigDecimal.ZERO) > 0; }
+    public String getDisplayPrice() {
+        return hasFixedPrice() ? getPrice().setScale(2, RoundingMode.HALF_UP) + " сом" : null;
+    }
     public String getCategoryId() { return categoryId; }
     public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
     public String getProvId() { return provId; }

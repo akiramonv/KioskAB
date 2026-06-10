@@ -35,6 +35,12 @@ public class ServiceDetailController {
         this.service = service;
         serviceNameLabel.setText(service.getName());
 
+        if (service.hasFixedPrice()) {
+            amountField.setText(service.getPrice().toPlainString());
+            amountField.setEditable(false);
+            amountField.setFocusTraversable(false);
+        }
+
         // В новом ApiAB категория может прийти названием, а в старых данных только id.
         String catName = service.getCategoryName() != null ? service.getCategoryName() : categories.stream()
                 .filter(c -> c.getId().equals(service.getCategoryId()))

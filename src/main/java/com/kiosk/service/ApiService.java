@@ -204,12 +204,15 @@ public class ApiService {
         return parseData(ApiClient.get("/api/payments/" + id), Payment.class);
     }
 
-    public static Payment createPayment(BigDecimal sum, String providerId) throws Exception {
-        // ApiAB принимает один платеж на провайдера: сумма уже посчитана по всей корзине.
+    public static Payment createPayment(BigDecimal sum, String providerId, String fio, String inn) throws Exception {
         Map<String, Object> data = new HashMap<>();
         data.put("sum", sum);
         data.put("status", "processing");
         data.put("provId", providerId);
+        data.put("fio", fio);
+        if (inn != null && !inn.isBlank()) {
+            data.put("inn", inn);
+        }
         return parseData(ApiClient.post("/api/payments", data), Payment.class);
     }
 

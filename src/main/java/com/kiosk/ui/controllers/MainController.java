@@ -19,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -376,14 +377,34 @@ public class MainController {
             content.getChildren().add(hint);
         }
 
+        content.getChildren().add(new Separator());
+
+        Label payerHeader = new Label("Данные плательщика");
+        payerHeader.getStyleClass().add("payment-section-header");
+
+        TextField fioField = new TextField();
+        fioField.setPromptText("ФИО плательщика *");
+
+        TextField innField = new TextField();
+        innField.setPromptText("ИНН (необязательно)");
+
+        content.getChildren().addAll(payerHeader, fioField, innField);
+
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
         scroll.setPrefWidth(680);
-        scroll.setPrefHeight(620);
+        scroll.setPrefHeight(680);
         scroll.getStyleClass().add("payment-scroll");
         dialog.getDialogPane().setContent(scroll);
+
+        Node confirmNode = dialog.getDialogPane().lookupButton(confirm);
+        confirmNode.setDisable(true);
+        fioField.textProperty().addListener((obs, o, n) -> confirmNode.setDisable(n.isBlank()));
+
         dialog.setResultConverter(btn -> btn == confirm);
-        dialog.showAndWait().filter(Boolean::booleanValue).ifPresent(v -> createPayment(paymentProviderId));
+        dialog.showAndWait().filter(Boolean::booleanValue).ifPresent(v ->
+                createPayment(paymentProviderId, fioField.getText().trim(),
+                        innField.getText().isBlank() ? null : innField.getText().trim()));
     }
 
     private VBox buildCheckoutProviderBlock(String providerId, List<CartItem> items) {
@@ -443,13 +464,12 @@ public class MainController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private void createPayment(String providerId) {
+    private void createPayment(String providerId, String fio, String inn) {
         payCartBtn.setDisable(true);
         setStatus("Создание платежа в ApiAB...");
         new Thread(() -> {
             try {
-                // В ApiAB отправляется один платеж на весь итог корзины.
-                Payment payment = ApiService.createPayment(cartTotal(), providerId);
+                Payment payment = ApiService.createPayment(cartTotal(), providerId, fio, inn);
                 List<Payment> created = new ArrayList<>();
                 if (payment != null) {
                     created.add(payment);
@@ -548,6 +568,8 @@ public class MainController {
 
             Label id = new Label("ID платежа: " + nullToEmpty(payment.getId()));
             id.getStyleClass().add("payment-muted-line");
+            Label fioLabel = new Label("Плательщик: " + nullToEmpty(payment.getFio()));
+            fioLabel.getStyleClass().add("payment-muted-line");
             Label amount = new Label("Сумма: " + formatMoney(payment.getSum()));
             amount.getStyleClass().add("payment-amount-line");
             Label fee = new Label("Комиссия: " + formatMoney(payment.getFee()));
@@ -563,7 +585,13 @@ public class MainController {
             qrData.setWrapText(true);
             qrData.getStyleClass().add("payment-qr-data");
 
-            info.getChildren().addAll(statusRow, id, amount, fee, total, qrCaption, qrData);
+            info.getChildren().addAll(statusRow, id, fioLabel);
+            if (payment.getInn() != null && !payment.getInn().isBlank()) {
+                Label innLabel = new Label("ИНН: " + payment.getInn());
+                innLabel.getStyleClass().add("payment-muted-line");
+                info.getChildren().add(innLabel);
+            }
+            info.getChildren().addAll(amount, fee, total, qrCaption, qrData);
             HBox.setHgrow(info, Priority.ALWAYS);
 
             block.getChildren().addAll(qrBox, info);

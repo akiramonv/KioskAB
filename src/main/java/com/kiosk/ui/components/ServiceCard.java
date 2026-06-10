@@ -48,13 +48,28 @@ public class ServiceCard extends VBox {
         Label catLabel = new Label("📁 " + catName);
         catLabel.getStyleClass().add("card-category");
 
+        // Цена услуги (если задана в ApiAB)
+        String displayPrice = service.getDisplayPrice();
+        Label priceLabel = displayPrice != null ? new Label(displayPrice) : null;
+        if (priceLabel != null) {
+            priceLabel.getStyleClass().add("card-price");
+        }
+
         // Признак избранного
         if (ServiceDetailController.getFavorites().contains(service.getId())) {
             Label favLabel = new Label("★");
             favLabel.getStyleClass().add("card-favorite");
-            getChildren().addAll(nameLabel, provLabel, catLabel, favLabel);
+            if (priceLabel != null) {
+                getChildren().addAll(nameLabel, provLabel, catLabel, priceLabel, favLabel);
+            } else {
+                getChildren().addAll(nameLabel, provLabel, catLabel, favLabel);
+            }
         } else {
-            getChildren().addAll(nameLabel, provLabel, catLabel);
+            if (priceLabel != null) {
+                getChildren().addAll(nameLabel, provLabel, catLabel, priceLabel);
+            } else {
+                getChildren().addAll(nameLabel, provLabel, catLabel);
+            }
         }
 
         // Hover-курсор

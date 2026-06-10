@@ -72,10 +72,11 @@ public class SessionManager {
 
     public void logout() {
         // При выходе чистим все данные сессии, чтобы следующий пользователь не видел чужой контекст.
+        // Заменяем списки новыми, а не вызываем clear(), — это безопасно даже если список был неизменяемым.
         currentUser = null;
         currentProviderId = null;
         currentProviderName = null;
-        currentUserRoles.clear();
-        currentUserSpecializations.clear();
+        currentUserRoles = new ArrayList<>();
+        currentUserSpecializations = new ArrayList<>();
     }
 }
