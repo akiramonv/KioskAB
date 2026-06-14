@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.kiosk.ui.controllers.ClassicMainController"
+            stylesheets="@../css/styles.css"
+            fx:id="rootPane">
+
+    <!-- TOP: Шапка -->
+    <top>
+        <VBox styleClass="header-bar">
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-inner">
+                <Label text="%app.title" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="searchField" promptText="%home.search" styleClass="search-field"
+                           prefWidth="300"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <MenuButton fx:id="settingsMenu" text="%settings.button" styleClass="settings-menu">
+                    <items>
+                        <MenuItem fx:id="loginItem" text="%settings.login" onAction="#onLoginClicked"/>
+                        <MenuItem fx:id="logoutItem" text="%settings.logout" onAction="#onLogoutClicked"/>
+                        <MenuItem fx:id="adminItem" text="%settings.admin" onAction="#onAdminClicked"/>
+                        <SeparatorMenuItem/>
+                        <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
+                        <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
+                        <SeparatorMenuItem/>
+                        <Menu text="%settings.language">
+                            <items>
+                                <RadioMenuItem fx:id="langRuItem" text="%lang.ru" onAction="#onLangRu"/>
+                                <RadioMenuItem fx:id="langEnItem" text="%lang.en" onAction="#onLangEn"/>
+                                <RadioMenuItem fx:id="langKyItem" text="%lang.ky" onAction="#onLangKy"/>
+                            </items>
+                        </Menu>
+                    </items>
+                </MenuButton>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER: основной контент -->
+    <center>
+        <HBox>
+            <!-- LEFT: категории -->
+            <VBox fx:id="categorySidebar" styleClass="sidebar" prefWidth="220">
+                <Label text="%home.categories" styleClass="sidebar-title"/>
+                <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="categoryList" styleClass="category-list" spacing="6">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- RIGHT: контент -->
+            <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+                <!-- Breadcrumb + действия -->
+                <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="breadcrumb" text="%home.all" styleClass="breadcrumb"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="clearFilterBtn" text="%home.reset" styleClass="btn-small"
+                            onAction="#onClearFilters"/>
+                </HBox>
+
+                <!-- Сетка услуг -->
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
+                    <VBox>
+                        <!-- Рекомендованные / популярные -->
+                        <VBox fx:id="featuredSection" spacing="8">
+                            <padding><Insets top="16" right="16" bottom="0" left="16"/></padding>
+                            <Label fx:id="featuredLabel" text="%home.popular" styleClass="section-label"/>
+                            <FlowPane fx:id="featuredPane" hgap="12" vgap="12" styleClass="services-flow">
+                                <padding><Insets top="4" right="0" bottom="0" left="0"/></padding>
+                            </FlowPane>
+                        </VBox>
+
+                        <!-- Все / отфильтрованные услуги -->
+                        <VBox spacing="8">
+                            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                            <Label fx:id="servicesLabel" text="%home.all" styleClass="section-label"/>
+                            <FlowPane fx:id="servicesPane" hgap="12" vgap="12" styleClass="services-flow">
+                            </FlowPane>
+                            <Label fx:id="emptyLabel" text="%services.empty" styleClass="empty-label"
+                                   visible="false"/>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- RIGHT: корзина -->
+            <VBox fx:id="cartSidebar" styleClass="cart-sidebar" prefWidth="280" spacing="12">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="%cart.title" styleClass="sidebar-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="cartCountLabel" text="0" styleClass="cart-count"/>
+                </HBox>
+                <Label fx:id="cartHelpLabel"
+                       text="%cart.help"
+                       styleClass="detail-hint" wrapText="true"/>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="sidebar-scroll">
+                    <VBox fx:id="cartItemsBox" spacing="8"/>
+                </ScrollPane>
+                <Separator/>
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="%cart.total" styleClass="field-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="cartTotalLabel" text="0.00" styleClass="cart-total"/>
+                </HBox>
+                <Button fx:id="payCartBtn" text="%cart.checkout" styleClass="btn-primary"
+                        maxWidth="Infinity" onAction="#onCheckout" disable="true"/>
+                <Button text="%cart.clear" styleClass="btn-outline"
+                        maxWidth="Infinity" onAction="#onClearCart"/>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- BOTTOM: статус бар -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="statusLabel" text="%status.ready" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="connectionLabel" text="" styleClass="status-connected"/>
+        </HBox>
+    </bottom>
+</BorderPane>

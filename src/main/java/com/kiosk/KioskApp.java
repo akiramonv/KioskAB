@@ -27,7 +27,9 @@ public class KioskApp extends Application {
         primaryStage.show();
     }
     public static void showMain() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(KioskApp.class.getResource("/fxml/main.fxml"));
+        // Новый дизайн — макет PAYTERMINAL, старый — классическая раскладка с боковыми панелями.
+        String fxml = DesignManager.isNewDesign() ? "/fxml/main.fxml" : "/fxml/main_classic.fxml";
+        FXMLLoader fxmlLoader = new FXMLLoader(KioskApp.class.getResource(fxml));
         fxmlLoader.setResources(LocaleManager.getBundle());
         Scene scene = new Scene(fxmlLoader.load(), 1280, 800);
         DesignManager.apply(scene);

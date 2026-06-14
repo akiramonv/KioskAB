@@ -7,15 +7,13 @@ import com.kiosk.model.Payment;
 import com.kiosk.model.Provider;
 import com.kiosk.model.ProviderService;
 import com.kiosk.service.ApiService;
+import com.kiosk.ui.components.CategoryButton;
 import com.kiosk.ui.components.ServiceCard;
 import com.kiosk.util.AppLogger;
 import com.kiosk.util.DesignManager;
 import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import com.kiosk.util.ThemeManager;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,13 +43,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -61,20 +56,23 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MainController {
+/**
+ * Контроллер «классического» (старого) макета: боковая панель категорий,
+ * сетка услуг и панель корзины справа. Логика та же, что и раньше, но с меню
+ * настроек, переключением дизайна и локализацией ru/en/ky.
+ */
+public class ClassicMainController {
 
-    @FXML private TextField homeSearchField, servicesSearchField;
-    @FXML private Button payCartBtn, cartSummaryBtn;
+    @FXML private TextField searchField;
+    @FXML private Button payCartBtn;
     @FXML private MenuButton settingsMenu;
     @FXML private MenuItem loginItem, logoutItem, adminItem;
     @FXML private CheckMenuItem darkItem, designItem;
     @FXML private RadioMenuItem langRuItem, langEnItem, langKyItem;
-    @FXML private Label clockLabel, dateLabel;
-    @FXML private Label servicesTitle, statusLabel, connectionLabel, emptyLabel;
-    @FXML private FlowPane categoryTiles, servicesPane;
-    @FXML private ScrollPane homeView;
-    @FXML private VBox servicesView;
-    @FXML private HBox cartBar;
+    @FXML private Label breadcrumb, statusLabel, connectionLabel, emptyLabel;
+    @FXML private Label featuredLabel, servicesLabel, cartCountLabel, cartTotalLabel, cartHelpLabel;
+    @FXML private VBox categoryList, featuredSection, cartItemsBox;
+    @FXML private FlowPane featuredPane, servicesPane;
 
     private List<ProviderService> allServices = new ArrayList<>();
     private List<CategoryService> allCategories = new ArrayList<>();
@@ -84,98 +82,27 @@ public class MainController {
     private String selectedCategoryName = null;
     private String searchQuery = "";
 
-    // Один общий таймер часов на приложение, чтобы при пересоздании экрана не плодить копии.
-    private static Timeline clock;
-
     @FXML
     public void initialize() {
         setupSearch();
         setupMenuState();
-        startClock();
         updateSessionControls();
         renderCart();
-        showHome();
         loadData();
     }
 
-    // ==================== ЧАСЫ ====================
-
-    private void startClock() {
-        if (clock != null) {
-            clock.stop();
-        }
-        updateClock();
-        clock = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateClock()));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
-    }
-
-    private void updateClock() {
-        if (clockLabel == null) {
-            return;
-        }
-        LocalDateTime now = LocalDateTime.now();
-        clockLabel.setText(now.format(DateTimeFormatter.ofPattern("HH:mm")));
-        dateLabel.setText(now.format(DateTimeFormatter.ofPattern("d MMMM yyyy", LocaleManager.getLocale())));
-    }
-
-    // ==================== ПОИСК / НАВИГАЦИЯ ====================
-
     private void setupSearch() {
-        homeSearchField.textProperty().addListener((obs, oldV, newV) -> {
-            String q = newV.trim();
-            if (!q.isEmpty()) {
-                // Поиск с домашнего экрана уводит в список услуг и продолжается там же.
-                selectedCategoryId = null;
-                selectedCategoryName = null;
-                searchQuery = q.toLowerCase();
-                servicesSearchField.setText(q);
-                showServices(LocaleManager.t("home.all"));
-                servicesSearchField.requestFocus();
-                servicesSearchField.positionCaret(q.length());
-                homeSearchField.clear();
-            }
-        });
-        servicesSearchField.textProperty().addListener((obs, oldV, newV) -> {
+        searchField.textProperty().addListener((obs, oldV, newV) -> {
             searchQuery = newV.trim().toLowerCase();
             applyFilters();
         });
     }
 
-    private void showHome() {
-        homeView.setVisible(true);
-        homeView.setManaged(true);
-        servicesView.setVisible(false);
-        servicesView.setManaged(false);
-        selectedCategoryId = null;
-        selectedCategoryName = null;
-        searchQuery = "";
-        servicesSearchField.clear();
-    }
-
-    private void showServices(String title) {
-        servicesTitle.setText(title);
-        homeView.setVisible(false);
-        homeView.setManaged(false);
-        servicesView.setVisible(true);
-        servicesView.setManaged(true);
-        applyFilters();
-    }
-
-    @FXML
-    private void onBackHome() {
-        showHome();
-    }
-
     // ==================== НАСТРОЙКИ / ТЕМА / ЯЗЫК ====================
 
     private void setupMenuState() {
-        if (darkItem != null) {
-            darkItem.setSelected(ThemeManager.isDarkMode());
-        }
-        if (designItem != null) {
-            designItem.setSelected(DesignManager.isNewDesign());
-        }
+        if (darkItem != null) darkItem.setSelected(ThemeManager.isDarkMode());
+        if (designItem != null) designItem.setSelected(DesignManager.isNewDesign());
         String lang = LocaleManager.getLanguage();
         if (langRuItem != null) langRuItem.setSelected(LocaleManager.RU.equals(lang));
         if (langEnItem != null) langEnItem.setSelected(LocaleManager.EN.equals(lang));
@@ -185,19 +112,16 @@ public class MainController {
     @FXML
     private void onThemeToggle() {
         ThemeManager.toggle();
-        reapplyStyles();
+        if (settingsMenu != null && settingsMenu.getScene() != null) {
+            DesignManager.apply(settingsMenu.getScene());
+        }
         setupMenuState();
     }
 
     @FXML
     private void onToggleDesign() {
         DesignManager.toggle();
-        // Старый и новый дизайн используют разные макеты, поэтому перезагружаем экран целиком.
-        try {
-            KioskApp.showMain();
-        } catch (Exception e) {
-            showError(LocaleManager.t("common.error"), readableError(e));
-        }
+        reloadMain();
     }
 
     @FXML private void onLangRu() { switchLanguage(LocaleManager.RU); }
@@ -209,17 +133,14 @@ public class MainController {
             return;
         }
         LocaleManager.setLanguage(lang);
+        reloadMain();
+    }
+
+    private void reloadMain() {
         try {
-            // Перезагружаем экран целиком, чтобы перечитать все %ключи из FXML.
             KioskApp.showMain();
         } catch (Exception e) {
             showError(LocaleManager.t("common.error"), readableError(e));
-        }
-    }
-
-    private void reapplyStyles() {
-        if (settingsMenu != null && settingsMenu.getScene() != null) {
-            DesignManager.apply(settingsMenu.getScene());
         }
     }
 
@@ -239,7 +160,9 @@ public class MainController {
                     allProviders = providers;
                     allCategories = categories;
                     allServices = services;
-                    buildCategoryTiles();
+                    buildCategoryList();
+                    renderServices(services);
+                    renderFeatured(services);
                     setStatus(LocaleManager.t("status.loaded", services.size(), categories.size()));
                     connectionLabel.setText(LocaleManager.t("status.connected"));
                     connectionLabel.getStyleClass().setAll("status-connected");
@@ -262,64 +185,46 @@ public class MainController {
         return session.isLoggedIn() && session.hasSpecializations() && !session.isAdmin();
     }
 
-    // ==================== ПЛИТКИ КАТЕГОРИЙ ====================
+    private void buildCategoryList() {
+        categoryList.getChildren().clear();
 
-    private void buildCategoryTiles() {
-        categoryTiles.getChildren().clear();
-
-        // Плитка "Все услуги" открывает полный список.
-        categoryTiles.getChildren().add(buildTile("◎", LocaleManager.t("home.all"), () -> {
+        Button allBtn = new Button(LocaleManager.t("home.all"));
+        allBtn.getStyleClass().add("category-btn-active");
+        allBtn.setMaxWidth(Double.MAX_VALUE);
+        allBtn.setOnAction(e -> {
             selectedCategoryId = null;
             selectedCategoryName = null;
-            showServices(LocaleManager.t("home.all"));
-        }));
+            breadcrumb.setText(LocaleManager.t("home.all"));
+            resetCategoryButtonStyles(allBtn);
+            applyFilters();
+        });
+        categoryList.getChildren().add(allBtn);
 
         allCategories.stream()
                 .sorted((a, b) -> nullToEmpty(a.getName()).compareToIgnoreCase(nullToEmpty(b.getName())))
-                .forEach(cat -> categoryTiles.getChildren().add(
-                        buildTile(iconFor(cat.getName()), cat.getName(), () -> {
-                            selectedCategoryId = cat.getId();
-                            selectedCategoryName = cat.getName();
-                            showServices(cat.getName());
-                        })));
+                .forEach(cat -> {
+                    CategoryButton btn = new CategoryButton(cat);
+                    btn.setMaxWidth(Double.MAX_VALUE);
+                    btn.setOnAction(e -> {
+                        selectedCategoryId = cat.getId();
+                        selectedCategoryName = cat.getName();
+                        breadcrumb.setText(cat.getName());
+                        resetCategoryButtonStyles(btn);
+                        applyFilters();
+                    });
+                    categoryList.getChildren().add(btn);
+                });
     }
 
-    private VBox buildTile(String icon, String name, Runnable onClick) {
-        VBox tile = new VBox(10);
-        tile.getStyleClass().add("cat-tile");
-        tile.setAlignment(Pos.CENTER);
-
-        Label iconLabel = new Label(icon);
-        iconLabel.getStyleClass().add("cat-tile-icon");
-
-        Label nameLabel = new Label(name);
-        nameLabel.getStyleClass().add("cat-tile-name");
-        nameLabel.setWrapText(true);
-        nameLabel.setAlignment(Pos.CENTER);
-
-        tile.getChildren().addAll(iconLabel, nameLabel);
-        tile.setOnMouseClicked(e -> onClick.run());
-        return tile;
+    private void resetCategoryButtonStyles(Node active) {
+        categoryList.getChildren().forEach(node -> {
+            node.getStyleClass().removeAll("category-btn-active");
+            if (!node.getStyleClass().contains("category-btn")) {
+                node.getStyleClass().add("category-btn");
+            }
+        });
+        active.getStyleClass().add("category-btn-active");
     }
-
-    /** Эмодзи-иконка для категории по ключевым словам в названии. */
-    private String iconFor(String name) {
-        String n = nullToEmpty(name).toLowerCase();
-        if (n.contains("интернет") || n.contains("internet")) return "🌐";
-        if (n.contains("моб") || n.contains("связ") || n.contains("mobile") || n.contains("phone")) return "📱";
-        if (n.contains("комм") || n.contains("вод") || n.contains("газ") || n.contains("свет")
-                || n.contains("utilit")) return "💧";
-        if (n.contains("тв") || n.contains("телев") || n.contains("tv")) return "📺";
-        if (n.contains("образ") || n.contains("educat") || n.contains("школ") || n.contains("универ")) return "🎓";
-        if (n.contains("налог") || n.contains("tax")) return "🏛";
-        if (n.contains("штраф") || n.contains("fine") || n.contains("гаи") || n.contains("полиц")) return "🚓";
-        if (n.contains("банк") || n.contains("кредит") || n.contains("bank") || n.contains("loan")) return "🏦";
-        if (n.contains("игр") || n.contains("game")) return "🎮";
-        if (n.contains("транспорт") || n.contains("такси") || n.contains("transport")) return "🚌";
-        return "💳";
-    }
-
-    // ==================== ФИЛЬТР / СПИСОК УСЛУГ ====================
 
     private void applyFilters() {
         List<ProviderService> filtered = allServices;
@@ -341,6 +246,7 @@ public class MainController {
         }
 
         renderServices(filtered);
+        servicesLabel.setText(selectedCategoryName == null ? LocaleManager.t("home.all") : selectedCategoryName);
         emptyLabel.setVisible(filtered.isEmpty());
     }
 
@@ -351,6 +257,16 @@ public class MainController {
             card.setOnMouseClicked(e -> openServiceDetail(service));
             servicesPane.getChildren().add(card);
         });
+    }
+
+    private void renderFeatured(List<ProviderService> services) {
+        featuredPane.getChildren().clear();
+        services.stream().limit(4).forEach(service -> {
+            ServiceCard card = new ServiceCard(service, allProviders, allCategories);
+            card.setOnMouseClicked(e -> openServiceDetail(service));
+            featuredPane.getChildren().add(card);
+        });
+        featuredSection.setVisible(!services.isEmpty());
     }
 
     private void openServiceDetail(ProviderService service) {
@@ -375,8 +291,6 @@ public class MainController {
         }
     }
 
-    // ==================== КОРЗИНА ====================
-
     private void addToCart(ProviderService service, BigDecimal amount, int quantity) {
         Optional<Provider> provider = resolveProvider(service);
         if (provider.isEmpty()) {
@@ -399,84 +313,40 @@ public class MainController {
     }
 
     private void renderCart() {
-        BigDecimal total = cartTotal();
-        boolean empty = cart.isEmpty();
-        cartBar.setVisible(!empty);
-        cartBar.setManaged(!empty);
-        payCartBtn.setDisable(empty);
-        cartSummaryBtn.setText(LocaleManager.t("cart.positions", cart.size()) + "  •  " + formatMoney(total));
-    }
+        cartItemsBox.getChildren().clear();
+        BigDecimal total = BigDecimal.ZERO;
 
-    @FXML
-    private void onShowCart() {
-        if (cart.isEmpty()) {
-            return;
-        }
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle(LocaleManager.t("cart.title"));
-        styleDialog(dialog, "payment-dialog-pane");
-        ButtonType close = new ButtonType(LocaleManager.t("detail.close"), ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(close);
-
-        VBox content = new VBox(12);
-        content.getStyleClass().add("payment-shell");
-        content.setPadding(new Insets(22));
-
-        Label title = new Label(LocaleManager.t("cart.title"));
-        title.getStyleClass().add("payment-title");
-        content.getChildren().add(title);
-
-        for (CartItem item : new ArrayList<>(cart)) {
+        for (CartItem item : cart) {
+            total = total.add(item.getTotal());
             VBox row = new VBox(6);
             row.getStyleClass().add("cart-item");
+
             Label name = new Label(item.getService().getName());
             name.getStyleClass().add("cart-item-title");
             name.setWrapText(true);
+
             Label meta = new Label(item.getService().getDisplayProvider()
-                    + " • " + formatMoney(item.getAmount()) + " × " + item.getQuantity()
+                    + " • " + formatMoney(item.getAmount())
+                    + " × " + item.getQuantity()
                     + " = " + formatMoney(item.getTotal()));
             meta.getStyleClass().add("cart-item-meta");
+
             Button remove = new Button(LocaleManager.t("cart.remove"));
             remove.getStyleClass().add("btn-small");
             remove.setOnAction(e -> {
                 cart.remove(item);
                 renderCart();
-                dialog.close();
-                onShowCart();
             });
+
             row.getChildren().addAll(name, meta, remove);
-            content.getChildren().add(row);
+            cartItemsBox.getChildren().add(row);
         }
 
-        HBox totalRow = new HBox(12);
-        totalRow.setAlignment(Pos.CENTER_LEFT);
-        totalRow.getStyleClass().add("payment-total-row");
-        Label totalLabel = new Label(LocaleManager.t("cart.total"));
-        totalLabel.getStyleClass().add("payment-total-label");
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        Label totalValue = new Label(formatMoney(cartTotal()));
-        totalValue.getStyleClass().add("payment-total-value");
-        totalRow.getChildren().addAll(totalLabel, spacer, totalValue);
-        content.getChildren().add(totalRow);
-
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.setFitToWidth(true);
-        scroll.setPrefWidth(560);
-        scroll.setPrefHeight(560);
-        scroll.getStyleClass().add("payment-scroll");
-        dialog.getDialogPane().setContent(scroll);
-        dialog.showAndWait();
+        cartCountLabel.setText(String.valueOf(cart.size()));
+        cartTotalLabel.setText(formatMoney(total));
+        cartHelpLabel.setVisible(cart.isEmpty());
+        payCartBtn.setDisable(cart.isEmpty());
     }
-
-    @FXML
-    private void onClearCart() {
-        cart.clear();
-        renderCart();
-        setStatus(LocaleManager.t("cart.cleared"));
-    }
-
-    // ==================== ОПЛАТА ====================
 
     @FXML
     private void onCheckout() {
@@ -766,7 +636,12 @@ public class MainController {
         }
     }
 
-    // ==================== СЕССИЯ ====================
+    @FXML
+    private void onClearCart() {
+        cart.clear();
+        renderCart();
+        setStatus(LocaleManager.t("cart.cleared"));
+    }
 
     @FXML
     private void onLoginClicked() {
@@ -825,7 +700,17 @@ public class MainController {
         }
     }
 
-    // ==================== ХЕЛПЕРЫ ====================
+    @FXML
+    private void onClearFilters() {
+        searchField.clear();
+        selectedCategoryId = null;
+        selectedCategoryName = null;
+        breadcrumb.setText(LocaleManager.t("home.all"));
+        if (!categoryList.getChildren().isEmpty()) {
+            resetCategoryButtonStyles(categoryList.getChildren().get(0));
+        }
+        applyFilters();
+    }
 
     private void setStatus(String text) {
         statusLabel.setText(text);

@@ -230,3 +230,5 @@ INFO: Создан общий платеж ebccd356-a54d-4a0b-9900-2e15fb8511ea,
 INFO: Выход пользователя: admin1@test.com
 июн. 15, 2026 12:59:03 AM com.kiosk.util.AppLogger info
 INFO: Вход пользователя: admin1@test.com
+июн. 15, 2026 1:11:32 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
