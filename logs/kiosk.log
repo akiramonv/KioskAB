@@ -180,3 +180,33 @@ INFO: Услуга добавлена в корзину: Оплата за эл�
 INFO: Создан общий платеж 0dd56db0-f8d3-4d2d-b3c1-e69efb49abc3, сумма 2523.0
 июн. 09, 2026 12:21:47 PM com.kiosk.util.AppLogger info
 INFO: Выход пользователя: admin1@test.com
+июн. 10, 2026 5:10:56 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+июн. 10, 2026 5:11:10 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду, сумма 12323, количество 1
+июн. 10, 2026 5:11:13 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено), сумма 200.0, количество 123
+июн. 10, 2026 5:11:15 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено), сумма 200.0, количество 2
+июн. 10, 2026 5:11:26 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет, сумма 234, количество 4
+июн. 10, 2026 5:11:38 PM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 3a56d21e-6853-4b42-a10f-bafe5a3a53a3, сумма 1336.0
+июн. 10, 2026 5:12:16 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com
+июн. 10, 2026 5:12:59 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: user1@test.com
+июн. 10, 2026 5:13:04 PM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: user1@test.com
+июн. 14, 2026 2:02:15 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+июн. 14, 2026 2:02:44 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено), сумма 200.0, количество 1
+июн. 14, 2026 2:02:58 PM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж eff60819-28d2-4102-b484-271d521c8cb0, сумма 200.0
+июн. 14, 2026 2:15:22 PM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+июн. 14, 2026 2:15:32 PM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено), сумма 200.0, количество 1
+июн. 14, 2026 2:15:35 PM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж e9c7779a-4368-499b-ab63-16ae695768c5, сумма 200.0

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "src\\main\\resources\\fxml\\admin.fxml",
+    "status": "PASS",
+    "details": "controller: com.kiosk.ui.controllers.AdminController"
+  },
+  {
+    "file": "src\\main\\resources\\fxml\\login.fxml",
+    "status": "PASS",
+    "details": "controller: com.kiosk.ui.controllers.LoginController"
+  },
+  {
+    "file": "src\\main\\resources\\fxml\\main.fxml",
+    "status": "PASS",
+    "details": "controller: com.kiosk.ui.controllers.MainController"
+  },
+  {
+    "file": "src\\main\\resources\\fxml\\service_detail.fxml",
+    "status": "PASS",
+    "details": "controller: com.kiosk.ui.controllers.ServiceDetailController"
+  }
+]

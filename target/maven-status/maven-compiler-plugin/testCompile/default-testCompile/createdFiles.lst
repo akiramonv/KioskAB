@@ -1,0 +1,6 @@
+com\kiosk\util\SessionManagerTest.class
+com\kiosk\model\CommissionTest.class
+com\kiosk\model\ProviderServiceTest.class
+com\kiosk\model\PaymentTest.class
+com\kiosk\model\RoleTest.class
+com\kiosk\model\CartItemTest.class

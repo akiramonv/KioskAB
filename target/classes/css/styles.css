@@ -225,6 +225,14 @@
     -fx-padding: 0 16 0 0;
 }
 
+/* Прозрачный viewport, чтобы ScrollPane не давал белый прямоугольник
+   (особенно заметно в тёмной теме). */
+.services-scroll > .viewport,
+.sidebar-scroll > .viewport,
+.payment-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
 .section-label {
     -fx-text-fill: #374151;
     -fx-font-size: 15px;
@@ -867,22 +875,91 @@
     -fx-text-fill: #bbf7d0;
 }
 
-.dark .admin-table .column-header {
+.dark .admin-table {
+    -fx-background-color: #10281c;
+    -fx-border-color: #1f5f3e;
+}
+
+/* Шапка таблицы: фон строки заголовков, сами ячейки заголовков и пустой
+   "филлер" справа от последней колонки — всё должно быть тёмным. */
+.dark .admin-table .column-header-background,
+.dark .admin-table .column-header-background .filler,
+.dark .admin-table .column-header,
+.dark .admin-table .nested-column-header {
     -fx-background-color: #143522;
+}
+
+.dark .admin-table .column-header .label {
+    -fx-text-fill: #d9fbe4;
 }
 
 .dark .admin-table .table-row-cell {
     -fx-background-color: #10281c;
+    -fx-border-color: transparent transparent #1f5f3e transparent;
+}
+
+/* Пустые строки ниже данных не должны выглядеть как белые полосы. */
+.dark .admin-table .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Цвет текста ячеек задаётся через .table-cell, а не .table-row-cell. */
+.dark .admin-table .table-cell {
     -fx-text-fill: #e5f7eb;
 }
 
-.dark .admin-table .table-row-cell:selected {
+.dark .admin-table .table-row-cell:selected,
+.dark .admin-table .table-row-cell:selected .table-cell {
     -fx-background-color: #14532d;
+    -fx-text-fill: #ffffff;
+}
+
+/* Уголок между скроллбарами таблицы. */
+.dark .admin-table .corner {
+    -fx-background-color: #143522;
 }
 
 .dark.payment-dialog-pane,
 .dark .payment-shell {
     -fx-background-color: #07130d;
+}
+
+/* Кнопки нижней панели диалога (Создать платёж / Вернуться / Готово). */
+.dark.payment-dialog-pane > .button-bar > .container {
+    -fx-background-color: #07130d;
+}
+
+.dark.payment-dialog-pane .button-bar .button {
+    -fx-background-color: #143522;
+    -fx-text-fill: #e5f7eb;
+    -fx-border-color: #1f5f3e;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.dark.payment-dialog-pane .button-bar .button:hover {
+    -fx-background-color: #1d4a30;
+    -fx-border-color: #4ade80;
+}
+
+.dark.payment-dialog-pane .button-bar .button:default {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.dark.payment-dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: #15803d;
+}
+
+.dark.payment-dialog-pane .button-bar .button:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* Разделитель в корзине не должен быть ярко-белым на тёмном фоне. */
+.dark .separator .line {
+    -fx-border-color: #1f5f3e;
 }
 
 .dark .payment-hint {
@@ -938,4 +1015,40 @@
 .scroll-bar .decrement-arrow {
     -fx-shape: "";
     -fx-pref-height: 0;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 6px;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #d1fae5;
+    -fx-background-radius: 3;
+}
+
+.scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #16a34a;
+}
+
+/* В тёмной теме светлый ползунок выглядел как белая полоса. */
+.dark .scroll-bar:vertical,
+.dark .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.dark .scroll-bar:vertical .thumb,
+.dark .scroll-bar:horizontal .thumb {
+    -fx-background-color: #1f5f3e;
+}
+
+.dark .scroll-bar:vertical .thumb:hover,
+.dark .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #4ade80;
+}
+
+.dark .scroll-bar .increment-button,
+.dark .scroll-bar .decrement-button,
+.dark .corner {
+    -fx-background-color: transparent;
 }

@@ -1,0 +1,243 @@
+{
+  "java_files": 24,
+  "fxml_files": 4,
+  "css_files": 1,
+  "physical_lines_java": 3133,
+  "blank_lines_java": 427,
+  "comment_lines_java": 114,
+  "code_lines_java": 2592,
+  "classes_interfaces_enums": 24,
+  "methods_approx": 346,
+  "branches_approx": 350,
+  "todos": 0,
+  "files": [
+    {
+      "file": "src\\main\\java\\module-info.java",
+      "lines": 20,
+      "code": 18,
+      "methods": 0,
+      "branches": 0
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\KioskApp.java",
+      "lines": 61,
+      "code": 50,
+      "methods": 4,
+      "branches": 0
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\api\\ApiClient.java",
+      "lines": 107,
+      "code": 84,
+      "methods": 8,
+      "branches": 7
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Account.java",
+      "lines": 30,
+      "code": 25,
+      "methods": 11,
+      "branches": 1
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\CartItem.java",
+      "lines": 35,
+      "code": 25,
+      "methods": 4,
+      "branches": 0
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\CategoryService.java",
+      "lines": 38,
+      "code": 32,
+      "methods": 14,
+      "branches": 4
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Commission.java",
+      "lines": 33,
+      "code": 27,
+      "methods": 8,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\CommissionLevel.java",
+      "lines": 21,
+      "code": 16,
+      "methods": 5,
+      "branches": 1
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Payment.java",
+      "lines": 49,
+      "code": 43,
+      "methods": 23,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Provider.java",
+      "lines": 45,
+      "code": 39,
+      "methods": 16,
+      "branches": 5
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\ProviderService.java",
+      "lines": 69,
+      "code": 61,
+      "methods": 29,
+      "branches": 10
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Role.java",
+      "lines": 28,
+      "code": 22,
+      "methods": 7,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\Specialization.java",
+      "lines": 27,
+      "code": 22,
+      "methods": 9,
+      "branches": 1
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\model\\User.java",
+      "lines": 39,
+      "code": 34,
+      "methods": 16,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\service\\ApiService.java",
+      "lines": 273,
+      "code": 191,
+      "methods": 50,
+      "branches": 10
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\util\\AppLogger.java",
+      "lines": 51,
+      "code": 43,
+      "methods": 4,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\util\\SessionManager.java",
+      "lines": 81,
+      "code": 57,
+      "methods": 17,
+      "branches": 4
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\util\\ThemeManager.java",
+      "lines": 34,
+      "code": 26,
+      "methods": 4,
+      "branches": 2
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\components\\CategoryButton.java",
+      "lines": 18,
+      "code": 11,
+      "methods": 0,
+      "branches": 0
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\components\\ServiceCard.java",
+      "lines": 78,
+      "code": 59,
+      "methods": 0,
+      "branches": 7
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\AdminController.java",
+      "lines": 874,
+      "code": 753,
+      "methods": 60,
+      "branches": 187
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\LoginController.java",
+      "lines": 197,
+      "code": 163,
+      "methods": 9,
+      "branches": 25
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\MainController.java",
+      "lines": 786,
+      "code": 680,
+      "methods": 39,
+      "branches": 63
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\ServiceDetailController.java",
+      "lines": 139,
+      "code": 111,
+      "methods": 9,
+      "branches": 13
+    }
+  ],
+  "files_top_by_lines": [
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\AdminController.java",
+      "lines": 874,
+      "code": 753,
+      "methods": 60,
+      "branches": 187
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\MainController.java",
+      "lines": 786,
+      "code": 680,
+      "methods": 39,
+      "branches": 63
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\service\\ApiService.java",
+      "lines": 273,
+      "code": 191,
+      "methods": 50,
+      "branches": 10
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\LoginController.java",
+      "lines": 197,
+      "code": 163,
+      "methods": 9,
+      "branches": 25
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\controllers\\ServiceDetailController.java",
+      "lines": 139,
+      "code": 111,
+      "methods": 9,
+      "branches": 13
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\api\\ApiClient.java",
+      "lines": 107,
+      "code": 84,
+      "methods": 8,
+      "branches": 7
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\util\\SessionManager.java",
+      "lines": 81,
+      "code": 57,
+      "methods": 17,
+      "branches": 4
+    },
+    {
+      "file": "src\\main\\java\\com\\kiosk\\ui\\components\\ServiceCard.java",
+      "lines": 78,
+      "code": 59,
+      "methods": 0,
+      "branches": 7
+    }
+  ],
+  "avg_lines_per_java_file": 130.5,
+  "approx_cyclomatic_total": 696
+}
