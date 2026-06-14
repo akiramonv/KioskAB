@@ -1,0 +1,174 @@
+/* ================================================================
+   KIOSK APP — PAYTERMINAL, ТЁМНАЯ ТЕМА (накладывается поверх styles-v2.css)
+   Правила без префикса .dark — поэтому работают и в попапах
+   (контекст-меню, выпадающие списки), которые не видят класс корня.
+   ================================================================ */
+
+.root { -fx-background-color: #0b1310; }
+
+/* Шапка / бренд / часы */
+.header-bar { -fx-background-color: #102017; -fx-border-color: #1f3a2b; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 12, 0, 0, 3); }
+.brand-title { -fx-text-fill: #4ade80; }
+.brand-subtitle { -fx-text-fill: #93a89c; }
+.clock-time { -fx-text-fill: #e6f2ea; }
+.clock-date { -fx-text-fill: #93a89c; }
+
+/* Меню настроек + попапы */
+.settings-menu { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+.settings-menu > .label { -fx-text-fill: #bbf7d0; }
+.settings-menu:hover, .settings-menu:showing { -fx-background-color: #16271d; -fx-border-color: #22c55e; }
+.settings-menu > .arrow-button > .arrow { -fx-background-color: #4ade80; }
+
+.context-menu { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 18, 0, 0, 6); }
+.menu-item .label { -fx-text-fill: #e6f2ea; }
+.menu-item:focused { -fx-background-color: #16271d; }
+.menu-item:focused .label { -fx-text-fill: #86efac; }
+.menu-item:focused .arrow { -fx-background-color: #86efac; }
+.radio-menu-item:checked > .left-container > .radio,
+.check-menu-item:checked > .left-container > .check { -fx-background-color: #22c55e; }
+.separator .line { -fx-border-color: #1f3a2b; }
+
+/* Кнопки */
+.btn-outline { -fx-border-color: #4ade80; -fx-text-fill: #bbf7d0; }
+.btn-outline:hover { -fx-background-color: #16271d; }
+.btn-small { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #bbf7d0; }
+.btn-small:hover { -fx-background-color: #16271d; -fx-text-fill: #86efac; -fx-border-color: #22c55e; }
+
+/* Поиск */
+.search-field { -fx-background-color: #0e1a14; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; -fx-prompt-text-fill: #93a89c; }
+.search-field:focused { -fx-background-color: #16271d; -fx-border-color: #22c55e; }
+.search-field-lg { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; -fx-prompt-text-fill: #93a89c; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 2); }
+.search-field-lg:focused { -fx-background-color: #16271d; -fx-border-color: #22c55e; }
+
+/* Домашний экран */
+.home-welcome { -fx-text-fill: #4ade80; }
+.home-subtitle { -fx-text-fill: #93a89c; }
+
+.cat-tile { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 3); }
+.cat-tile:hover { -fx-background-color: #16271d; -fx-border-color: #22c55e; -fx-effect: dropshadow(gaussian, rgba(34,197,94,0.25), 14, 0, 0, 5); }
+.cat-tile-icon { -fx-background-color: #14271b; -fx-text-fill: #4ade80; }
+.cat-tile-name { -fx-text-fill: #e6f2ea; }
+
+.feature-strip { -fx-border-color: #1f3a2b; }
+.feature-icon { -fx-text-fill: #4ade80; }
+.feature-title { -fx-text-fill: #86efac; }
+.feature-desc { -fx-text-fill: #93a89c; }
+
+/* Экран услуг */
+.services-view { -fx-background-color: #0b1310; }
+.content-toolbar { -fx-background-color: #102017; -fx-border-color: #1f3a2b; }
+.breadcrumb { -fx-text-fill: #e6f2ea; }
+.empty-label { -fx-text-fill: #93a89c; }
+
+/* Карточка услуги */
+.service-card { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 3); }
+.service-card:hover { -fx-background-color: #16271d; -fx-border-color: #22c55e; }
+.card-name { -fx-text-fill: #e6f2ea; }
+.card-provider { -fx-text-fill: #4ade80; }
+.card-category { -fx-text-fill: #93a89c; }
+.card-price { -fx-text-fill: #86efac; }
+
+/* Панель корзины */
+.cart-bar { -fx-background-color: #102017; -fx-border-color: #1f3a2b; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 14, 0, 0, -2); }
+.cart-bar-summary { -fx-background-color: #14271b; -fx-text-fill: #86efac; }
+.cart-bar-summary:hover { -fx-background-color: #1d3a27; }
+
+/* Статус-бар */
+.status-bar { -fx-background-color: #102017; -fx-border-color: #1f3a2b; }
+.status-text { -fx-text-fill: #93a89c; }
+.status-connected { -fx-text-fill: #4ade80; }
+.status-disconnected { -fx-text-fill: #f87171; }
+
+/* Вход */
+.login-dialog { -fx-background-color: #122019; }
+.login-brand-title { -fx-text-fill: #4ade80; }
+.dialog-title { -fx-text-fill: #4ade80; }
+.dialog-subtitle { -fx-text-fill: #93a89c; }
+.field-label { -fx-text-fill: #c7d8cd; }
+.dialog-field { -fx-background-color: #0e1a14; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; -fx-prompt-text-fill: #93a89c; }
+.dialog-field:focused { -fx-border-color: #22c55e; -fx-background-color: #16271d; }
+.dialog-field:read-only { -fx-background-color: #0d1f14; -fx-text-fill: #93a89c; }
+.error-label { -fx-background-color: #2a1414; -fx-text-fill: #fca5a5; }
+
+/* Детали услуги */
+.detail-dialog { -fx-background-color: #122019; }
+.detail-title { -fx-text-fill: #e6f2ea; }
+.detail-key { -fx-text-fill: #c7d8cd; }
+.detail-val { -fx-text-fill: #4ade80; }
+.detail-hint { -fx-text-fill: #93a89c; }
+
+/* Корзина / оплата */
+.cart-item { -fx-background-color: #0e1a14; -fx-border-color: #1f3a2b; }
+.cart-item-title { -fx-text-fill: #e6f2ea; }
+.cart-item-meta { -fx-text-fill: #93a89c; }
+
+.payment-dialog-pane { -fx-background-color: #0b1310; }
+.payment-dialog-pane > .button-bar > .container { -fx-background-color: #0b1310; }
+.payment-dialog-pane .button-bar .button { -fx-background-color: #16271d; -fx-text-fill: #e6f2ea; -fx-border-color: #1f3a2b; }
+.payment-dialog-pane .button-bar .button:hover { -fx-background-color: #1d3a27; -fx-border-color: #22c55e; }
+.payment-dialog-pane .button-bar .button:default { -fx-background-color: #16a34a; -fx-text-fill: white; -fx-border-color: transparent; }
+.payment-dialog-pane .button-bar .button:default:hover { -fx-background-color: #15803d; }
+
+.payment-shell { -fx-background-color: #0b1310; }
+.payment-step { -fx-text-fill: #4ade80; }
+.payment-title { -fx-text-fill: #e6f2ea; }
+.payment-section-header { -fx-text-fill: #86efac; }
+.payment-subtitle { -fx-text-fill: #c7d8cd; }
+.payment-hint { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #bbf7d0; }
+
+.checkout-provider-block { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+.checkout-provider-name { -fx-text-fill: #e6f2ea; }
+.checkout-count-pill { -fx-background-color: #14271b; -fx-text-fill: #86efac; }
+.checkout-subtotal, .checkout-service-amount { -fx-text-fill: #4ade80; }
+.checkout-service-name { -fx-text-fill: #c7d8cd; }
+
+.payment-total-row { -fx-background-color: #0f5132; }
+.payment-total-label { -fx-text-fill: #bbf7d0; }
+
+.payment-result { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+.qr-box { -fx-background-color: #0b1310; -fx-border-color: #1f3a2b; }
+.qr-scan-hint { -fx-text-fill: #4ade80; }
+.payment-provider-name { -fx-text-fill: #e6f2ea; }
+.payment-status-processing { -fx-background-color: #3a2e0f; -fx-text-fill: #fcd34d; }
+.payment-status-success { -fx-background-color: #14532d; -fx-text-fill: #86efac; }
+.payment-status-cancel { -fx-background-color: #3a1414; -fx-text-fill: #fca5a5; }
+.payment-muted-line { -fx-text-fill: #93a89c; }
+.payment-amount-line { -fx-text-fill: #e6f2ea; }
+.payment-grand-total { -fx-text-fill: #4ade80; }
+.payment-qr-caption { -fx-text-fill: #c7d8cd; }
+.payment-qr-data { -fx-background-color: #0e1a14; -fx-border-color: #1f3a2b; -fx-text-fill: #93a89c; }
+
+/* Админка */
+.admin-panel { -fx-background-color: #0b1310; }
+.admin-header { -fx-background-color: #0f5132; }
+.admin-sidebar { -fx-background-color: #102017; -fx-border-color: #1f3a2b; }
+.admin-nav-btn { -fx-text-fill: #c7d8cd; }
+.admin-nav-btn:hover { -fx-background-color: #16271d; -fx-text-fill: #86efac; }
+.admin-content { -fx-background-color: #0b1310; }
+.admin-content .search-field { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; -fx-prompt-text-fill: #93a89c; }
+.filter-combo { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+
+.admin-table { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+.admin-table .column-header-background,
+.admin-table .column-header-background .filler,
+.admin-table .column-header,
+.admin-table .nested-column-header { -fx-background-color: #16271d; }
+.admin-table .column-header .label { -fx-text-fill: #d9fbe4; }
+.admin-table .table-row-cell { -fx-background-color: #122019; -fx-border-color: transparent transparent #1f3a2b transparent; }
+.admin-table .table-row-cell:empty { -fx-background-color: transparent; -fx-border-color: transparent; }
+.admin-table .table-cell { -fx-text-fill: #e6f2ea; }
+.admin-table .table-row-cell:selected,
+.admin-table .table-row-cell:selected .table-cell { -fx-background-color: #14532d; -fx-text-fill: #ffffff; }
+.admin-table .corner { -fx-background-color: #16271d; }
+
+/* Выпадашки */
+.combo-box-popup .list-view { -fx-background-color: #122019; -fx-border-color: #1f3a2b; }
+.combo-box-popup .list-cell { -fx-text-fill: #e6f2ea; -fx-background-color: #122019; }
+.combo-box-popup .list-cell:filled:hover { -fx-background-color: #16271d; -fx-text-fill: #86efac; }
+.combo-box .list-cell { -fx-text-fill: #e6f2ea; }
+.combo-box { -fx-background-color: #122019; }
+.combo-box .arrow { -fx-background-color: #4ade80; }
+
+/* Прокрутка */
+.scroll-bar .thumb { -fx-background-color: #1f3a2b; }
+.scroll-bar .thumb:hover { -fx-background-color: #4ade80; }
