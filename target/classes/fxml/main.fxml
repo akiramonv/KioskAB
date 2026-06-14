@@ -8,110 +8,117 @@
             stylesheets="@../css/styles.css"
             fx:id="rootPane">
 
-    <!-- TOP: Шапка -->
+    <!-- ШАПКА: бренд + часы + настройки -->
     <top>
         <VBox styleClass="header-bar">
-            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="header-inner">
-                <Label text="Киоск самообслуживания" styleClass="header-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-inner">
+                <Label text="✓" styleClass="brand-logo"/>
+                <VBox spacing="1" alignment="CENTER_LEFT">
+                    <Label text="PAYTERMINAL" styleClass="brand-title"/>
+                    <Label text="%brand.subtitle" styleClass="brand-subtitle"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="searchField" promptText="Поиск услуг..." styleClass="search-field"
-                           prefWidth="300"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <ToggleButton fx:id="themeToggle" text="Темная тема" styleClass="btn-outline"
-                              onAction="#onThemeToggle"/>
-                <Button fx:id="loginBtn" text="Войти" styleClass="btn-outline"
-                        onAction="#onLoginClicked"/>
-                <Label fx:id="userLabel" text="" styleClass="user-label" visible="false" managed="false"/>
-                <Button fx:id="logoutBtn" text="Выйти" styleClass="btn-danger"
-                        onAction="#onLogoutClicked" visible="false"/>
-                <Button fx:id="adminBtn" text="Админ" styleClass="btn-admin"
-                        onAction="#onAdminClicked" visible="false"/>
+                <VBox spacing="0" alignment="CENTER_RIGHT">
+                    <Label fx:id="clockLabel" text="00:00" styleClass="clock-time"/>
+                    <Label fx:id="dateLabel" text="" styleClass="clock-date"/>
+                </VBox>
+                <MenuButton fx:id="settingsMenu" text="%settings.button" styleClass="settings-menu">
+                    <items>
+                        <MenuItem fx:id="loginItem" text="%settings.login" onAction="#onLoginClicked"/>
+                        <MenuItem fx:id="logoutItem" text="%settings.logout" onAction="#onLogoutClicked"/>
+                        <MenuItem fx:id="adminItem" text="%settings.admin" onAction="#onAdminClicked"/>
+                        <SeparatorMenuItem/>
+                        <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
+                        <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
+                        <SeparatorMenuItem/>
+                        <Menu text="%settings.language">
+                            <items>
+                                <RadioMenuItem fx:id="langRuItem" text="%lang.ru" onAction="#onLangRu"/>
+                                <RadioMenuItem fx:id="langEnItem" text="%lang.en" onAction="#onLangEn"/>
+                                <RadioMenuItem fx:id="langKyItem" text="%lang.ky" onAction="#onLangKy"/>
+                            </items>
+                        </Menu>
+                    </items>
+                </MenuButton>
             </HBox>
         </VBox>
     </top>
 
-    <!-- CENTER: основной контент -->
+    <!-- ЦЕНТР: домашний экран ИЛИ список услуг -->
     <center>
-        <HBox>
-            <!-- LEFT: категории -->
-            <VBox fx:id="categorySidebar" styleClass="sidebar" prefWidth="220">
-                <Label text="Категории" styleClass="sidebar-title"/>
-                <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
-                    <VBox fx:id="categoryList" styleClass="category-list" spacing="6">
-                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
-                    </VBox>
-                </ScrollPane>
-            </VBox>
+        <StackPane>
+            <!-- ДОМАШНИЙ ЭКРАН -->
+            <ScrollPane fx:id="homeView" fitToWidth="true" styleClass="services-scroll">
+                <VBox styleClass="home-view" alignment="TOP_CENTER" spacing="16">
+                    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+                    <Label text="%home.welcome" styleClass="home-welcome"/>
+                    <Label text="%home.subtitle" styleClass="home-subtitle"/>
+                    <FlowPane fx:id="categoryTiles" styleClass="tile-grid" hgap="18" vgap="18"
+                              alignment="CENTER" prefWrapLength="760"/>
+                    <StackPane maxWidth="640">
+                        <TextField fx:id="homeSearchField" promptText="%home.search" styleClass="search-field-lg"/>
+                    </StackPane>
+                    <HBox fx:id="featureStrip" styleClass="feature-strip" alignment="CENTER" spacing="18">
+                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
+                            <Label text="🖱" styleClass="feature-icon"/>
+                            <Label text="%feat.simple.title" styleClass="feature-title"/>
+                            <Label text="%feat.simple.desc" styleClass="feature-desc" wrapText="true"/>
+                        </VBox>
+                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
+                            <Label text="⚡" styleClass="feature-icon"/>
+                            <Label text="%feat.fast.title" styleClass="feature-title"/>
+                            <Label text="%feat.fast.desc" styleClass="feature-desc" wrapText="true"/>
+                        </VBox>
+                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
+                            <Label text="🛡" styleClass="feature-icon"/>
+                            <Label text="%feat.secure.title" styleClass="feature-title"/>
+                            <Label text="%feat.secure.desc" styleClass="feature-desc" wrapText="true"/>
+                        </VBox>
+                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
+                            <Label text="♿" styleClass="feature-icon"/>
+                            <Label text="%feat.access.title" styleClass="feature-title"/>
+                            <Label text="%feat.access.desc" styleClass="feature-desc" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
 
-            <!-- RIGHT: контент -->
-            <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
-                <!-- Breadcrumb + действия -->
+            <!-- ЭКРАН УСЛУГ -->
+            <VBox fx:id="servicesView" styleClass="services-view" visible="false" managed="false">
                 <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
-                    <Label fx:id="breadcrumb" text="Все услуги" styleClass="breadcrumb"/>
+                    <Button text="←" styleClass="icon-btn" onAction="#onBackHome"/>
+                    <Label fx:id="servicesTitle" text="" styleClass="breadcrumb"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="clearFilterBtn" text="Сбросить" styleClass="btn-small"
-                            onAction="#onClearFilters"/>
+                    <TextField fx:id="servicesSearchField" promptText="%home.search"
+                               styleClass="search-field" prefWidth="240"/>
+                    <Button text="⌂" styleClass="icon-btn" onAction="#onBackHome"/>
                 </HBox>
-
-                <!-- Сетка услуг -->
                 <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
-                    <VBox>
-                        <!-- Рекомендованные / популярные -->
-                        <VBox fx:id="featuredSection" spacing="8">
-                            <padding><Insets top="16" right="16" bottom="0" left="16"/></padding>
-                            <Label fx:id="featuredLabel" text="Популярные услуги" styleClass="section-label"/>
-                            <FlowPane fx:id="featuredPane" hgap="12" vgap="12" styleClass="services-flow">
-                                <padding><Insets top="4" right="0" bottom="0" left="0"/></padding>
-                            </FlowPane>
-                        </VBox>
-
-                        <!-- Все / отфильтрованные услуги -->
-                        <VBox spacing="8">
-                            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
-                            <Label fx:id="servicesLabel" text="Все услуги" styleClass="section-label"/>
-                            <FlowPane fx:id="servicesPane" hgap="12" vgap="12" styleClass="services-flow">
-                            </FlowPane>
-                            <Label fx:id="emptyLabel" text="Услуги не найдены" styleClass="empty-label"
-                                   visible="false"/>
-                        </VBox>
+                    <VBox spacing="8">
+                        <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+                        <FlowPane fx:id="servicesPane" hgap="14" vgap="14" styleClass="services-flow"/>
+                        <Label fx:id="emptyLabel" text="%services.empty" styleClass="empty-label" visible="false"/>
                     </VBox>
                 </ScrollPane>
             </VBox>
-
-            <!-- RIGHT: корзина -->
-            <VBox fx:id="cartSidebar" styleClass="cart-sidebar" prefWidth="280" spacing="12">
-                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label text="Корзина" styleClass="sidebar-title"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="cartCountLabel" text="0" styleClass="cart-count"/>
-                </HBox>
-                <Label fx:id="cartHelpLabel"
-                       text="Выберите услугу, укажите сумму и добавьте её к оплате."
-                       styleClass="detail-hint" wrapText="true"/>
-                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="sidebar-scroll">
-                    <VBox fx:id="cartItemsBox" spacing="8"/>
-                </ScrollPane>
-                <Separator/>
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="Итого" styleClass="field-label"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="cartTotalLabel" text="0.00 сом" styleClass="cart-total"/>
-                </HBox>
-                <Button fx:id="payCartBtn" text="Перейти к подтверждению" styleClass="btn-primary"
-                        maxWidth="Infinity" onAction="#onCheckout" disable="true"/>
-                <Button text="Очистить корзину" styleClass="btn-outline"
-                        maxWidth="Infinity" onAction="#onClearCart"/>
-            </VBox>
-        </HBox>
+        </StackPane>
     </center>
 
-    <!-- BOTTOM: статус бар -->
+    <!-- НИЗ: панель корзины + статус -->
     <bottom>
-        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
-            <Label fx:id="statusLabel" text="Готово" styleClass="status-text"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="connectionLabel" text="● Подключено" styleClass="status-connected"/>
-        </HBox>
+        <VBox>
+            <HBox fx:id="cartBar" styleClass="cart-bar" alignment="CENTER_LEFT" spacing="14"
+                  visible="false" managed="false">
+                <Button fx:id="cartSummaryBtn" text="" styleClass="cart-bar-summary" onAction="#onShowCart"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="%cart.clear" styleClass="btn-outline" onAction="#onClearCart"/>
+                <Button fx:id="payCartBtn" text="%cart.checkout" styleClass="btn-primary" onAction="#onCheckout"/>
+            </HBox>
+            <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+                <Label fx:id="statusLabel" text="%status.ready" styleClass="status-text"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="connectionLabel" text="" styleClass="status-connected"/>
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>

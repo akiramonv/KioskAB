@@ -3,6 +3,7 @@ package com.kiosk.ui.controllers;
 import com.kiosk.model.CategoryService;
 import com.kiosk.model.Provider;
 import com.kiosk.model.ProviderService;
+import com.kiosk.util.LocaleManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -61,7 +62,7 @@ public class ServiceDetailController {
 
         commissionLabel.setText(service.getCommission() != null
                 ? service.getCommission().getDisplayText()
-                : "По умолчанию провайдера");
+                : LocaleManager.t("detail.commissionDefault"));
 
         // Кнопка избранного
         updateFavoriteBtn(service.getId());
@@ -81,10 +82,10 @@ public class ServiceDetailController {
 
     private void updateFavoriteBtn(String serviceId) {
         if (favorites.contains(serviceId)) {
-            favoriteBtn.setText("★ В избранном");
+            favoriteBtn.setText(LocaleManager.t("detail.favRemove"));
             favoriteBtn.getStyleClass().add("btn-favorite-active");
         } else {
-            favoriteBtn.setText("☆ В избранное");
+            favoriteBtn.setText(LocaleManager.t("detail.favAdd"));
             favoriteBtn.getStyleClass().removeAll("btn-favorite-active");
         }
     }
@@ -105,13 +106,13 @@ public class ServiceDetailController {
             // Сумма вводится за одну единицу услуги.
             BigDecimal amount = new BigDecimal(amountField.getText().trim().replace(',', '.'));
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                showDetailError("Введите сумму больше 0.");
+                showDetailError(LocaleManager.t("detail.err.amount"));
                 return;
             }
             // Количество умножится на сумму уже в CartItem.
             int quantity = Integer.parseInt(quantityField.getText().trim());
             if (quantity <= 0) {
-                showDetailError("Количество должно быть больше 0.");
+                showDetailError(LocaleManager.t("detail.err.quantity"));
                 return;
             }
             if (onAddToCart != null && service != null) {
@@ -119,7 +120,7 @@ public class ServiceDetailController {
             }
             if (stage != null) stage.close();
         } catch (NumberFormatException e) {
-            showDetailError("Проверьте сумму и количество. Например: сумма 250.00, количество 2.");
+            showDetailError(LocaleManager.t("detail.err.format"));
         }
     }
 

@@ -16,38 +16,37 @@
     <Separator/>
 
     <GridPane hgap="12" vgap="10" styleClass="detail-grid">
-        <Label text="Категория:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%detail.category" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <Label fx:id="categoryLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Провайдер:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label text="%detail.provider" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <Label fx:id="providerLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="Счёт:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label text="%detail.account" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
         <Label fx:id="accountLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <Label text="Комиссия:" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label text="%detail.commission" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <Label fx:id="commissionLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
     </GridPane>
 
     <Separator/>
 
     <VBox spacing="8">
-        <Label text="Сумма за единицу" styleClass="field-label"/>
-        <TextField fx:id="amountField" promptText="Например: 250.00" styleClass="dialog-field"/>
-        <Label text="Количество" styleClass="field-label"/>
-        <TextField fx:id="quantityField" promptText="Например: 1" text="1" styleClass="dialog-field"/>
+        <Label text="%detail.amount" styleClass="field-label"/>
+        <TextField fx:id="amountField" promptText="%detail.amountPrompt" styleClass="dialog-field"/>
+        <Label text="%detail.quantity" styleClass="field-label"/>
+        <TextField fx:id="quantityField" promptText="%detail.quantityPrompt" text="1" styleClass="dialog-field"/>
         <Label fx:id="detailErrorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
     </VBox>
 
-    <Label text="Проверьте услугу, сумму и количество. После добавления позицию можно убрать из корзины."
-           styleClass="detail-hint" wrapText="true"/>
+    <Label text="%detail.hint" styleClass="detail-hint" wrapText="true"/>
 
     <HBox spacing="12" alignment="CENTER_RIGHT">
-        <Button fx:id="favoriteBtn" text="☆ В избранное" styleClass="btn-outline"
+        <Button fx:id="favoriteBtn" text="%detail.favAdd" styleClass="btn-outline"
                 onAction="#onFavorite"/>
-        <Button text="Добавить к оплате" styleClass="btn-primary"
+        <Button text="%detail.add" styleClass="btn-primary"
                 onAction="#onAddToCart"/>
-        <Button text="Закрыть" styleClass="btn-outline"
+        <Button text="%detail.close" styleClass="btn-outline"
                 onAction="#onClose"/>
     </HBox>
 </VBox>

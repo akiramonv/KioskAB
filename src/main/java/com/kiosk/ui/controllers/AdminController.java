@@ -3,6 +3,7 @@ package com.kiosk.ui.controllers;
 import com.kiosk.model.*;
 import com.kiosk.service.ApiService;
 import com.kiosk.util.AppLogger;
+import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -94,7 +95,7 @@ public class AdminController {
         paymentFilters.setManaged(payments);
         // Обычный админ видит своего провайдера, но не может создать новую организацию.
         addBtn.setDisable(payments || ("providers".equals(section) && isOrganizationBound()));
-        editBtn.setText(payments ? "Статус" : "Изменить");
+        editBtn.setText(payments ? LocaleManager.t("admin.statusBtn") : LocaleManager.t("admin.edit"));
         editBtn.setDisable(true);
         deleteBtn.setDisable(true);
     }

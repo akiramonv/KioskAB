@@ -6,37 +6,49 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.kiosk.ui.controllers.LoginController"
       styleClass="login-dialog"
-      spacing="20" alignment="CENTER"
-      prefWidth="420" prefHeight="480">
+      spacing="16" alignment="CENTER"
+      prefWidth="440" prefHeight="560">
 
-    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+    <padding><Insets top="32" right="48" bottom="36" left="48"/></padding>
 
     <HBox alignment="CENTER_RIGHT" maxWidth="Infinity">
-        <ToggleButton fx:id="themeToggle" text="Темная тема" styleClass="btn-small"
-                      onAction="#onThemeToggle"/>
+        <MenuButton fx:id="settingsMenu" text="%settings.button" styleClass="settings-menu">
+            <items>
+                <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
+                <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
+                <SeparatorMenuItem/>
+                <Menu text="%settings.language">
+                    <items>
+                        <RadioMenuItem fx:id="langRuItem" text="%lang.ru" onAction="#onLangRu"/>
+                        <RadioMenuItem fx:id="langEnItem" text="%lang.en" onAction="#onLangEn"/>
+                        <RadioMenuItem fx:id="langKyItem" text="%lang.ky" onAction="#onLangKy"/>
+                    </items>
+                </Menu>
+            </items>
+        </MenuButton>
     </HBox>
 
-    <Label text="Авторизация" styleClass="dialog-title"/>
-    <Label text="Войдите под нужным пользователем, чтобы открыть доступные услуги и админку."
-           styleClass="dialog-subtitle" wrapText="true"/>
+    <Label text="✓" styleClass="brand-logo-lg"/>
+    <Label text="PAYTERMINAL" styleClass="login-brand-title"/>
+
+    <Label text="%login.title" styleClass="dialog-title"/>
+    <Label text="%login.subtitle" styleClass="dialog-subtitle" wrapText="true"/>
 
     <VBox spacing="8">
-        <Label text="Email" styleClass="field-label"/>
-        <TextField fx:id="emailField" promptText="user@example.com"
-                   styleClass="dialog-field"/>
+        <Label text="%login.email" styleClass="field-label"/>
+        <TextField fx:id="emailField" promptText="user@example.com" styleClass="dialog-field"/>
     </VBox>
 
     <VBox spacing="8">
-        <Label text="Пароль" styleClass="field-label"/>
-        <PasswordField fx:id="passwordField" promptText="••••••••"
-                       styleClass="dialog-field"/>
+        <Label text="%login.password" styleClass="field-label"/>
+        <PasswordField fx:id="passwordField" promptText="••••••••" styleClass="dialog-field"/>
     </VBox>
 
     <Label fx:id="errorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
 
-    <Button fx:id="loginBtn" text="Войти" styleClass="btn-primary"
+    <Button fx:id="loginBtn" text="%login.submit" styleClass="btn-primary"
             maxWidth="Infinity" onAction="#onLogin"/>
 
-    <Button text="Закрыть" styleClass="btn-outline"
+    <Button text="%login.close" styleClass="btn-outline"
             maxWidth="Infinity" onAction="#onCancel"/>
 </VBox>

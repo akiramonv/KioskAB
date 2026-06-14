@@ -7,28 +7,35 @@ import com.kiosk.model.Payment;
 import com.kiosk.model.Provider;
 import com.kiosk.model.ProviderService;
 import com.kiosk.service.ApiService;
-import com.kiosk.ui.components.CategoryButton;
 import com.kiosk.ui.components.ServiceCard;
 import com.kiosk.util.AppLogger;
+import com.kiosk.util.DesignManager;
+import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import com.kiosk.util.ThemeManager;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -38,10 +45,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -53,13 +63,18 @@ import java.util.stream.Collectors;
 
 public class MainController {
 
-    @FXML private TextField searchField;
-    @FXML private Button loginBtn, logoutBtn, adminBtn, payCartBtn;
-    @FXML private ToggleButton themeToggle;
-    @FXML private Label userLabel, breadcrumb, statusLabel, connectionLabel, emptyLabel;
-    @FXML private Label featuredLabel, servicesLabel, cartCountLabel, cartTotalLabel, cartHelpLabel;
-    @FXML private VBox categoryList, featuredSection, cartItemsBox;
-    @FXML private FlowPane featuredPane, servicesPane;
+    @FXML private TextField homeSearchField, servicesSearchField;
+    @FXML private Button payCartBtn, cartSummaryBtn;
+    @FXML private MenuButton settingsMenu;
+    @FXML private MenuItem loginItem, logoutItem, adminItem;
+    @FXML private CheckMenuItem darkItem, designItem;
+    @FXML private RadioMenuItem langRuItem, langEnItem, langKyItem;
+    @FXML private Label clockLabel, dateLabel;
+    @FXML private Label servicesTitle, statusLabel, connectionLabel, emptyLabel;
+    @FXML private FlowPane categoryTiles, servicesPane;
+    @FXML private ScrollPane homeView;
+    @FXML private VBox servicesView;
+    @FXML private HBox cartBar;
 
     private List<ProviderService> allServices = new ArrayList<>();
     private List<CategoryService> allCategories = new ArrayList<>();
@@ -69,37 +84,149 @@ public class MainController {
     private String selectedCategoryName = null;
     private String searchQuery = "";
 
+    // Один общий таймер часов на приложение, чтобы при пересоздании экрана не плодить копии.
+    private static Timeline clock;
+
     @FXML
     public void initialize() {
         setupSearch();
-        setupThemeToggle();
+        setupMenuState();
+        startClock();
         updateSessionControls();
         renderCart();
+        showHome();
         loadData();
     }
 
+    // ==================== ЧАСЫ ====================
+
+    private void startClock() {
+        if (clock != null) {
+            clock.stop();
+        }
+        updateClock();
+        clock = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateClock()));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+    }
+
+    private void updateClock() {
+        if (clockLabel == null) {
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        clockLabel.setText(now.format(DateTimeFormatter.ofPattern("HH:mm")));
+        dateLabel.setText(now.format(DateTimeFormatter.ofPattern("d MMMM yyyy", LocaleManager.getLocale())));
+    }
+
+    // ==================== ПОИСК / НАВИГАЦИЯ ====================
+
     private void setupSearch() {
-        searchField.textProperty().addListener((obs, oldV, newV) -> {
+        homeSearchField.textProperty().addListener((obs, oldV, newV) -> {
+            String q = newV.trim();
+            if (!q.isEmpty()) {
+                // Поиск с домашнего экрана уводит в список услуг и продолжается там же.
+                selectedCategoryId = null;
+                selectedCategoryName = null;
+                searchQuery = q.toLowerCase();
+                servicesSearchField.setText(q);
+                showServices(LocaleManager.t("home.all"));
+                servicesSearchField.requestFocus();
+                servicesSearchField.positionCaret(q.length());
+                homeSearchField.clear();
+            }
+        });
+        servicesSearchField.textProperty().addListener((obs, oldV, newV) -> {
             searchQuery = newV.trim().toLowerCase();
             applyFilters();
         });
     }
 
-    private void setupThemeToggle() {
-        if (themeToggle != null) {
-            themeToggle.setSelected(ThemeManager.isDarkMode());
-            themeToggle.setText(ThemeManager.isDarkMode() ? "Светлая тема" : "Темная тема");
+    private void showHome() {
+        homeView.setVisible(true);
+        homeView.setManaged(true);
+        servicesView.setVisible(false);
+        servicesView.setManaged(false);
+        selectedCategoryId = null;
+        selectedCategoryName = null;
+        searchQuery = "";
+        servicesSearchField.clear();
+    }
+
+    private void showServices(String title) {
+        servicesTitle.setText(title);
+        homeView.setVisible(false);
+        homeView.setManaged(false);
+        servicesView.setVisible(true);
+        servicesView.setManaged(true);
+        applyFilters();
+    }
+
+    @FXML
+    private void onBackHome() {
+        showHome();
+    }
+
+    // ==================== НАСТРОЙКИ / ТЕМА / ЯЗЫК ====================
+
+    private void setupMenuState() {
+        if (darkItem != null) {
+            darkItem.setSelected(ThemeManager.isDarkMode());
+        }
+        if (designItem != null) {
+            designItem.setSelected(DesignManager.isNewDesign());
+        }
+        String lang = LocaleManager.getLanguage();
+        if (langRuItem != null) langRuItem.setSelected(LocaleManager.RU.equals(lang));
+        if (langEnItem != null) langEnItem.setSelected(LocaleManager.EN.equals(lang));
+        if (langKyItem != null) langKyItem.setSelected(LocaleManager.KY.equals(lang));
+    }
+
+    @FXML
+    private void onThemeToggle() {
+        ThemeManager.toggle();
+        reapplyStyles();
+        setupMenuState();
+    }
+
+    @FXML
+    private void onToggleDesign() {
+        DesignManager.toggle();
+        reapplyStyles();
+        setupMenuState();
+    }
+
+    @FXML private void onLangRu() { switchLanguage(LocaleManager.RU); }
+    @FXML private void onLangEn() { switchLanguage(LocaleManager.EN); }
+    @FXML private void onLangKy() { switchLanguage(LocaleManager.KY); }
+
+    private void switchLanguage(String lang) {
+        if (lang.equals(LocaleManager.getLanguage())) {
+            return;
+        }
+        LocaleManager.setLanguage(lang);
+        try {
+            // Перезагружаем экран целиком, чтобы перечитать все %ключи из FXML.
+            KioskApp.showMain();
+        } catch (Exception e) {
+            showError(LocaleManager.t("common.error"), readableError(e));
         }
     }
 
+    private void reapplyStyles() {
+        if (settingsMenu != null && settingsMenu.getScene() != null) {
+            DesignManager.apply(settingsMenu.getScene());
+        }
+    }
+
+    // ==================== ДАННЫЕ ====================
+
     private void loadData() {
-        setStatus("Загрузка данных...");
+        setStatus(LocaleManager.t("status.loading"));
         new Thread(() -> {
             try {
-                // Справочники нужны для отображения названий и сопоставления провайдера услуги.
                 List<Provider> providers = ApiService.getAllProviders();
                 List<CategoryService> categories = ApiService.getAllCategories();
-                // Обычному пользователю показываем услуги по специализации, администратору — все доступные.
                 List<ProviderService> services = shouldLoadUserServices()
                         ? ApiService.getServicesByUser(SessionManager.getInstance().getCurrentUser().getId())
                         : ApiService.getAllServices();
@@ -108,23 +235,19 @@ public class MainController {
                     allProviders = providers;
                     allCategories = categories;
                     allServices = services;
-                    buildCategoryList();
-                    renderServices(services);
-                    renderFeatured(services);
-                    setStatus("Загружено: " + services.size() + " услуг, " + categories.size() + " категорий");
-                    connectionLabel.setText("● Подключено");
+                    buildCategoryTiles();
+                    setStatus(LocaleManager.t("status.loaded", services.size(), categories.size()));
+                    connectionLabel.setText(LocaleManager.t("status.connected"));
                     connectionLabel.getStyleClass().setAll("status-connected");
                 });
             } catch (Exception e) {
                 AppLogger.error("Ошибка загрузки данных с ApiAB", e);
                 Platform.runLater(() -> {
-                    setStatus("Ошибка подключения к API");
-                    connectionLabel.setText("● Не подключено");
+                    setStatus(LocaleManager.t("status.connError"));
+                    connectionLabel.setText(LocaleManager.t("status.disconnected"));
                     connectionLabel.getStyleClass().setAll("status-disconnected");
-                    showError("Ошибка подключения",
-                            "Не удалось подключиться к ApiAB на http://localhost:7924.\n"
-                                    + "Запустите provider-api-emulator и повторите попытку.\n\n"
-                                    + readableError(e));
+                    showError(LocaleManager.t("status.connError.title"),
+                            LocaleManager.t("status.connError.body") + "\n\n" + readableError(e));
                 });
             }
         }).start();
@@ -132,57 +255,71 @@ public class MainController {
 
     private boolean shouldLoadUserServices() {
         SessionManager session = SessionManager.getInstance();
-        // Фильтр по специализации включаем только для неадминов.
         return session.isLoggedIn() && session.hasSpecializations() && !session.isAdmin();
     }
 
-    private void buildCategoryList() {
-        categoryList.getChildren().clear();
+    // ==================== ПЛИТКИ КАТЕГОРИЙ ====================
 
-        // Кнопка "Все услуги" сбрасывает выбранную категорию.
-        Button allBtn = new Button("Все услуги");
-        allBtn.getStyleClass().add("category-btn-active");
-        allBtn.setMaxWidth(Double.MAX_VALUE);
-        allBtn.setOnAction(e -> {
+    private void buildCategoryTiles() {
+        categoryTiles.getChildren().clear();
+
+        // Плитка "Все услуги" открывает полный список.
+        categoryTiles.getChildren().add(buildTile("◎", LocaleManager.t("home.all"), () -> {
             selectedCategoryId = null;
             selectedCategoryName = null;
-            breadcrumb.setText("Все услуги");
-            resetCategoryButtonStyles(allBtn);
-            applyFilters();
-        });
-        categoryList.getChildren().add(allBtn);
+            showServices(LocaleManager.t("home.all"));
+        }));
 
         allCategories.stream()
                 .sorted((a, b) -> nullToEmpty(a.getName()).compareToIgnoreCase(nullToEmpty(b.getName())))
-                .forEach(cat -> {
-                    // Категории приходят из ApiAB, поэтому строим меню динамически.
-                    CategoryButton btn = new CategoryButton(cat);
-                    btn.setMaxWidth(Double.MAX_VALUE);
-                    btn.setOnAction(e -> {
-                        selectedCategoryId = cat.getId();
-                        selectedCategoryName = cat.getName();
-                        breadcrumb.setText(cat.getName());
-                        resetCategoryButtonStyles(btn);
-                        applyFilters();
-                    });
-                    categoryList.getChildren().add(btn);
-                });
+                .forEach(cat -> categoryTiles.getChildren().add(
+                        buildTile(iconFor(cat.getName()), cat.getName(), () -> {
+                            selectedCategoryId = cat.getId();
+                            selectedCategoryName = cat.getName();
+                            showServices(cat.getName());
+                        })));
     }
 
-    private void resetCategoryButtonStyles(javafx.scene.Node active) {
-        categoryList.getChildren().forEach(node -> {
-            node.getStyleClass().removeAll("category-btn-active");
-            if (!node.getStyleClass().contains("category-btn")) {
-                node.getStyleClass().add("category-btn");
-            }
-        });
-        active.getStyleClass().add("category-btn-active");
+    private VBox buildTile(String icon, String name, Runnable onClick) {
+        VBox tile = new VBox(10);
+        tile.getStyleClass().add("cat-tile");
+        tile.setAlignment(Pos.CENTER);
+
+        Label iconLabel = new Label(icon);
+        iconLabel.getStyleClass().add("cat-tile-icon");
+
+        Label nameLabel = new Label(name);
+        nameLabel.getStyleClass().add("cat-tile-name");
+        nameLabel.setWrapText(true);
+        nameLabel.setAlignment(Pos.CENTER);
+
+        tile.getChildren().addAll(iconLabel, nameLabel);
+        tile.setOnMouseClicked(e -> onClick.run());
+        return tile;
     }
+
+    /** Эмодзи-иконка для категории по ключевым словам в названии. */
+    private String iconFor(String name) {
+        String n = nullToEmpty(name).toLowerCase();
+        if (n.contains("интернет") || n.contains("internet")) return "🌐";
+        if (n.contains("моб") || n.contains("связ") || n.contains("mobile") || n.contains("phone")) return "📱";
+        if (n.contains("комм") || n.contains("вод") || n.contains("газ") || n.contains("свет")
+                || n.contains("utilit")) return "💧";
+        if (n.contains("тв") || n.contains("телев") || n.contains("tv")) return "📺";
+        if (n.contains("образ") || n.contains("educat") || n.contains("школ") || n.contains("универ")) return "🎓";
+        if (n.contains("налог") || n.contains("tax")) return "🏛";
+        if (n.contains("штраф") || n.contains("fine") || n.contains("гаи") || n.contains("полиц")) return "🚓";
+        if (n.contains("банк") || n.contains("кредит") || n.contains("bank") || n.contains("loan")) return "🏦";
+        if (n.contains("игр") || n.contains("game")) return "🎮";
+        if (n.contains("транспорт") || n.contains("такси") || n.contains("transport")) return "🚌";
+        return "💳";
+    }
+
+    // ==================== ФИЛЬТР / СПИСОК УСЛУГ ====================
 
     private void applyFilters() {
         List<ProviderService> filtered = allServices;
 
-        // Категорию проверяем по имени и по id, потому что новый DTO часто отдает именно имя.
         if (selectedCategoryName != null && !selectedCategoryName.isBlank()) {
             filtered = filtered.stream()
                     .filter(s -> selectedCategoryName.equalsIgnoreCase(nullToEmpty(s.getCategoryName()))
@@ -190,7 +327,6 @@ public class MainController {
                     .collect(Collectors.toList());
         }
 
-        // Поиск идет по услуге, провайдеру и категории, чтобы пользователю было проще найти нужное.
         if (!searchQuery.isEmpty()) {
             String q = searchQuery;
             filtered = filtered.stream()
@@ -201,7 +337,6 @@ public class MainController {
         }
 
         renderServices(filtered);
-        servicesLabel.setText(selectedCategoryName == null ? "Все услуги" : selectedCategoryName);
         emptyLabel.setVisible(filtered.isEmpty());
     }
 
@@ -214,28 +349,15 @@ public class MainController {
         });
     }
 
-    private void renderFeatured(List<ProviderService> services) {
-        featuredPane.getChildren().clear();
-        services.stream().limit(4).forEach(service -> {
-            ServiceCard card = new ServiceCard(service, allProviders, allCategories);
-            card.setOnMouseClicked(e -> openServiceDetail(service));
-            featuredPane.getChildren().add(card);
-        });
-        featuredSection.setVisible(!services.isEmpty());
-    }
-
     private void openServiceDetail(ProviderService service) {
         try {
-            // Окно деталей открываем отдельно, потому что там вводятся сумма и количество.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/service_detail.fxml"));
+            loader.setResources(LocaleManager.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Детали услуги");
+            stage.setTitle(LocaleManager.t("detail.title"));
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm()
-            );
-            ThemeManager.apply(scene);
+            DesignManager.apply(scene);
 
             ServiceDetailController ctrl = loader.getController();
             ctrl.setService(service, allProviders, allCategories);
@@ -245,111 +367,144 @@ public class MainController {
             stage.showAndWait();
         } catch (Exception e) {
             AppLogger.warn("Не удалось открыть детали услуги", e);
-            showError("Ошибка", "Не удалось открыть детали услуги: " + readableError(e));
+            showError(LocaleManager.t("common.error"), readableError(e));
         }
     }
 
+    // ==================== КОРЗИНА ====================
+
     private void addToCart(ProviderService service, BigDecimal amount, int quantity) {
-        // Перед добавлением проверяем провайдера, потому что платеж в ApiAB требует provId.
         Optional<Provider> provider = resolveProvider(service);
         if (provider.isEmpty()) {
-            showError("Нужен провайдер",
-                    "ApiAB вернул услугу без понятного провайдера. Обновите данные услуги в админке "
-                            + "или проверьте справочник провайдеров.");
+            showError(LocaleManager.t("pay.addError.title"), LocaleManager.t("pay.addError.body"));
             return;
         }
         service.setProvId(provider.get().getId());
         cart.add(new CartItem(service, amount, quantity));
         renderCart();
-        setStatus("Добавлено к оплате: " + service.getName() + " x" + quantity + " — " + formatMoney(amount.multiply(BigDecimal.valueOf(quantity))));
-        AppLogger.info("Услуга добавлена в корзину: " + service.getName() + ", сумма " + amount + ", количество " + quantity);
+        setStatus(LocaleManager.t("cart.added", service.getName() + " ×" + quantity
+                + " — " + formatMoney(amount.multiply(BigDecimal.valueOf(quantity)))));
+        AppLogger.info("Услуга добавлена в корзину: " + service.getName());
     }
 
     private Optional<Provider> resolveProvider(ProviderService service) {
-        // Если в услуге уже есть provId, используем его как самый надежный вариант.
         if (service.getProvId() != null && !service.getProvId().isBlank()) {
-            return allProviders.stream()
-                    .filter(p -> service.getProvId().equals(p.getId()))
-                    .findFirst();
+            return allProviders.stream().filter(p -> service.getProvId().equals(p.getId())).findFirst();
         }
-        // Если provId нет, сопоставляем провайдера по названию из DTO.
-        return allProviders.stream()
-                .filter(p -> p.matchesName(service.getProviderName()))
-                .findFirst();
+        return allProviders.stream().filter(p -> p.matchesName(service.getProviderName())).findFirst();
     }
 
     private void renderCart() {
-        cartItemsBox.getChildren().clear();
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal total = cartTotal();
+        boolean empty = cart.isEmpty();
+        cartBar.setVisible(!empty);
+        cartBar.setManaged(!empty);
+        payCartBtn.setDisable(empty);
+        cartSummaryBtn.setText(LocaleManager.t("cart.positions", cart.size()) + "  •  " + formatMoney(total));
+    }
 
-        for (CartItem item : cart) {
-            // Итог корзины складывается из итогов позиций: сумма за единицу * количество.
-            total = total.add(item.getTotal());
+    @FXML
+    private void onShowCart() {
+        if (cart.isEmpty()) {
+            return;
+        }
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle(LocaleManager.t("cart.title"));
+        styleDialog(dialog, "payment-dialog-pane");
+        ButtonType close = new ButtonType(LocaleManager.t("detail.close"), ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(close);
+
+        VBox content = new VBox(12);
+        content.getStyleClass().add("payment-shell");
+        content.setPadding(new Insets(22));
+
+        Label title = new Label(LocaleManager.t("cart.title"));
+        title.getStyleClass().add("payment-title");
+        content.getChildren().add(title);
+
+        for (CartItem item : new ArrayList<>(cart)) {
             VBox row = new VBox(6);
             row.getStyleClass().add("cart-item");
-
             Label name = new Label(item.getService().getName());
             name.getStyleClass().add("cart-item-title");
             name.setWrapText(true);
-
             Label meta = new Label(item.getService().getDisplayProvider()
-                    + " • " + formatMoney(item.getAmount())
-                    + " x " + item.getQuantity()
+                    + " • " + formatMoney(item.getAmount()) + " × " + item.getQuantity()
                     + " = " + formatMoney(item.getTotal()));
             meta.getStyleClass().add("cart-item-meta");
-
-            Button remove = new Button("Убрать");
+            Button remove = new Button(LocaleManager.t("cart.remove"));
             remove.getStyleClass().add("btn-small");
             remove.setOnAction(e -> {
                 cart.remove(item);
                 renderCart();
+                dialog.close();
+                onShowCart();
             });
-
             row.getChildren().addAll(name, meta, remove);
-            cartItemsBox.getChildren().add(row);
+            content.getChildren().add(row);
         }
 
-        cartCountLabel.setText(String.valueOf(cart.size()));
-        cartTotalLabel.setText(formatMoney(total));
-        cartHelpLabel.setVisible(cart.isEmpty());
-        payCartBtn.setDisable(cart.isEmpty());
+        HBox totalRow = new HBox(12);
+        totalRow.setAlignment(Pos.CENTER_LEFT);
+        totalRow.getStyleClass().add("payment-total-row");
+        Label totalLabel = new Label(LocaleManager.t("cart.total"));
+        totalLabel.getStyleClass().add("payment-total-label");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label totalValue = new Label(formatMoney(cartTotal()));
+        totalValue.getStyleClass().add("payment-total-value");
+        totalRow.getChildren().addAll(totalLabel, spacer, totalValue);
+        content.getChildren().add(totalRow);
+
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setPrefWidth(560);
+        scroll.setPrefHeight(560);
+        scroll.getStyleClass().add("payment-scroll");
+        dialog.getDialogPane().setContent(scroll);
+        dialog.showAndWait();
     }
+
+    @FXML
+    private void onClearCart() {
+        cart.clear();
+        renderCart();
+        setStatus(LocaleManager.t("cart.cleared"));
+    }
+
+    // ==================== ОПЛАТА ====================
 
     @FXML
     private void onCheckout() {
         if (cart.isEmpty()) {
-            showInfo("Корзина пустая", "Сначала выберите услугу и укажите сумму платежа.");
+            showInfo(LocaleManager.t("pay.emptyCart.title"), LocaleManager.t("pay.emptyCart.body"));
             return;
         }
 
         Map<String, List<CartItem>> groups = groupCartByProvider();
         int groupedItems = groups.values().stream().mapToInt(List::size).sum();
-        // Общий платеж создаем на организацию текущего пользователя.
         String paymentProviderId = paymentProviderId();
         if (groups.isEmpty() || groupedItems != cart.size() || paymentProviderId == null) {
-            showError("Нельзя создать платеж",
-                    "Не удалось определить организацию для общего платежа. Войдите под пользователем организации "
-                            + "или проверьте провайдера у услуг.");
+            showError(LocaleManager.t("pay.cantCreate.title"), LocaleManager.t("pay.cantCreate.body"));
             return;
         }
 
         Dialog<Boolean> dialog = new Dialog<>();
-        dialog.setTitle("Подтверждение платежа");
+        dialog.setTitle(LocaleManager.t("pay.confirmTitle"));
         styleDialog(dialog, "payment-dialog-pane");
-        ButtonType back = new ButtonType("Вернуться к корзине", ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType confirm = new ButtonType("Создать платеж", ButtonBar.ButtonData.OK_DONE);
+        ButtonType back = new ButtonType(LocaleManager.t("pay.back"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType confirm = new ButtonType(LocaleManager.t("pay.create"), ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(back, confirm);
 
         VBox content = new VBox(16);
         content.getStyleClass().add("payment-shell");
         content.setPadding(new Insets(24));
 
-        Label step = new Label("Шаг 1 из 2");
+        Label step = new Label(LocaleManager.t("pay.step1"));
         step.getStyleClass().add("payment-step");
-        Label title = new Label("Подтверждение платежа");
+        Label title = new Label(LocaleManager.t("pay.confirmTitle"));
         title.getStyleClass().add("payment-title");
-        Label subtitle = new Label("Проверьте услуги, количество и суммы. ApiAB получит один общий платеж на организацию: "
-                + providerName(paymentProviderId) + ".");
+        Label subtitle = new Label(LocaleManager.t("pay.confirmSubtitle", providerName(paymentProviderId)));
         subtitle.getStyleClass().add("payment-subtitle");
         subtitle.setWrapText(true);
         content.getChildren().addAll(step, title, subtitle);
@@ -361,7 +516,7 @@ public class MainController {
         HBox totalRow = new HBox(12);
         totalRow.setAlignment(Pos.CENTER_LEFT);
         totalRow.getStyleClass().add("payment-total-row");
-        Label totalLabel = new Label("Итого к созданию");
+        Label totalLabel = new Label(LocaleManager.t("pay.totalCreate"));
         totalLabel.getStyleClass().add("payment-total-label");
         Label totalValue = new Label(formatMoney(cartTotal()));
         totalValue.getStyleClass().add("payment-total-value");
@@ -371,7 +526,7 @@ public class MainController {
         content.getChildren().add(totalRow);
 
         if (groups.size() > 1) {
-            Label hint = new Label("В корзине услуги разных провайдеров. ApiAB все равно получит один общий платеж на итоговую сумму.");
+            Label hint = new Label(LocaleManager.t("pay.multiHint"));
             hint.setWrapText(true);
             hint.getStyleClass().add("payment-hint");
             content.getChildren().add(hint);
@@ -379,14 +534,13 @@ public class MainController {
 
         content.getChildren().add(new Separator());
 
-        Label payerHeader = new Label("Данные плательщика");
+        Label payerHeader = new Label(LocaleManager.t("pay.payerData"));
         payerHeader.getStyleClass().add("payment-section-header");
 
         TextField fioField = new TextField();
-        fioField.setPromptText("ФИО плательщика *");
-
+        fioField.setPromptText(LocaleManager.t("pay.fio"));
         TextField innField = new TextField();
-        innField.setPromptText("ИНН (необязательно)");
+        innField.setPromptText(LocaleManager.t("pay.inn"));
 
         content.getChildren().addAll(payerHeader, fioField, innField);
 
@@ -415,7 +569,8 @@ public class MainController {
         header.setAlignment(Pos.CENTER_LEFT);
         Label provider = new Label(providerName(providerId));
         provider.getStyleClass().add("checkout-provider-name");
-        Label count = new Label(items.stream().mapToInt(CartItem::getQuantity).sum() + " шт.");
+        Label count = new Label(LocaleManager.t("cart.positions",
+                items.stream().mapToInt(CartItem::getQuantity).sum()));
         count.getStyleClass().add("checkout-count-pill");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -432,7 +587,7 @@ public class MainController {
             service.getStyleClass().add("checkout-service-name");
             Region rowSpacer = new Region();
             HBox.setHgrow(rowSpacer, Priority.ALWAYS);
-            Label amount = new Label(formatMoney(item.getAmount()) + " x " + item.getQuantity()
+            Label amount = new Label(formatMoney(item.getAmount()) + " × " + item.getQuantity()
                     + " = " + formatMoney(item.getTotal()));
             amount.getStyleClass().add("checkout-service-amount");
             row.getChildren().addAll(service, rowSpacer, amount);
@@ -444,7 +599,6 @@ public class MainController {
     private Map<String, List<CartItem>> groupCartByProvider() {
         Map<String, List<CartItem>> result = new LinkedHashMap<>();
         for (CartItem item : cart) {
-            // Группировка нужна только для красивого подтверждения, платеж все равно общий.
             Optional<Provider> provider = resolveProvider(item.getService());
             provider.ifPresent(p -> result.computeIfAbsent(p.getId(), id -> new ArrayList<>()).add(item));
         }
@@ -452,21 +606,16 @@ public class MainController {
     }
 
     private BigDecimal cartTotal() {
-        // Общая сумма платежа — это сумма всех строк корзины.
-        return cart.stream()
-                .map(CartItem::getTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return cart.stream().map(CartItem::getTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BigDecimal sumItems(List<CartItem> items) {
-        return items.stream()
-                .map(CartItem::getTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return items.stream().map(CartItem::getTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private void createPayment(String providerId, String fio, String inn) {
         payCartBtn.setDisable(true);
-        setStatus("Создание платежа в ApiAB...");
+        setStatus(LocaleManager.t("pay.creating"));
         new Thread(() -> {
             try {
                 Payment payment = ApiService.createPayment(cartTotal(), providerId, fio, inn);
@@ -478,27 +627,26 @@ public class MainController {
                 Platform.runLater(() -> {
                     cart.clear();
                     renderCart();
-                    setStatus("Платеж создан. Покажите QR-код для оплаты.");
+                    setStatus(LocaleManager.t("pay.created"));
                     showPaymentResult(created);
                 });
             } catch (Exception e) {
                 AppLogger.error("Ошибка создания платежа", e);
                 Platform.runLater(() -> {
                     renderCart();
-                    setStatus("Ошибка создания платежа");
-                    showError("Платеж не создан",
-                            "ApiAB не принял платеж. Проверьте подключение и данные провайдера.\n\n" + readableError(e));
+                    setStatus(LocaleManager.t("pay.notCreated.title"));
+                    showError(LocaleManager.t("pay.notCreated.title"),
+                            LocaleManager.t("pay.notCreated.body") + "\n\n" + readableError(e));
                 });
             }
         }).start();
     }
 
     private void showPaymentResult(List<Payment> payments) {
-        // После создания платежа показываем QR, который вернул ApiAB.
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("QR-код платежа");
+        dialog.setTitle(LocaleManager.t("pay.createdTitle"));
         styleDialog(dialog, "payment-dialog-pane");
-        ButtonType close = new ButtonType("Готово", ButtonBar.ButtonData.OK_DONE);
+        ButtonType close = new ButtonType(LocaleManager.t("pay.done"), ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(close);
 
         VBox content = new VBox(18);
@@ -506,17 +654,18 @@ public class MainController {
         content.setPadding(new Insets(24));
 
         if (payments.isEmpty()) {
-            Label empty = new Label("ApiAB не вернул данные платежа. Проверьте журнал и повторите.");
+            Label empty = new Label(LocaleManager.t("pay.noData"));
             empty.getStyleClass().add("payment-error-text");
             empty.setWrapText(true);
             content.getChildren().add(empty);
         }
 
-        Label step = new Label("Шаг 2 из 2");
+        Label step = new Label(LocaleManager.t("pay.step2"));
         step.getStyleClass().add("payment-step");
-        Label title = new Label(payments.size() > 1 ? "Платежи созданы" : "Платеж создан");
+        Label title = new Label(payments.size() > 1
+                ? LocaleManager.t("pay.createdTitleMulti") : LocaleManager.t("pay.createdTitle"));
         title.getStyleClass().add("payment-title");
-        Label subtitle = new Label("Покажите QR-код сканеру или используйте данные QR ниже. Не закрывайте окно, пока клиент не завершит оплату.");
+        Label subtitle = new Label(LocaleManager.t("pay.createdSubtitle"));
         subtitle.getStyleClass().add("payment-subtitle");
         subtitle.setWrapText(true);
         content.getChildren().addAll(step, title, subtitle);
@@ -540,17 +689,17 @@ public class MainController {
                     qr.getStyleClass().add("qr-image");
                     qrBox.getChildren().add(qr);
                 } catch (IllegalArgumentException e) {
-                    Label noQr = new Label("QR-код поврежден");
+                    Label noQr = new Label(LocaleManager.t("pay.qrBroken"));
                     noQr.getStyleClass().add("payment-error-text");
                     qrBox.getChildren().add(noQr);
                 }
             } else {
-                Label noQr = new Label("QR-код не получен");
+                Label noQr = new Label(LocaleManager.t("pay.qrNoCode"));
                 noQr.getStyleClass().add("payment-error-text");
                 qrBox.getChildren().add(noQr);
             }
 
-            Label scanHint = new Label("Сканируйте этот код");
+            Label scanHint = new Label(LocaleManager.t("pay.scanHint"));
             scanHint.getStyleClass().add("qr-scan-hint");
             qrBox.getChildren().add(scanHint);
 
@@ -561,33 +710,31 @@ public class MainController {
             Label status = new Label(statusLabel(payment.getStatus()));
             status.getStyleClass().addAll("payment-status-pill", statusClass(payment.getStatus()));
             Label provider = new Label(nullToEmpty(payment.getProviderName()).isBlank()
-                    ? "Провайдер не указан"
-                    : payment.getProviderName());
+                    ? LocaleManager.t("pay.providerNone") : payment.getProviderName());
             provider.getStyleClass().add("payment-provider-name");
             statusRow.getChildren().addAll(status, provider);
 
-            Label id = new Label("ID платежа: " + nullToEmpty(payment.getId()));
+            Label id = new Label(LocaleManager.t("pay.id", nullToEmpty(payment.getId())));
             id.getStyleClass().add("payment-muted-line");
-            Label fioLabel = new Label("Плательщик: " + nullToEmpty(payment.getFio()));
+            Label fioLabel = new Label(LocaleManager.t("pay.payer", nullToEmpty(payment.getFio())));
             fioLabel.getStyleClass().add("payment-muted-line");
-            Label amount = new Label("Сумма: " + formatMoney(payment.getSum()));
+            Label amount = new Label(LocaleManager.t("pay.amount", formatMoney(payment.getSum())));
             amount.getStyleClass().add("payment-amount-line");
-            Label fee = new Label("Комиссия: " + formatMoney(payment.getFee()));
+            Label fee = new Label(LocaleManager.t("pay.fee", formatMoney(payment.getFee())));
             fee.getStyleClass().add("payment-muted-line");
-            Label total = new Label("К оплате: " + formatMoney(payment.getTotal()));
+            Label total = new Label(LocaleManager.t("pay.toPay", formatMoney(payment.getTotal())));
             total.getStyleClass().add("payment-grand-total");
 
-            Label qrCaption = new Label("Данные QR");
+            Label qrCaption = new Label(LocaleManager.t("pay.qrCaption"));
             qrCaption.getStyleClass().add("payment-qr-caption");
             Label qrData = new Label(nullToEmpty(payment.getQrLink()).isBlank()
-                    ? "ApiAB не вернул ссылку QR"
-                    : payment.getQrLink());
+                    ? LocaleManager.t("pay.qrNoLink") : payment.getQrLink());
             qrData.setWrapText(true);
             qrData.getStyleClass().add("payment-qr-data");
 
             info.getChildren().addAll(statusRow, id, fioLabel);
             if (payment.getInn() != null && !payment.getInn().isBlank()) {
-                Label innLabel = new Label("ИНН: " + payment.getInn());
+                Label innLabel = new Label(LocaleManager.t("pay.innLine", payment.getInn()));
                 innLabel.getStyleClass().add("payment-muted-line");
                 info.getChildren().add(innLabel);
             }
@@ -608,69 +755,47 @@ public class MainController {
     }
 
     private void styleDialog(Dialog<?> dialog, String styleClass) {
-        dialog.getDialogPane().getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm()
-        );
+        DesignManager.apply(dialog.getDialogPane());
         dialog.getDialogPane().getStyleClass().add(styleClass);
         if (ThemeManager.isDarkMode()) {
             dialog.getDialogPane().getStyleClass().add("dark");
         }
     }
 
-    @FXML
-    private void onClearCart() {
-        cart.clear();
-        renderCart();
-        setStatus("Корзина очищена");
-    }
-
-    @FXML
-    private void onThemeToggle() {
-        ThemeManager.toggle();
-        setupThemeToggle();
-        if (themeToggle.getScene() != null) {
-            ThemeManager.apply(themeToggle.getScene());
-        }
-    }
+    // ==================== СЕССИЯ ====================
 
     @FXML
     private void onLoginClicked() {
         try {
             KioskApp.showLogin();
         } catch (Exception e) {
-            showError("Ошибка", "Не удалось открыть окно входа: " + readableError(e));
+            showError(LocaleManager.t("common.error"), readableError(e));
         }
     }
 
     private void updateSessionControls() {
         SessionManager session = SessionManager.getInstance();
         boolean loggedIn = session.isLoggedIn();
-        loginBtn.setVisible(!loggedIn);
-        logoutBtn.setVisible(loggedIn);
-        userLabel.setVisible(false);
-        userLabel.setManaged(false);
-        adminBtn.setVisible(loggedIn && session.isAdmin());
+        loginItem.setVisible(!loggedIn);
+        logoutItem.setVisible(loggedIn);
+        adminItem.setVisible(loggedIn && session.isAdmin());
 
         if (loggedIn) {
-            String provider = session.getCurrentProviderName() == null || session.getCurrentProviderName().isBlank()
-                    ? ""
-                    : " • " + session.getCurrentProviderName();
-            setStatus("Вход выполнен: " + session.getCurrentUser().getName() + provider);
+            setStatus(LocaleManager.t("status.loggedIn", session.getCurrentUser().getName()));
         }
     }
 
     @FXML
     private void onLogoutClicked() {
         String email = SessionManager.getInstance().getCurrentUser() != null
-                ? SessionManager.getInstance().getCurrentUser().getEmail()
-                : "";
+                ? SessionManager.getInstance().getCurrentUser().getEmail() : "";
         SessionManager.getInstance().logout();
         cart.clear();
         AppLogger.info("Выход пользователя: " + email);
         try {
             KioskApp.showLogin();
         } catch (Exception e) {
-            showError("Ошибка", "Не удалось вернуться к авторизации: " + readableError(e));
+            showError(LocaleManager.t("common.error"), readableError(e));
         }
     }
 
@@ -678,14 +803,12 @@ public class MainController {
     private void onAdminClicked() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml"));
+            loader.setResources(LocaleManager.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Панель администратора");
+            stage.setTitle(LocaleManager.t("admin.title"));
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm()
-            );
-            ThemeManager.apply(scene);
+            DesignManager.apply(scene);
             AdminController ctrl = loader.getController();
             ctrl.setStage(stage);
             stage.setScene(scene);
@@ -694,21 +817,11 @@ public class MainController {
             loadData();
         } catch (Exception e) {
             AppLogger.warn("Не удалось открыть панель администратора", e);
-            showError("Ошибка", "Не удалось открыть панель администратора: " + readableError(e));
+            showError(LocaleManager.t("common.error"), LocaleManager.t("admin.open.error") + " " + readableError(e));
         }
     }
 
-    @FXML
-    private void onClearFilters() {
-        searchField.clear();
-        selectedCategoryId = null;
-        selectedCategoryName = null;
-        breadcrumb.setText("Все услуги");
-        if (!categoryList.getChildren().isEmpty()) {
-            resetCategoryButtonStyles(categoryList.getChildren().get(0));
-        }
-        applyFilters();
-    }
+    // ==================== ХЕЛПЕРЫ ====================
 
     private void setStatus(String text) {
         statusLabel.setText(text);
@@ -731,7 +844,7 @@ public class MainController {
     }
 
     private String formatMoney(BigDecimal value) {
-        return value.setScale(2, RoundingMode.HALF_UP) + " сом";
+        return value.setScale(2, RoundingMode.HALF_UP) + " " + LocaleManager.t("money.suffix");
     }
 
     private String providerName(String providerId) {
@@ -744,11 +857,9 @@ public class MainController {
 
     private String paymentProviderId() {
         SessionManager session = SessionManager.getInstance();
-        // В первую очередь берем организацию вошедшего пользователя из сессии.
         if (session.hasProvider()) {
             return session.getCurrentProviderId();
         }
-        // Запасной вариант: если сессия без провайдера, берем провайдера первой услуги в корзине.
         return cart.stream()
                 .map(CartItem::getService)
                 .map(this::resolveProvider)
@@ -761,10 +872,10 @@ public class MainController {
 
     private String statusLabel(String status) {
         return switch (nullToEmpty(status)) {
-            case "processing" -> "Ожидает оплаты";
-            case "success" -> "Оплачен";
-            case "cancel" -> "Отменен";
-            default -> "Статус неизвестен";
+            case "processing" -> LocaleManager.t("pay.statusProcessing");
+            case "success" -> LocaleManager.t("pay.statusSuccess");
+            case "cancel" -> LocaleManager.t("pay.statusCancel");
+            default -> LocaleManager.t("pay.statusUnknown");
         };
     }
 

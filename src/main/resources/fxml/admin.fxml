@@ -10,26 +10,26 @@
 
     <top>
         <HBox styleClass="admin-header" alignment="CENTER_LEFT" spacing="16">
-            <Label text="Панель администратора" styleClass="admin-title"/>
+            <Label text="%admin.title" styleClass="admin-title"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Закрыть" styleClass="btn-danger" onAction="#onClose"/>
+            <Button text="%admin.close" styleClass="btn-danger" onAction="#onClose"/>
         </HBox>
     </top>
 
     <left>
         <VBox styleClass="admin-sidebar" spacing="4">
             <padding><Insets top="16" right="0" bottom="16" left="0"/></padding>
-            <Button text="Пользователи" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.users" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showUsers"/>
-            <Button text="Услуги" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.services" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showServices"/>
-            <Button text="Категории" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.categories" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showCategories"/>
-            <Button text="Провайдеры" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.providers" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showProviders"/>
-            <Button text="Специализации" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.specializations" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showSpecializations"/>
-            <Button text="Платежи" styleClass="admin-nav-btn"
+            <Button text="%admin.nav.payments" styleClass="admin-nav-btn"
                     maxWidth="Infinity" onAction="#showPayments"/>
         </VBox>
     </left>
@@ -40,7 +40,7 @@
 
             <!-- Toolbar: поиск + кнопки -->
             <HBox spacing="8" alignment="CENTER_LEFT">
-                <TextField fx:id="adminSearchField" promptText="Поиск..."
+                <TextField fx:id="adminSearchField" promptText="%admin.search"
                            styleClass="search-field" prefWidth="220"
                            onKeyReleased="#onAdminSearch"/>
                 <HBox fx:id="paymentFilters" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false">
@@ -54,21 +54,21 @@
                                 onAction="#onAdminSearch"/>
                     <DatePicker fx:id="dateToPicker" promptText="до" prefWidth="120"
                                 onAction="#onAdminSearch"/>
-                    <Button text="Сброс" styleClass="btn-small" onAction="#onResetPaymentFilters"/>
+                    <Button text="%admin.reset" styleClass="btn-small" onAction="#onResetPaymentFilters"/>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="addBtn" text="+ Добавить" styleClass="btn-primary"
+                <Button fx:id="addBtn" text="%admin.add" styleClass="btn-primary"
                         onAction="#onAdd"/>
-                <Button fx:id="editBtn" text="Изменить" styleClass="btn-outline"
+                <Button fx:id="editBtn" text="%admin.edit" styleClass="btn-outline"
                         onAction="#onEdit" disable="true"/>
-                <Button fx:id="deleteBtn" text="Удалить" styleClass="btn-danger"
+                <Button fx:id="deleteBtn" text="%admin.delete" styleClass="btn-danger"
                         onAction="#onDelete" disable="true"/>
             </HBox>
 
             <!-- Таблица -->
             <TableView fx:id="adminTable" VBox.vgrow="ALWAYS" styleClass="admin-table">
                 <placeholder>
-                    <Label text="Выберите раздел в меню слева" styleClass="empty-label"/>
+                    <Label text="%admin.placeholder" styleClass="empty-label"/>
                 </placeholder>
             </TableView>
 

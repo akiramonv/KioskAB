@@ -1052,3 +1052,197 @@
 .dark .corner {
     -fx-background-color: transparent;
 }
+
+/* ---------- БРЕНД + МЕНЮ НАСТРОЕК ---------- */
+/* Эти элементы общие для FXML, поэтому стиль нужен и в старом дизайне. */
+.brand-logo {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 12;
+}
+
+/* На зелёной шапке — белый бейдж с зелёным символом. */
+.header-bar .brand-logo {
+    -fx-background-color: white;
+    -fx-text-fill: #16a34a;
+}
+
+.settings-menu {
+    -fx-background-color: white;
+    -fx-border-color: #d1fae5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+
+.settings-menu > .label {
+    -fx-text-fill: #15803d;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.settings-menu:hover,
+.settings-menu:showing {
+    -fx-background-color: #f0fdf4;
+}
+
+.settings-menu > .arrow-button > .arrow {
+    -fx-background-color: #16a34a;
+}
+
+.context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #d1fae5;
+    -fx-border-radius: 10;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 14, 0, 0, 4);
+}
+
+.menu-item {
+    -fx-background-radius: 8;
+    -fx-padding: 8 18 8 12;
+}
+
+.menu-item .label {
+    -fx-text-fill: #374151;
+    -fx-font-size: 13px;
+}
+
+.menu-item:focused {
+    -fx-background-color: #dcfce7;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: #15803d;
+}
+
+.dark .settings-menu {
+    -fx-background-color: #10281c;
+    -fx-border-color: #1f5f3e;
+}
+
+.dark .settings-menu > .label {
+    -fx-text-fill: #bbf7d0;
+}
+
+.dark .settings-menu:hover,
+.dark .settings-menu:showing {
+    -fx-background-color: #143522;
+}
+
+.dark .settings-menu > .arrow-button > .arrow {
+    -fx-background-color: #4ade80;
+}
+
+.dark .context-menu {
+    -fx-background-color: #10281c;
+    -fx-border-color: #1f5f3e;
+}
+
+.dark .menu-item .label {
+    -fx-text-fill: #e5f7eb;
+}
+
+.dark .menu-item:focused {
+    -fx-background-color: #143522;
+}
+
+.dark .menu-item:focused .label {
+    -fx-text-fill: #86efac;
+}
+
+/* ================================================================
+   НОВЫЙ МАКЕТ В СТАРОМ СКИНЕ
+   main.fxml/login.fxml теперь общие для обоих дизайнов, поэтому
+   новые классы нужно стилизовать и в старой теме.
+   ================================================================ */
+.brand-title { -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; }
+.brand-subtitle { -fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 11px; }
+.clock-time { -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; }
+.clock-date { -fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 11px; }
+
+.home-view { -fx-background-color: transparent; }
+.home-welcome { -fx-text-fill: #15803d; -fx-font-size: 30px; -fx-font-weight: bold; }
+.home-subtitle { -fx-text-fill: #6b7280; -fx-font-size: 15px; }
+
+.tile-grid { -fx-background-color: transparent; -fx-padding: 8 0 8 0; }
+.cat-tile {
+    -fx-background-color: white; -fx-background-radius: 14;
+    -fx-border-color: #d1fae5; -fx-border-radius: 14; -fx-border-width: 1.5;
+    -fx-min-width: 150; -fx-pref-width: 150; -fx-min-height: 132; -fx-pref-height: 132;
+    -fx-padding: 18 12 18 12; -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 6, 0, 0, 2);
+}
+.cat-tile:hover { -fx-border-color: #16a34a; -fx-background-color: #f0fdf4; }
+.cat-tile-icon {
+    -fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-font-size: 26px;
+    -fx-min-width: 60; -fx-min-height: 60; -fx-pref-width: 60; -fx-pref-height: 60;
+    -fx-alignment: CENTER; -fx-background-radius: 30;
+}
+.cat-tile-name { -fx-text-fill: #111827; -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-alignment: CENTER; }
+
+.search-field-lg {
+    -fx-background-color: white; -fx-background-radius: 26; -fx-border-color: #d1fae5; -fx-border-radius: 26;
+    -fx-text-fill: #111827; -fx-prompt-text-fill: #9ca3af; -fx-padding: 14 22 14 22; -fx-font-size: 15px;
+}
+.search-field-lg:focused { -fx-border-color: #16a34a; }
+
+.feature-strip { -fx-border-color: #d1fae5; -fx-border-width: 1 0 0 0; -fx-padding: 18 0 4 0; }
+.feature-item { -fx-padding: 4 14 4 14; -fx-max-width: 220; }
+.feature-icon { -fx-text-fill: #16a34a; -fx-font-size: 20px; }
+.feature-title { -fx-text-fill: #15803d; -fx-font-size: 13px; -fx-font-weight: bold; }
+.feature-desc { -fx-text-fill: #6b7280; -fx-font-size: 11px; }
+
+.services-view { -fx-background-color: #f0fdf4; }
+
+.icon-btn {
+    -fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;
+    -fx-min-width: 40; -fx-min-height: 40; -fx-pref-width: 40; -fx-pref-height: 40;
+    -fx-background-radius: 20; -fx-cursor: hand; -fx-border-color: transparent;
+}
+.icon-btn:hover { -fx-background-color: #15803d; }
+
+.cart-bar {
+    -fx-background-color: white; -fx-border-color: #d1fae5; -fx-border-width: 1 0 0 0; -fx-padding: 12 24 12 24;
+}
+.cart-bar-summary {
+    -fx-background-color: #dcfce7; -fx-background-radius: 12; -fx-border-color: transparent;
+    -fx-text-fill: #15803d; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 9 18 9 18; -fx-cursor: hand;
+}
+.cart-bar-summary:hover { -fx-background-color: #bbf7d0; }
+
+.brand-logo-lg {
+    -fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold;
+    -fx-min-width: 66; -fx-min-height: 66; -fx-pref-width: 66; -fx-pref-height: 66;
+    -fx-alignment: CENTER; -fx-background-radius: 18;
+}
+.login-brand-title { -fx-text-fill: #15803d; -fx-font-size: 22px; -fx-font-weight: bold; }
+
+.combo-box-popup .list-view { -fx-background-color: white; -fx-border-color: #d1fae5; }
+.combo-box-popup .list-cell { -fx-text-fill: #111827; -fx-background-color: white; -fx-padding: 6 12 6 12; }
+.combo-box-popup .list-cell:filled:hover { -fx-background-color: #dcfce7; -fx-text-fill: #15803d; }
+
+/* Тёмный вариант старого скина для новых классов */
+.dark .home-welcome { -fx-text-fill: #4ade80; }
+.dark .home-subtitle { -fx-text-fill: #9fb7aa; }
+.dark .services-view { -fx-background-color: #07130d; }
+.dark .cat-tile { -fx-background-color: #10281c; -fx-border-color: #1f5f3e; }
+.dark .cat-tile:hover { -fx-background-color: #143522; -fx-border-color: #22c55e; }
+.dark .cat-tile-icon { -fx-background-color: #143522; -fx-text-fill: #4ade80; }
+.dark .cat-tile-name { -fx-text-fill: #e5f7eb; }
+.dark .search-field-lg { -fx-background-color: #0d1f16; -fx-border-color: #1f5f3e; -fx-text-fill: #e5f7eb; -fx-prompt-text-fill: #9fb7aa; }
+.dark .feature-strip { -fx-border-color: #1f5f3e; }
+.dark .feature-title { -fx-text-fill: #86efac; }
+.dark .feature-desc { -fx-text-fill: #9fb7aa; }
+.dark .cart-bar { -fx-background-color: #0d1f16; -fx-border-color: #1f5f3e; }
+.dark .cart-bar-summary { -fx-background-color: #143522; -fx-text-fill: #86efac; }
+.dark .login-brand-title { -fx-text-fill: #4ade80; }

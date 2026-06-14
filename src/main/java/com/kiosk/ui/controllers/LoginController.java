@@ -7,6 +7,8 @@ import com.kiosk.model.Specialization;
 import com.kiosk.model.User;
 import com.kiosk.service.ApiService;
 import com.kiosk.util.AppLogger;
+import com.kiosk.util.DesignManager;
+import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import com.kiosk.util.ThemeManager;
 import javafx.application.Platform;
@@ -24,7 +26,8 @@ public class LoginController {
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginBtn;
-    @FXML private ToggleButton themeToggle;
+    @FXML private CheckMenuItem darkItem, designItem;
+    @FXML private RadioMenuItem langRuItem, langEnItem, langKyItem;
 
     private Stage stage;
 
@@ -36,10 +39,40 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        if (themeToggle != null) {
-            themeToggle.setSelected(ThemeManager.isDarkMode());
-            themeToggle.setText(ThemeManager.isDarkMode() ? "Светлая тема" : "Темная тема");
+        setupMenuState();
+    }
+
+    private void setupMenuState() {
+        if (darkItem != null) {
+            darkItem.setSelected(ThemeManager.isDarkMode());
         }
+        if (designItem != null) {
+            designItem.setSelected(DesignManager.isNewDesign());
+        }
+        String lang = LocaleManager.getLanguage();
+        if (langRuItem != null) langRuItem.setSelected(LocaleManager.RU.equals(lang));
+        if (langEnItem != null) langEnItem.setSelected(LocaleManager.EN.equals(lang));
+        if (langKyItem != null) langKyItem.setSelected(LocaleManager.KY.equals(lang));
+    }
+
+    @FXML private void onLangRu() { switchLanguage(LocaleManager.RU); }
+    @FXML private void onLangEn() { switchLanguage(LocaleManager.EN); }
+    @FXML private void onLangKy() { switchLanguage(LocaleManager.KY); }
+
+    private void switchLanguage(String lang) {
+        if (lang.equals(LocaleManager.getLanguage())) {
+            return;
+        }
+        LocaleManager.setLanguage(lang);
+        try {
+            KioskApp.showLogin();
+        } catch (Exception e) {
+            showError(readableError(e));
+        }
+    }
+
+    private String readableError(Exception e) {
+        return e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
     }
 
     @FXML
@@ -49,12 +82,12 @@ public class LoginController {
         String password = passwordField.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            showError("Введите email и пароль");
+            showError(LocaleManager.t("login.err.empty"));
             return;
         }
 
         loginBtn.setDisable(true);
-        loginBtn.setText("Проверка...");
+        loginBtn.setText(LocaleManager.t("login.checking"));
         errorLabel.setVisible(false);
 
         new Thread(() -> {
@@ -62,9 +95,9 @@ public class LoginController {
                 User user = ApiService.authenticate(email, password);
                 if (user == null) {
                     Platform.runLater(() -> {
-                        showError("Неверный email или пароль");
+                        showError(LocaleManager.t("login.err.invalid"));
                         loginBtn.setDisable(false);
-                        loginBtn.setText("Войти");
+                        loginBtn.setText(LocaleManager.t("login.submit"));
                     });
                     return;
                 }
@@ -94,17 +127,17 @@ public class LoginController {
                     try {
                         KioskApp.showMain();
                     } catch (Exception e) {
-                        showError("Не удалось открыть главный экран: " + e.getMessage());
+                        showError(LocaleManager.t("login.err.openMain") + " " + e.getMessage());
                         loginBtn.setDisable(false);
-                        loginBtn.setText("Войти");
+                        loginBtn.setText(LocaleManager.t("login.submit"));
                     }
                 });
 
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    showError("Ошибка: " + e.getMessage());
+                    showError(LocaleManager.t("common.error") + ": " + e.getMessage());
                     loginBtn.setDisable(false);
-                    loginBtn.setText("Войти");
+                    loginBtn.setText(LocaleManager.t("login.submit"));
                 });
             }
         }).start();
@@ -181,12 +214,20 @@ public class LoginController {
     @FXML
     private void onThemeToggle() {
         ThemeManager.toggle();
-        if (themeToggle != null) {
-            themeToggle.setSelected(ThemeManager.isDarkMode());
-            themeToggle.setText(ThemeManager.isDarkMode() ? "Светлая тема" : "Темная тема");
-        }
+        reapplyStyles();
+        setupMenuState();
+    }
+
+    @FXML
+    private void onToggleDesign() {
+        DesignManager.toggle();
+        reapplyStyles();
+        setupMenuState();
+    }
+
+    private void reapplyStyles() {
         if (stage != null && stage.getScene() != null) {
-            ThemeManager.apply(stage.getScene());
+            DesignManager.apply(stage.getScene());
         }
     }
 
