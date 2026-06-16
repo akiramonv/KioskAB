@@ -232,3 +232,19 @@ INFO: Выход пользователя: admin1@test.com
 INFO: Вход пользователя: admin1@test.com
 июн. 15, 2026 1:11:32 AM com.kiosk.util.AppLogger info
 INFO: Вход пользователя: admin1@test.com
+июн. 15, 2026 9:43:24 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin1@test.com
+июн. 15, 2026 9:44:05 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за воду
+июн. 15, 2026 9:44:10 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оплата за электроэнергию (обновлено)
+июн. 15, 2026 9:44:23 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 8b056453-2917-4c74-80f5-53ce349e1cb2, сумма 1369.0
+июн. 15, 2026 9:48:04 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет
+июн. 15, 2026 9:48:24 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Пополнение мобильного
+июн. 15, 2026 9:48:35 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 56cfd9ff-3e4d-4892-beb1-491c1aebb9bd, сумма 5510.0
+июн. 15, 2026 9:49:20 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin1@test.com
