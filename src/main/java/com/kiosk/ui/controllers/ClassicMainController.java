@@ -14,6 +14,7 @@ import com.kiosk.util.DesignManager;
 import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import com.kiosk.util.ThemeManager;
+import com.kiosk.util.WindowManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -67,7 +68,7 @@ public class ClassicMainController {
     @FXML private Button payCartBtn;
     @FXML private MenuButton settingsMenu;
     @FXML private MenuItem loginItem, logoutItem, adminItem;
-    @FXML private CheckMenuItem darkItem, designItem;
+    @FXML private CheckMenuItem darkItem, designItem, kioskItem;
     @FXML private RadioMenuItem langRuItem, langEnItem, langKyItem;
     @FXML private Label breadcrumb, statusLabel, connectionLabel, emptyLabel;
     @FXML private Label featuredLabel, servicesLabel, cartCountLabel, cartTotalLabel, cartHelpLabel;
@@ -103,6 +104,7 @@ public class ClassicMainController {
     private void setupMenuState() {
         if (darkItem != null) darkItem.setSelected(ThemeManager.isDarkMode());
         if (designItem != null) designItem.setSelected(DesignManager.isNewDesign());
+        if (kioskItem != null) kioskItem.setSelected(WindowManager.isKioskMode());
         String lang = LocaleManager.getLanguage();
         if (langRuItem != null) langRuItem.setSelected(LocaleManager.RU.equals(lang));
         if (langEnItem != null) langEnItem.setSelected(LocaleManager.EN.equals(lang));
@@ -122,6 +124,13 @@ public class ClassicMainController {
     private void onToggleDesign() {
         DesignManager.toggle();
         reloadMain();
+    }
+
+    @FXML
+    private void onToggleKiosk() {
+        // Безграничный режим прячет рамку с кнопкой закрытия у текущего окна.
+        WindowManager.toggle();
+        setupMenuState();
     }
 
     @FXML private void onLangRu() { switchLanguage(LocaleManager.RU); }
@@ -275,6 +284,8 @@ public class ClassicMainController {
             loader.setResources(LocaleManager.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
+            // В киоск-режиме окно без рамки; задаём стиль до показа.
+            WindowManager.configureDialog(stage);
             stage.setTitle(LocaleManager.t("detail.title"));
             Scene scene = new Scene(loader.load());
             DesignManager.apply(scene);
@@ -685,6 +696,8 @@ public class ClassicMainController {
             loader.setResources(LocaleManager.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
+            // В киоск-режиме окно без рамки; задаём стиль до показа.
+            WindowManager.configureDialog(stage);
             stage.setTitle(LocaleManager.t("admin.title"));
             Scene scene = new Scene(loader.load());
             DesignManager.apply(scene);

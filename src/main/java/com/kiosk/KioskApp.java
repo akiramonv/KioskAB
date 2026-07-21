@@ -3,6 +3,7 @@ import com.kiosk.ui.controllers.LoginController;
 import com.kiosk.util.AppLogger;
 import com.kiosk.util.DesignManager;
 import com.kiosk.util.LocaleManager;
+import com.kiosk.util.WindowManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,6 +26,8 @@ public class KioskApp extends Application {
         LoginController controller = fxmlLoader.getController();
         controller.setStage(primaryStage);
         primaryStage.show();
+        // Терминал всегда работает на весь экран (в киоск-режиме — без рамки).
+        WindowManager.configure(primaryStage);
     }
     public static void showMain() throws IOException {
         // Новый дизайн — макет PAYTERMINAL, старый — классическая раскладка с боковыми панелями.
@@ -38,6 +41,8 @@ public class KioskApp extends Application {
         primaryStage.setMinWidth(1024);
         primaryStage.setMinHeight(700);
         primaryStage.show();
+        // Сохраняем режим окна (полный экран / киоск) при пересоздании сцены.
+        WindowManager.configure(primaryStage);
     }
     public static void main(String[] args) {
         launch();

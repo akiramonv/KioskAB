@@ -11,6 +11,7 @@ import com.kiosk.util.DesignManager;
 import com.kiosk.util.LocaleManager;
 import com.kiosk.util.SessionManager;
 import com.kiosk.util.ThemeManager;
+import com.kiosk.util.WindowManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -26,7 +27,7 @@ public class LoginController {
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginBtn;
-    @FXML private CheckMenuItem darkItem, designItem;
+    @FXML private CheckMenuItem darkItem, designItem, kioskItem;
     @FXML private RadioMenuItem langRuItem, langEnItem, langKyItem;
 
     private Stage stage;
@@ -48,6 +49,9 @@ public class LoginController {
         }
         if (designItem != null) {
             designItem.setSelected(DesignManager.isNewDesign());
+        }
+        if (kioskItem != null) {
+            kioskItem.setSelected(WindowManager.isKioskMode());
         }
         String lang = LocaleManager.getLanguage();
         if (langRuItem != null) langRuItem.setSelected(LocaleManager.RU.equals(lang));
@@ -222,6 +226,13 @@ public class LoginController {
     private void onToggleDesign() {
         DesignManager.toggle();
         reapplyStyles();
+        setupMenuState();
+    }
+
+    @FXML
+    private void onToggleKiosk() {
+        // Безграничный режим прячет рамку с кнопкой закрытия у текущего окна.
+        WindowManager.toggle();
         setupMenuState();
     }
 

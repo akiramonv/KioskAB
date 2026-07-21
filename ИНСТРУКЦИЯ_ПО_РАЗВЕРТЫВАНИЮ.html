@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><style>
+body { font-family: 'Calibri','Segoe UI',sans-serif; font-size: 11pt; line-height: 1.4; color: #1a1a1a; }
+h1 { font-family: 'Cambria','Georgia',serif; font-size: 22pt; color: #1F5C3F; border-bottom: 2px solid #1F5C3F; padding-bottom: 4pt; }
+h2 { font-family: 'Cambria','Georgia',serif; font-size: 16pt; color: #1F5C3F; margin-top: 18pt; }
+h3 { font-family: 'Cambria','Georgia',serif; font-size: 13pt; color: #2C6E49; margin-top: 12pt; }
+p { margin: 6pt 0; }
+ul, ol { margin: 6pt 0; }
+li { margin: 2pt 0; }
+code { font-family: 'Consolas','Courier New',monospace; font-size: 10pt; background: #f2f4f3; padding: 0 2px; }
+pre { font-family: 'Consolas','Courier New',monospace; font-size: 9.5pt; background: #f2f4f3; border: 1px solid #d8e0db; border-left: 3px solid #2C6E49; padding: 6pt 10pt; margin: 8pt 0; white-space: pre-wrap; word-break: break-word; line-height: 1.3; }
+pre code { background: none; padding: 0; font-size: 9.5pt; }
+blockquote { border-left: 3px solid #2C6E49; margin: 8pt 0; padding: 4pt 12pt; background: #f5f9f6; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10.5pt; }
+th { background: #1F5C3F; color: #ffffff; border: 1px solid #1F5C3F; padding: 4pt 6pt; text-align: left; }
+td { border: 1px solid #b8c9bf; padding: 4pt 6pt; vertical-align: top; }
+hr { border: none; border-top: 1px solid #cccccc; margin: 12pt 0; }
+strong { color: #14301f; }
+</style></head>
+<body><h1>Инструкция по развёртыванию и запуску</h1>
+<p>Документ описывает полную процедуру развёртывания прототипа киоска самообслуживания</p>
+<p>на локальной машине: подготовку базы данных, запуск API-эмулятора и запуск</p>
+<p>клиентского приложения.</p>
+<hr/>
+<h2>1. Архитектура решения</h2>
+<p>Система состоит из трёх компонентов, которые запускаются в строгом порядке снизу вверх:</p>
+<table>
+<thead><tr><th>№</th><th>Компонент</th><th>Технологии</th><th>Порт</th><th>Назначение</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>PostgreSQL</strong></td><td>PostgreSQL 14+</td><td><code>5432</code></td><td>Хранилище данных (услуги, провайдеры, пользователи, платежи)</td></tr>
+<tr><td>2</td><td><strong>Provider API Emulator</strong></td><td>Spring Boot 3.3.2, Gradle 8.12, Java 17</td><td><code>7924</code></td><td>Эмулятор серверного API. Замещает банковскую платформу <strong>Abilling</strong> на этапе разработки</td></tr>
+<tr><td>3</td><td><strong>Киоск (клиент)</strong></td><td>JavaFX 21.0.2, Maven, Java 17</td><td>—</td><td>Десктоп-приложение терминала самообслуживания</td></tr>
+</tbody></table>
+<pre><code>┌──────────────────────┐     HTTP :7924      ┌──────────────────────┐     JDBC :5432     ┌──────────────┐
+│  Киоск (JavaFX)      │ ──────────────────► │  API-эмулятор        │ ─────────────────► │  PostgreSQL  │
+│  com.kiosk.KioskApp  │   localhost:7924    │  Spring Boot         │   parodiaMisera    │  (схема БД)  │
+└──────────────────────┘                     └──────────────────────┘                    └──────────────┘</code></pre>
+<p>Клиент сам не работает с базой данных и не хранит данные локально — все запросы идут</p>
+<p>к эмулятору по адресу <code>http://localhost:7924</code> (адрес задан в <code>ApiClient.java</code>).</p>
+<hr/>
+<h2>2. Требования к окружению</h2>
+<table>
+<thead><tr><th>ПО</th><th>Версия</th><th>Примечание</th></tr></thead>
+<tbody>
+<tr><td><strong>JDK</strong></td><td><strong>17</strong></td><td>Обязательно JDK 17. На JDK 25 EA падает Lombok при компиляции. Проверено на Microsoft OpenJDK 17.0.15</td></tr>
+<tr><td><strong>PostgreSQL</strong></td><td>14 и выше</td><td>Используется СУБД и утилита <code>psql</code></td></tr>
+<tr><td><strong>Maven</strong></td><td>3.8+</td><td>Для сборки клиента. Можно использовать Maven, встроенный в IntelliJ IDEA</td></tr>
+<tr><td><strong>Gradle</strong></td><td>—</td><td>Отдельно ставить <strong>не нужно</strong>: в эмуляторе есть Gradle Wrapper (<code>gradlew</code>)</td></tr>
+<tr><td><strong>IntelliJ IDEA</strong></td><td>2023+</td><td>Необязательно, но удобно для запуска обоих проектов</td></tr>
+</tbody></table>
+<hr/>
+<h2>3. Состав поставки</h2>
+<table>
+<thead><tr><th>Артефакт</th><th>Что это</th></tr></thead>
+<tbody>
+<tr><td><code>kiosk-app/</code></td><td>Исходный код клиента (JavaFX)</td></tr>
+<tr><td><code>ApiAB.zip</code> → <code>provider-api-emulator/</code></td><td>Исходный код API-эмулятора (Spring Boot)</td></tr>
+<tr><td><code>схема БД.md</code></td><td>Описание схемы БД и SQL-скрипт создания таблиц</td></tr>
+</tbody></table>
+<p>Распакуйте <code>ApiAB.zip</code> — внутри находится папка <code>provider-api-emulator</code> (Gradle-проект).</p>
+<hr/>
+<h2>4. Шаг 1 — Подготовка базы данных PostgreSQL</h2>
+<blockquote>⚠️ Эмулятор запускается в режиме <code>ddl-auto: validate</code> — он <strong>не создаёт</strong> таблицы сам,<br/>а лишь проверяет, что они уже существуют и совпадают со схемой. Поэтому схему нужно<br/>создать <strong>до</strong> первого запуска эмулятора.</blockquote>
+<h3>4.1. Создать базу данных</h3>
+<pre><code># psql из стандартной поставки PostgreSQL
+psql -U postgres -c &quot;CREATE DATABASE \&quot;parodiaMisera\&quot;;&quot;</code></pre>
+<p>Параметры подключения по умолчанию (заданы в <code>application.yml</code> эмулятора):</p>
+<ul>
+<li><strong>URL:</strong> <code>jdbc:postgresql://localhost:5432/parodiaMisera</code></li>
+<li><strong>Пользователь:</strong> <code>postgres</code></li>
+<li><strong>Схема:</strong> <code>public</code></li>
+</ul>
+<h3>4.2. Создать таблицы</h3>
+<p>Выполните SQL-скрипт из файла <code>схема БД.md</code> (раздел «Обновлённый SQL»). Он создаёт все</p>
+<p>таблицы, индексы, расширение <code>pgcrypto</code> и заполняет справочники <code>CommissionLevel</code> и <code>Roles</code>.</p>
+<pre><code># сохраните SQL-скрипт в файл schema.sql и выполните:
+psql -U postgres -d parodiaMisera -f schema.sql</code></pre>
+<h3>4.3. Заполнить демонстрационными данными</h3>
+<p>Скрипт схемы создаёт только пустые таблицы и справочники. Чтобы клиент мог авторизовать</p>
+<p>пользователя и показать каталог услуг, нужно добавить хотя бы одного провайдера, счёт,</p>
+<p>категорию, услугу и пользователя. Минимальный набор приведён ниже (выполнять <strong>после</strong></p>
+<p>скрипта схемы):</p>
+<pre><code>-- Провайдер (уровень комиссии — на уровне организации)
+INSERT INTO Providers (id, fullName, shortName, commLvl)
+VALUES (&#x27;11111111-1111-1111-1111-111111111111&#x27;,
+        &#x27;Демонстрационный провайдер&#x27;, &#x27;Демо&#x27;,
+        (SELECT id FROM CommissionLevel WHERE name = &#x27;organization&#x27;));
+
+-- Счёт провайдера
+INSERT INTO Accounts (id, name, ownerName, provId)
+VALUES (&#x27;22222222-2222-2222-2222-222222222222&#x27;,
+        &#x27;Основной счёт&#x27;, &#x27;Демо&#x27;,
+        &#x27;11111111-1111-1111-1111-111111111111&#x27;);
+
+-- Категория услуг
+INSERT INTO CategoryService (id, name, provId)
+VALUES (&#x27;33333333-3333-3333-3333-333333333333&#x27;,
+        &#x27;Коммунальные услуги&#x27;,
+        &#x27;11111111-1111-1111-1111-111111111111&#x27;);
+
+-- Услуга
+INSERT INTO ProviderService (id, name, categoryId, provId, accountId)
+VALUES (gen_random_uuid(), &#x27;Оплата электроэнергии&#x27;,
+        &#x27;33333333-3333-3333-3333-333333333333&#x27;,
+        &#x27;11111111-1111-1111-1111-111111111111&#x27;,
+        &#x27;22222222-2222-2222-2222-222222222222&#x27;);
+
+-- Пользователь для входа (логин по email + паролю)
+INSERT INTO Users (id, name, email, password, provId)
+VALUES (gen_random_uuid(), &#x27;admin&#x27;, &#x27;admin@kiosk.local&#x27;, &#x27;admin&#x27;,
+        &#x27;11111111-1111-1111-1111-111111111111&#x27;);</code></pre>
+<p>После этого учётные данные для входа в киоск:</p>
+<p><strong>e-mail</strong> <code>admin@kiosk.local</code>, <strong>пароль</strong> <code>admin</code>.</p>
+<blockquote>Альтернатива ручному SQL: справочные данные можно создавать и через CRUD-endpoint&#x27;ы<br/>эмулятора (<code>POST /api/providers</code>, <code>/api/categories</code>, <code>/api/services</code>, <code>/api/users</code>),<br/>но эмулятор всё равно требует готовую схему таблиц.</blockquote>
+<hr/>
+<h2>5. Шаг 2 — Запуск API-эмулятора</h2>
+<h3>5.1. Настроить подключение к БД</h3>
+<p>При необходимости отредактируйте <code>provider-api-emulator/src/main/resources/application.yml</code></p>
+<p>под свои параметры PostgreSQL:</p>
+<pre><code>server:
+  port: 7924                 # порт эмулятора (его ждёт клиент)
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/parodiaMisera
+    username: postgres
+    password: 09bd2n4d       # ← укажите пароль вашего postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate     # схема должна быть создана заранее (см. Шаг 1)</code></pre>
+<h3>5.2. Запустить</h3>
+<p>Из папки <code>provider-api-emulator</code>:</p>
+<pre><code># Windows
+gradlew.bat bootRun
+
+# Linux / macOS
+./gradlew bootRun</code></pre>
+<p>Gradle Wrapper сам скачает Gradle 8.12 при первом запуске (нужен интернет). Эмулятор</p>
+<p>поднимется на <code>http://localhost:7924</code>.</p>
+<h3>5.3. Проверить</h3>
+<pre><code># список услуг — должен вернуть JSON
+curl http://localhost:7924/api/services
+
+# состояние приложения (Spring Actuator)
+curl http://localhost:7924/actuator/health</code></pre>
+<p>Оставьте окно эмулятора запущенным — клиент обращается к нему в реальном времени.</p>
+<hr/>
+<h2>6. Шаг 3 — Запуск клиентского приложения (киоск)</h2>
+<h3>6.1. Указать JDK 17</h3>
+<pre><code># PowerShell (Windows). Подставьте свой путь к JDK 17.
+$env:JAVA_HOME = &quot;C:\Users\User\.jdks\ms-17.0.15&quot;</code></pre>
+<h3>6.2. Собрать</h3>
+<p>Из папки <code>kiosk-app</code>:</p>
+<pre><code># если mvn не в PATH — используйте Maven, встроенный в IntelliJ:
+$mvn = &quot;C:\Program Files\JetBrains\IntelliJ IDEA 2025.1\plugins\maven\lib\maven3\bin\mvn.cmd&quot;
+&amp; $mvn -q compile</code></pre>
+<h3>6.3. Запустить</h3>
+<p><strong>Вариант А — через Maven (нужен интернет для плагина JavaFX):</strong></p>
+<pre><code>&amp; $mvn javafx:run</code></pre>
+<p><strong>Вариант Б — через IntelliJ IDEA:</strong></p>
+<ol>
+<li><code>File → Open</code> → выбрать папку <code>kiosk-app</code> (IDE распознает Maven-проект, дождаться синхронизации).</li>
+<li>Убедиться, что в <code>File → Project Structure → SDK</code> выбран JDK 17.</li>
+<li>Запустить класс <code>com.kiosk.KioskApp</code> (или Maven-задачу <code>javafx:run</code>).</li>
+</ol>
+<p><strong>Вариант В — прямой запуск <code>java</code> (для офлайн-окружения):</strong></p>
+<p>Указать JavaFX 21.0.2 (<code>-win.jar</code>-модули из <code>~/.m2/repository/org/openjfx</code>) в <code>--module-path</code>,</p>
+<p>а <code>target/classes</code> и jackson (<code>databind</code>, <code>core</code>, <code>annotations</code> 2.16.1) — в <code>-cp</code>. Главный</p>
+<p>класс — <code>com.kiosk.KioskApp</code>, модули — <code>--add-modules javafx.controls,javafx.fxml,javafx.web</code>.</p>
+<blockquote>Экран входа отрисовывается и без эмулятора. Для перехода на главный экран и авторизации<br/>эмулятор на <code>http://localhost:7924</code> должен быть запущен.</blockquote>
+<hr/>
+<h2>7. Порядок запуска (чек-лист)</h2>
+<ol>
+<li>✅ Запущен <strong>PostgreSQL</strong>, создана БД <code>parodiaMisera</code>.</li>
+<li>✅ Выполнен SQL-скрипт схемы + демо-данные (Шаг 1).</li>
+<li>✅ Запущен <strong>API-эмулятор</strong> (<code>gradlew bootRun</code>), отвечает на <code>http://localhost:7924</code>.</li>
+<li>✅ Запущен <strong>клиент</strong> (<code>mvn javafx:run</code>), открылся экран входа.</li>
+<li>✅ Вход: <code>admin@kiosk.local</code> / <code>admin</code> → виден каталог услуг.</li>
+</ol>
+<hr/>
+<h2>8. Проверка работоспособности</h2>
+<table>
+<thead><tr><th>Что проверяем</th><th>Как</th><th>Ожидаемый результат</th></tr></thead>
+<tbody>
+<tr><td>БД доступна</td><td><code>psql -U postgres -d parodiaMisera -c &quot;\dt&quot;</code></td><td>Список таблиц</td></tr>
+<tr><td>Эмулятор работает</td><td><code>curl http://localhost:7924/api/services</code></td><td>JSON со списком услуг</td></tr>
+<tr><td>Клиент стартовал</td><td>Запуск <code>KioskApp</code></td><td>Окно входа в киоск</td></tr>
+<tr><td>Связка клиент↔эмулятор</td><td>Войти под <code>admin@kiosk.local</code></td><td>Отображается главный экран с категориями</td></tr>
+</tbody></table>
+<hr/>
+<h2>9. Типичные проблемы и решения</h2>
+<table>
+<thead><tr><th>Проблема</th><th>Причина</th><th>Решение</th></tr></thead>
+<tbody>
+<tr><td><code>ExceptionInInitializerError: ...TypeTag :: UNKNOWN</code> при сборке клиента</td><td>Компиляция на JDK 25 EA, несовместимом с Lombok 1.18.30</td><td>Установить <code>JAVA_HOME</code> на JDK 17</td></tr>
+<tr><td>Эмулятор не стартует, ошибка <code>Schema validation: missing table</code></td><td>Схема БД не создана или не совпадает</td><td>Выполнить SQL-скрипт из <code>схема БД.md</code> (Шаг 1)</td></tr>
+<tr><td>Эмулятор: <code>FATAL: password authentication failed</code></td><td>Неверный пароль/пользователь PostgreSQL</td><td>Поправить <code>username</code>/<code>password</code> в <code>application.yml</code></td></tr>
+<tr><td>Клиент: «не удаётся подключиться», пустой каталог</td><td>Эмулятор не запущен или занят порт <code>7924</code></td><td>Запустить эмулятор; освободить порт 7924</td></tr>
+<tr><td>Вход не выполняется</td><td>В таблице <code>Users</code> нет пользователя</td><td>Добавить пользователя (Шаг 1, п. 4.3). Вход — по <code>email</code> + <code>password</code></td></tr>
+<tr><td><code>mvn javafx:run</code> падает в офлайне</td><td>Не закэшированы зависимости плагина JavaFX</td><td>Запустить онлайн один раз либо использовать прямой запуск <code>java</code> (Вариант В)</td></tr>
+<tr><td><code>mvn</code> не найден</td><td>Maven не в PATH</td><td>Использовать Maven из IntelliJ (см. Шаг 3.2)</td></tr>
+</tbody></table>
+<hr/>
+<h2>10. Справочная конфигурация (окружение автора)</h2>
+<table>
+<thead><tr><th>Параметр</th><th>Значение</th></tr></thead>
+<tbody>
+<tr><td>JDK</td><td><code>C:\Users\User\.jdks\ms-17.0.15</code> (Microsoft OpenJDK 17.0.15)</td></tr>
+<tr><td>Maven</td><td><code>C:\Program Files\JetBrains\IntelliJ IDEA 2025.1\plugins\maven\lib\maven3\bin\mvn.cmd</code></td></tr>
+<tr><td>PostgreSQL</td><td>17, <code>localhost:5432</code>, БД <code>parodiaMisera</code>, пользователь <code>postgres</code></td></tr>
+<tr><td>Эмулятор</td><td><code>http://localhost:7924</code></td></tr>
+<tr><td>Главный класс клиента</td><td><code>com.kiosk.KioskApp</code></td></tr>
+</tbody></table></body></html>

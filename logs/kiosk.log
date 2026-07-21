@@ -248,3 +248,19 @@ INFO: Услуга добавлена в корзину: Пополнение м
 INFO: Создан общий платеж 56cfd9ff-3e4d-4892-beb1-491c1aebb9bd, сумма 5510.0
 июн. 15, 2026 9:49:20 AM com.kiosk.util.AppLogger info
 INFO: Выход пользователя: admin1@test.com
+июн. 17, 2026 8:39:46 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июн. 17, 2026 8:40:14 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin@estetika.kg
+июн. 17, 2026 8:40:26 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июн. 17, 2026 8:42:28 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июн. 17, 2026 8:53:19 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июн. 17, 2026 9:59:37 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июн. 17, 2026 10:00:15 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Классический маникюр
+июн. 17, 2026 10:00:58 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 3190d125-62bf-4789-980e-3d50d7de9dfc, сумма 800.0

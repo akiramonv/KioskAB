@@ -25,6 +25,7 @@
                         <SeparatorMenuItem/>
                         <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
                         <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
+                        <CheckMenuItem fx:id="kioskItem" text="%settings.kioskMode" onAction="#onToggleKiosk"/>
                         <SeparatorMenuItem/>
                         <Menu text="%settings.language">
                             <items>
