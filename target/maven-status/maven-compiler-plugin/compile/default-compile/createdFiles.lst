@@ -1,4 +1,6 @@
 com\kiosk\util\WindowManager.class
 com\kiosk\ui\controllers\ClassicMainController.class
+com\kiosk\api\LocalApiStub.class
+com\kiosk\util\Fx.class
 com\kiosk\util\LocaleManager.class
 com\kiosk\util\DesignManager.class

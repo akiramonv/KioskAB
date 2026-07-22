@@ -7,6 +7,7 @@ C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\module-info.jav
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\model\Provider.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\KioskApp.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\service\ApiService.java
+C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\util\Fx.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\api\ApiClient.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\model\Commission.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\ui\controllers\ClassicMainController.java
@@ -23,6 +24,7 @@ C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\ui\co
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\model\CartItem.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\ui\controllers\MainController.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\util\ThemeManager.java
+C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\api\LocalApiStub.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\util\LocaleManager.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\ui\components\CategoryButton.java
 C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\src\main\java\com\kiosk\ui\controllers\LoginController.java

@@ -264,3 +264,188 @@ INFO: Вход пользователя: admin@estetika.kg
 INFO: Услуга добавлена в корзину: Классический маникюр
 июн. 17, 2026 10:00:58 AM com.kiosk.util.AppLogger info
 INFO: Создан общий платеж 3190d125-62bf-4789-980e-3d50d7de9dfc, сумма 800.0
+июл. 22, 2026 12:16:12 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июл. 22, 2026 12:16:38 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Повторный приём кардиолога
+июл. 22, 2026 12:16:41 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Первичный приём невролога
+июл. 22, 2026 12:16:54 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж be9ec4c5-0d11-4401-bc6d-3b9227c1bd2d, сумма 3000.0
+июл. 22, 2026 12:31:27 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет — абонплата
+июл. 22, 2026 12:31:28 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оптоволокно AKNET
+июл. 22, 2026 12:31:31 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 250722-0042, сумма 1120.0
+июл. 22, 2026 12:33:27 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет — абонплата
+июл. 22, 2026 12:33:29 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оптоволокно AKNET
+июл. 22, 2026 12:33:31 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 250722-0042, сумма 1120.0
+июл. 22, 2026 12:36:32 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июл. 22, 2026 12:36:53 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Повторный приём терапевта
+июл. 22, 2026 12:36:56 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Подбор инсулинотерапии
+июл. 22, 2026 12:37:05 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж b6c2bc5e-f941-4f1e-8d30-278995f7ed0d, сумма 3100.0
+июл. 22, 2026 12:37:18 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin@estetika.kg
+июл. 22, 2026 12:42:21 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет — абонплата
+июл. 22, 2026 12:42:22 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оптоволокно AKNET
+июл. 22, 2026 12:42:25 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 250722-0042, сумма 1120.0
+июл. 22, 2026 12:43:35 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Домашний интернет — абонплата
+июл. 22, 2026 12:43:36 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Оптоволокно AKNET
+июл. 22, 2026 12:43:38 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж 250722-0042, сумма 1120.0
+июл. 22, 2026 1:01:19 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@estetika.kg
+июл. 22, 2026 1:01:58 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Женская стрижка (средние волосы)
+июл. 22, 2026 1:02:07 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin@estetika.kg
+июл. 22, 2026 1:07:22 AM com.kiosk.util.AppLogger warn
+WARNING: ApiAB недоступен (GET /api/providers) — переключаюсь в демо-режим
+java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:574)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:123)
+	at com.kiosk.api.ApiClient.send(ApiClient.java:101)
+	at com.kiosk.api.ApiClient.request(ApiClient.java:70)
+	at com.kiosk.api.ApiClient.get(ApiClient.java:39)
+	at com.kiosk.service.ApiService.getAllProviders(ApiService.java:85)
+	at com.kiosk.ui.controllers.MainController.lambda$loadData$5(MainController.java:295)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.common.Utils.toConnectException(Utils.java:1083)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:198)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.checkRetryConnect(PlainHttpConnection.java:230)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$1(PlainHttpConnection.java:206)
+	at java.base/java.util.concurrent.CompletableFuture.uniHandle(CompletableFuture.java:934)
+	at java.base/java.util.concurrent.CompletableFuture$UniHandle.tryFire(CompletableFuture.java:911)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:510)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1773)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	... 1 more
+Caused by: java.nio.channels.ClosedChannelException
+	at java.base/sun.nio.ch.SocketChannelImpl.ensureOpen(SocketChannelImpl.java:195)
+	at java.base/sun.nio.ch.SocketChannelImpl.beginConnect(SocketChannelImpl.java:760)
+	at java.base/sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:848)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$0(PlainHttpConnection.java:183)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:569)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:185)
+	... 9 more
+
+июл. 22, 2026 1:07:22 AM com.kiosk.util.AppLogger info
+INFO: ApiAB недоступен — включён демо-режим с локальными данными: C:\Users\User\.kioskapp\demo-data.json
+июл. 22, 2026 1:07:27 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Пополнение карты Элкарт
+июл. 22, 2026 1:07:29 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Погашение кредита — Айыл Банк
+июл. 22, 2026 1:07:31 AM com.kiosk.util.AppLogger info
+INFO: Демо-режим: создан локальный платёж D-260722-8122 на сумму 1.12E+3
+июл. 22, 2026 1:07:31 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж D-260722-8122, сумма 1.12E+3
+июл. 22, 2026 1:08:29 AM com.kiosk.util.AppLogger warn
+WARNING: ApiAB недоступен (GET /api/users) — переключаюсь в демо-режим
+java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:574)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:123)
+	at com.kiosk.api.ApiClient.send(ApiClient.java:101)
+	at com.kiosk.api.ApiClient.request(ApiClient.java:70)
+	at com.kiosk.api.ApiClient.get(ApiClient.java:39)
+	at com.kiosk.service.ApiService.getAllUsers(ApiService.java:153)
+	at com.kiosk.service.ApiService.authenticate(ApiService.java:237)
+	at DemoCheck.main(DemoCheck.java:15)
+Caused by: java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.common.Utils.toConnectException(Utils.java:1083)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:198)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.checkRetryConnect(PlainHttpConnection.java:230)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$1(PlainHttpConnection.java:206)
+	at java.base/java.util.concurrent.CompletableFuture.uniHandle(CompletableFuture.java:934)
+	at java.base/java.util.concurrent.CompletableFuture$UniHandle.tryFire(CompletableFuture.java:911)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:510)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1773)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.nio.channels.ClosedChannelException
+	at java.base/sun.nio.ch.SocketChannelImpl.ensureOpen(SocketChannelImpl.java:195)
+	at java.base/sun.nio.ch.SocketChannelImpl.beginConnect(SocketChannelImpl.java:760)
+	at java.base/sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:848)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$0(PlainHttpConnection.java:183)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:569)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:185)
+	... 9 more
+
+июл. 22, 2026 1:08:29 AM com.kiosk.util.AppLogger info
+INFO: Демо-режим: загружены сохранённые данные из C:\Users\User\.kioskapp\demo-data.json
+июл. 22, 2026 1:08:29 AM com.kiosk.util.AppLogger info
+INFO: ApiAB недоступен — включён демо-режим с локальными данными: C:\Users\User\.kioskapp\demo-data.json
+июл. 22, 2026 1:08:29 AM com.kiosk.util.AppLogger info
+INFO: Демо-режим: создан локальный платёж D-260722-0600 на сумму 5E+2
+июл. 22, 2026 8:54:18 AM com.kiosk.util.AppLogger warn
+WARNING: ApiAB недоступен (GET /api/users) — переключаюсь в демо-режим
+java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:574)
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:123)
+	at com.kiosk/com.kiosk.api.ApiClient.send(ApiClient.java:101)
+	at com.kiosk/com.kiosk.api.ApiClient.request(ApiClient.java:70)
+	at com.kiosk/com.kiosk.api.ApiClient.get(ApiClient.java:39)
+	at com.kiosk/com.kiosk.service.ApiService.getAllUsers(ApiService.java:153)
+	at com.kiosk/com.kiosk.service.ApiService.authenticate(ApiService.java:237)
+	at com.kiosk/com.kiosk.ui.controllers.LoginController.lambda$onLogin$4(LoginController.java:99)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.net.ConnectException
+	at java.net.http/jdk.internal.net.http.common.Utils.toConnectException(Utils.java:1083)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:198)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.checkRetryConnect(PlainHttpConnection.java:230)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$1(PlainHttpConnection.java:206)
+	at java.base/java.util.concurrent.CompletableFuture.uniHandle(CompletableFuture.java:934)
+	at java.base/java.util.concurrent.CompletableFuture$UniHandle.tryFire(CompletableFuture.java:911)
+	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:510)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1773)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	... 1 more
+Caused by: java.nio.channels.ClosedChannelException
+	at java.base/sun.nio.ch.SocketChannelImpl.ensureOpen(SocketChannelImpl.java:195)
+	at java.base/sun.nio.ch.SocketChannelImpl.beginConnect(SocketChannelImpl.java:760)
+	at java.base/sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:848)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.lambda$connectAsync$0(PlainHttpConnection.java:183)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:569)
+	at java.net.http/jdk.internal.net.http.PlainHttpConnection.connectAsync(PlainHttpConnection.java:185)
+	... 9 more
+
+июл. 22, 2026 8:54:18 AM com.kiosk.util.AppLogger info
+INFO: ApiAB недоступен — включён демо-режим с локальными данными: C:\Users\User\.kioskapp\demo-data.json
+июл. 22, 2026 8:54:18 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@kiosk.kg
+июл. 22, 2026 8:54:30 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Штраф ПДД — Безопасный город
+июл. 22, 2026 8:54:36 AM com.kiosk.util.AppLogger info
+INFO: Услуга добавлена в корзину: Госпошлина — паспорт
+июл. 22, 2026 8:54:49 AM com.kiosk.util.AppLogger info
+INFO: Демо-режим: создан локальный платёж D-260722-3170 на сумму 2.2E+3
+июл. 22, 2026 8:54:49 AM com.kiosk.util.AppLogger info
+INFO: Создан общий платеж D-260722-3170, сумма 2.2E+3
+июл. 22, 2026 8:54:56 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: admin@kiosk.kg
+июл. 22, 2026 8:55:07 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: kt@kiosk.kg
+июл. 22, 2026 8:55:37 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: kt@kiosk.kg
+июл. 22, 2026 8:55:42 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: user@kiosk.kg
+июл. 22, 2026 8:55:57 AM com.kiosk.util.AppLogger info
+INFO: Выход пользователя: user@kiosk.kg
+июл. 22, 2026 8:56:04 AM com.kiosk.util.AppLogger info
+INFO: Вход пользователя: admin@kiosk.kg

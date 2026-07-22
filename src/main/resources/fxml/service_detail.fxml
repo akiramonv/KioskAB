@@ -7,46 +7,69 @@
       fx:controller="com.kiosk.ui.controllers.ServiceDetailController"
       styleClass="detail-dialog"
       spacing="16"
-      prefWidth="480">
+      prefWidth="620">
 
-    <padding><Insets top="32" right="40" bottom="32" left="40"/></padding>
+    <padding><Insets top="18" right="44" bottom="36" left="44"/></padding>
 
-    <Label fx:id="serviceNameLabel" text="" styleClass="detail-title" wrapText="true"/>
+    <HBox alignment="CENTER">
+        <Region styleClass="sheet-handle" minWidth="80" maxWidth="80" minHeight="8" maxHeight="8"/>
+    </HBox>
 
-    <Separator/>
+    <HBox spacing="14" alignment="CENTER_LEFT">
+        <Label fx:id="serviceNameLabel" text="" styleClass="detail-title" wrapText="true"
+               maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="favoriteBtn" text="☆" styleClass="fav-btn" onAction="#onFavorite"/>
+    </HBox>
 
-    <GridPane hgap="12" vgap="10" styleClass="detail-grid">
-        <Label text="%detail.category" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="categoryLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <GridPane hgap="14" vgap="14" styleClass="detail-grid">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
 
-        <Label text="%detail.provider" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Label fx:id="providerLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Label text="%detail.account" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label fx:id="accountLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-        <Label text="%detail.commission" styleClass="detail-key" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Label fx:id="commissionLabel" text="" styleClass="detail-val" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <VBox styleClass="detail-cell" spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label text="%detail.category" styleClass="detail-key"/>
+            <Label fx:id="categoryLabel" text="" styleClass="detail-val" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="detail-cell" spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label text="%detail.provider" styleClass="detail-key"/>
+            <Label fx:id="providerLabel" text="" styleClass="detail-val" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="detail-cell" spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <Label text="%detail.account" styleClass="detail-key"/>
+            <Label fx:id="accountLabel" text="" styleClass="detail-val" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="detail-cell" spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label text="%detail.commission" styleClass="detail-key"/>
+            <Label fx:id="commissionLabel" text="" styleClass="detail-val" wrapText="true"/>
+        </VBox>
     </GridPane>
-
-    <Separator/>
 
     <VBox spacing="8">
         <Label text="%detail.amount" styleClass="field-label"/>
+        <HBox spacing="10">
+            <Button text="100" styleClass="amount-chip" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAmountChip"/>
+            <Button text="200" styleClass="amount-chip" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAmountChip"/>
+            <Button text="500" styleClass="amount-chip" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAmountChip"/>
+            <Button text="1000" styleClass="amount-chip" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAmountChip"/>
+        </HBox>
         <TextField fx:id="amountField" promptText="%detail.amountPrompt" styleClass="dialog-field"/>
-        <Label text="%detail.quantity" styleClass="field-label"/>
-        <TextField fx:id="quantityField" promptText="%detail.quantityPrompt" text="1" styleClass="dialog-field"/>
-        <Label fx:id="detailErrorLabel" text="" styleClass="error-label" visible="false" wrapText="true"/>
     </VBox>
+
+    <HBox spacing="14" alignment="CENTER_LEFT">
+        <Label text="%detail.quantity" styleClass="field-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="−" styleClass="qty-btn" onAction="#onQtyMinus"/>
+        <TextField fx:id="quantityField" text="1" styleClass="dialog-field, qty-field" prefWidth="86"/>
+        <Button text="+" styleClass="qty-btn" onAction="#onQtyPlus"/>
+    </HBox>
+
+    <Label fx:id="detailErrorLabel" text="" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
 
     <Label text="%detail.hint" styleClass="detail-hint" wrapText="true"/>
 
-    <HBox spacing="12" alignment="CENTER_RIGHT">
-        <Button fx:id="favoriteBtn" text="%detail.favAdd" styleClass="btn-outline"
-                onAction="#onFavorite"/>
-        <Button text="%detail.add" styleClass="btn-primary"
-                onAction="#onAddToCart"/>
-        <Button text="%detail.close" styleClass="btn-outline"
-                onAction="#onClose"/>
-    </HBox>
+    <Button text="%detail.add" styleClass="btn-primary" maxWidth="Infinity"
+            onAction="#onAddToCart"/>
+    <Button text="%detail.close" styleClass="btn-outline" maxWidth="Infinity"
+            onAction="#onClose"/>
 </VBox>

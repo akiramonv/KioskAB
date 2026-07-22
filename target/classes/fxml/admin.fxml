@@ -9,30 +9,24 @@
             prefWidth="900" prefHeight="650">
 
     <top>
-        <HBox styleClass="admin-header" alignment="CENTER_LEFT" spacing="16">
-            <Label text="%admin.title" styleClass="admin-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="%admin.close" styleClass="btn-danger" onAction="#onClose"/>
-        </HBox>
-    </top>
-
-    <left>
-        <VBox styleClass="admin-sidebar" spacing="4">
-            <padding><Insets top="16" right="0" bottom="16" left="0"/></padding>
-            <Button text="%admin.nav.users" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showUsers"/>
-            <Button text="%admin.nav.services" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showServices"/>
-            <Button text="%admin.nav.categories" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showCategories"/>
-            <Button text="%admin.nav.providers" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showProviders"/>
-            <Button text="%admin.nav.specializations" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showSpecializations"/>
-            <Button text="%admin.nav.payments" styleClass="admin-nav-btn"
-                    maxWidth="Infinity" onAction="#showPayments"/>
+        <VBox>
+            <HBox styleClass="admin-header" alignment="CENTER_LEFT" spacing="16">
+                <Label text="%admin.title" styleClass="admin-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="%admin.close" styleClass="btn-danger" onAction="#onClose"/>
+            </HBox>
+            <!-- Вкладки-пилюли, как в макете «Киоск — новый дизайн» -->
+            <FlowPane styleClass="admin-tabs" hgap="8" vgap="8">
+                <padding><Insets top="12" right="24" bottom="12" left="24"/></padding>
+                <Button text="%admin.nav.users" styleClass="admin-nav-btn" onAction="#showUsers"/>
+                <Button text="%admin.nav.services" styleClass="admin-nav-btn" onAction="#showServices"/>
+                <Button text="%admin.nav.categories" styleClass="admin-nav-btn" onAction="#showCategories"/>
+                <Button text="%admin.nav.providers" styleClass="admin-nav-btn" onAction="#showProviders"/>
+                <Button text="%admin.nav.specializations" styleClass="admin-nav-btn" onAction="#showSpecializations"/>
+                <Button text="%admin.nav.payments" styleClass="admin-nav-btn" onAction="#showPayments"/>
+            </FlowPane>
         </VBox>
-    </left>
+    </top>
 
     <center>
         <VBox styleClass="admin-content" spacing="12">

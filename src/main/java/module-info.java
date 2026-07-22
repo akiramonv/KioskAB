@@ -5,6 +5,8 @@ module com.kiosk {
     requires com.fasterxml.jackson.databind;
     requires java.net.http;
     requires java.logging;
+    // Нужен демо-режиму для локальной генерации QR-кода (BufferedImage/ImageIO).
+    requires java.desktop;
 
     opens com.kiosk to javafx.fxml;
     opens com.kiosk.ui.controllers to javafx.fxml;

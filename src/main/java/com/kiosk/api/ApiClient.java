@@ -2,7 +2,9 @@ package com.kiosk.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kiosk.util.AppLogger;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -13,6 +15,10 @@ import java.util.Map;
 
 /**
  * Низкоуровневый HTTP-клиент для взаимодействия с API Emulator.
+ * <p>
+ * Если эмулятор недоступен (нет соединения), клиент один раз переключается
+ * в демо-режим ({@link LocalApiStub}) и дальше работает с локальными данными,
+ * которые сохраняются между запусками. Форма ответов при этом не меняется.
  */
 public class ApiClient {
 
@@ -22,54 +28,56 @@ public class ApiClient {
             .build();
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    /** true, когда работаем на локальных демо-данных вместо ApiAB. */
+    public static boolean isDemoMode() {
+        return LocalApiStub.isActive();
+    }
+
     // ---- REST endpoints ----
 
     public static JsonNode get(String path) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + path))
-                .header("Content-Type", "application/json")
-                .GET()
-                .build();
-        return send(request);
+        return request("GET", path, null);
     }
 
     public static JsonNode post(String path, Object body) throws Exception {
-        String json = mapper.writeValueAsString(body);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        return send(request);
+        return request("POST", path, body);
     }
 
     public static JsonNode put(String path, Object body) throws Exception {
-        String json = mapper.writeValueAsString(body);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + path))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        return send(request);
+        return request("PUT", path, body);
     }
 
     public static JsonNode patch(String path, Object body) throws Exception {
-        String json = mapper.writeValueAsString(body);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + path))
-                .header("Content-Type", "application/json")
-                .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        return send(request);
+        return request("PATCH", path, body);
     }
 
     public static JsonNode delete(String path) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
+        return request("DELETE", path, null);
+    }
+
+    private static JsonNode request(String method, String path, Object body) throws Exception {
+        if (LocalApiStub.isActive()) {
+            return LocalApiStub.handle(method, path, body);
+        }
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + path))
-                .header("Content-Type", "application/json")
-                .DELETE()
-                .build();
-        return send(request);
+                .header("Content-Type", "application/json");
+        HttpRequest.BodyPublisher publisher = body == null
+                ? HttpRequest.BodyPublishers.noBody()
+                : HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body));
+        HttpRequest request = builder.method(method, publisher).build();
+        try {
+            return send(request);
+        } catch (IOException | InterruptedException e) {
+            // Сервер не ответил вовсе (нет соединения) — включаем демо-режим.
+            // HTTP-ошибки (сервер жив, но вернул 4xx/5xx) сюда не попадают.
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            AppLogger.warn("ApiAB недоступен (" + method + " " + path + ") — переключаюсь в демо-режим", (Exception) e);
+            LocalApiStub.activate();
+            return LocalApiStub.handle(method, path, body);
+        }
     }
 
     /**

@@ -173,8 +173,14 @@ public class ClassicMainController {
                     renderServices(services);
                     renderFeatured(services);
                     setStatus(LocaleManager.t("status.loaded", services.size(), categories.size()));
-                    connectionLabel.setText(LocaleManager.t("status.connected"));
-                    connectionLabel.getStyleClass().setAll("status-connected");
+                    if (com.kiosk.api.ApiClient.isDemoMode()) {
+                        // Эмулятор недоступен — работаем на локальных демо-данных.
+                        connectionLabel.setText(LocaleManager.t("status.demo"));
+                        connectionLabel.getStyleClass().setAll("status-demo");
+                    } else {
+                        connectionLabel.setText(LocaleManager.t("status.connected"));
+                        connectionLabel.getStyleClass().setAll("status-connected");
+                    }
                 });
             } catch (Exception e) {
                 AppLogger.error("Ошибка загрузки данных с ApiAB", e);

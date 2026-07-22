@@ -23,12 +23,18 @@ public class ServiceDetailController {
     @FXML private Button favoriteBtn;
 
     private Stage stage;
+    private Runnable onClose;
     private ProviderService service;
     private CartAddHandler onAddToCart;
     private static final Set<String> favorites = new HashSet<>();
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    /** В новом дизайне шторка живёт внутри сцены — вместо Stage передаётся колбэк закрытия. */
+    public void setOnClose(Runnable onClose) {
+        this.onClose = onClose;
     }
 
     public void setService(ProviderService service, List<Provider> providers, List<CategoryService> categories) {
@@ -81,11 +87,12 @@ public class ServiceDetailController {
     }
 
     private void updateFavoriteBtn(String serviceId) {
+        // Кнопка-звёздочка, как в макете: контур — не в избранном, заливка — в избранном.
         if (favorites.contains(serviceId)) {
-            favoriteBtn.setText(LocaleManager.t("detail.favRemove"));
+            favoriteBtn.setText("★");
             favoriteBtn.getStyleClass().add("btn-favorite-active");
         } else {
-            favoriteBtn.setText(LocaleManager.t("detail.favAdd"));
+            favoriteBtn.setText("☆");
             favoriteBtn.getStyleClass().removeAll("btn-favorite-active");
         }
     }
@@ -96,8 +103,43 @@ public class ServiceDetailController {
     }
 
     @FXML
+    private void onAmountChip(javafx.event.ActionEvent e) {
+        // Быстрые суммы недоступны, если у услуги фиксированная цена.
+        if (!amountField.isEditable()) {
+            return;
+        }
+        amountField.setText(((Button) e.getSource()).getText());
+        hideDetailError();
+    }
+
+    @FXML
+    private void onQtyMinus() {
+        changeQuantity(-1);
+    }
+
+    @FXML
+    private void onQtyPlus() {
+        changeQuantity(1);
+    }
+
+    private void changeQuantity(int delta) {
+        int current;
+        try {
+            current = Integer.parseInt(quantityField.getText().trim());
+        } catch (NumberFormatException e) {
+            current = 1;
+        }
+        quantityField.setText(String.valueOf(Math.max(1, current + delta)));
+        hideDetailError();
+    }
+
+    @FXML
     private void onClose() {
-        if (stage != null) stage.close();
+        if (stage != null) {
+            stage.close();
+        } else if (onClose != null) {
+            onClose.run();
+        }
     }
 
     @FXML
@@ -118,7 +160,7 @@ public class ServiceDetailController {
             if (onAddToCart != null && service != null) {
                 onAddToCart.add(service, amount, quantity);
             }
-            if (stage != null) stage.close();
+            onClose();
         } catch (NumberFormatException e) {
             showDetailError(LocaleManager.t("detail.err.format"));
         }
@@ -127,6 +169,12 @@ public class ServiceDetailController {
     private void showDetailError(String text) {
         detailErrorLabel.setText(text);
         detailErrorLabel.setVisible(true);
+        detailErrorLabel.setManaged(true);
+    }
+
+    private void hideDetailError() {
+        detailErrorLabel.setVisible(false);
+        detailErrorLabel.setManaged(false);
     }
 
     public static Set<String> getFavorites() {

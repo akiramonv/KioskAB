@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.kiosk.model.CartItemTest" time="0.049" tests="10" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.kiosk.model.CartItemTest" time="0.055" tests="10" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,9 +15,8 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="RU"/>
     <property name="sun.boot.library.path" value="C:\Users\User\.jdks\ms-17.0.15\bin"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\User\AppData\Local\Temp\surefire530163616782530348 2026-06-09T12-04-28_733-jvmRun1 surefire-20260609120429212_1tmp surefire_0-20260609120429212_2tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\User\AppData\Local\Temp\surefire1193735324977304224 2026-07-22T01-06-54_017-jvmRun1 surefire-20260722010654512_1tmp surefire_0-20260722010654512_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="test" value="PaymentTest,CartItemTest,ProviderServiceTest,CommissionTest,RoleTest,SessionManagerTest"/>
     <property name="surefire.test.class.path" value="C:\Users\User\OneDrive\Desktop\kiosk-app\kiosk-app\target\test-classes;C:\Users\User\.m2\repository\org\openjfx\javafx-controls\21.0.2\javafx-controls-21.0.2.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-graphics\21.0.2\javafx-graphics-21.0.2.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-base\21.0.2\javafx-base-21.0.2.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-fxml\21.0.2\javafx-fxml-21.0.2.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-web\21.0.2\javafx-web-21.0.2.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-media\21.0.2\javafx-media-21.0.2.jar;C:\Users\User\.m2\repository\org\projectlombok\lombok\1.18.30\lombok-1.18.30.jar;C:\Users\User\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\User\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\User\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\User\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\User\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\User\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\User\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\User\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\User"/>
@@ -52,7 +51,7 @@
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="native.encoding" value="Cp1251"/>
-    <property name="java.library.path" value="C:\Users\User\.jdks\ms-17.0.15\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\User\.jdks\ms-17.0.15\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\MongoDB\mongosh-2.5.2-win32-x64\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;D:\Program Files\nodejs\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Docker\Docker\resources\bin;C:\Users\User\AppData\Local\Programs\Python\Launcher\;C:\Users\User\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA 2025.1\bin;C:\Users\User\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\User\.dotnet\tools;C:\Users\User\AppData\Roaming\npm;C:\Users\User\AppData\Local\Python\bin;C:\Users\User\.jdks\openjdk-ea-25+36-3489-1\bin;C:\Users\User\AppData\Local\Programs\Python\Python313;C:\Program Files\Git\mingw64\bin;."/>
+    <property name="java.library.path" value="C:\Users\User\.jdks\ms-17.0.15\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\MongoDB\mongosh-2.5.2-win32-x64\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;D:\Program Files\nodejs\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Docker\Docker\resources\bin;C:\Users\User\AppData\Local\Programs\Python\Launcher\;C:\Users\User\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA 2025.1\bin;C:\Users\User\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\User\.dotnet\tools;C:\Users\User\AppData\Roaming\npm;C:\Users\User\AppData\Local\Python\bin;C:\Users\User\.jdks\openjdk-ea-25+36-3489-1\bin;C:\Users\User\AppData\Local\Programs\Python\Python313;C:\Program Files\Git\mingw64\bin;."/>
     <property name="java.vm.info" value="mixed mode"/>
     <property name="java.vendor" value="Microsoft"/>
     <property name="java.vm.version" value="17.0.15+6-LTS"/>
@@ -60,7 +59,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="getTotal_fractional_rounding" classname="com.kiosk.model.CartItemTest" time="0.019"/>
+  <testcase name="getTotal_fractional_rounding" classname="com.kiosk.model.CartItemTest" time="0.02"/>
   <testcase name="getTotal_quantity1" classname="com.kiosk.model.CartItemTest" time="0.0"/>
   <testcase name="quantity_one_stays" classname="com.kiosk.model.CartItemTest" time="0.001"/>
   <testcase name="getTotal_largeQuantity" classname="com.kiosk.model.CartItemTest" time="0.001"/>
@@ -68,6 +67,6 @@
   <testcase name="quantity_negative_clampedToOne" classname="com.kiosk.model.CartItemTest" time="0.001"/>
   <testcase name="amount_scaled_halfDown" classname="com.kiosk.model.CartItemTest" time="0.001"/>
   <testcase name="getService_returnsCorrectService" classname="com.kiosk.model.CartItemTest" time="0.001"/>
-  <testcase name="quantity_zero_clampedToOne" classname="com.kiosk.model.CartItemTest" time="0.0"/>
-  <testcase name="getTotal_normalValues" classname="com.kiosk.model.CartItemTest" time="0.0"/>
+  <testcase name="quantity_zero_clampedToOne" classname="com.kiosk.model.CartItemTest" time="0.001"/>
+  <testcase name="getTotal_normalValues" classname="com.kiosk.model.CartItemTest" time="0.001"/>
 </testsuite>

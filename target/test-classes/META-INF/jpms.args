@@ -1,0 +1,4 @@
+--patch-module
+com.kiosk=_
+--add-reads
+com.kiosk=ALL-UNNAMED

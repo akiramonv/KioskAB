@@ -5,7 +5,8 @@ import javafx.scene.Scene;
 
 public final class ThemeManager {
 
-    private static boolean darkMode = false;
+    // По умолчанию тёмная тема — канонический вид макета «Киоск — новый дизайн».
+    private static boolean darkMode = true;
 
     private ThemeManager() {}
 

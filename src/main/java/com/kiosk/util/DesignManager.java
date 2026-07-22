@@ -14,15 +14,15 @@ import java.util.Objects;
  * Переключение реализовано подменой подключённой таблицы стилей у сцены или
  * диалоговой панели, поэтому интерфейс перерисовывается без перезагрузки FXML.
  * <p>
- * Тёмная тема нового дизайна подключается отдельным файлом без префикса
- * {@code .dark} — так стили достают и попапы (контекст-меню, выпадающие списки),
- * которые не наследуют класс корня сцены.
+ * Новый дизайн по умолчанию тёмный (канон макета); светлая тема подключается
+ * отдельным файлом без префикса {@code .dark} — так стили достают и попапы
+ * (контекст-меню, выпадающие списки), которые не наследуют класс корня сцены.
  */
 public final class DesignManager {
 
     private static final String OLD_CSS = "/css/styles.css";
     private static final String NEW_CSS = "/css/styles-v2.css";
-    private static final String NEW_DARK_CSS = "/css/styles-v2-dark.css";
+    private static final String NEW_LIGHT_CSS = "/css/styles-v2-light.css";
 
     // По умолчанию показываем новый дизайн, старый доступен через переключатель.
     private static boolean newDesign = true;
@@ -45,9 +45,11 @@ public final class DesignManager {
     public static List<String> stylesheets() {
         List<String> sheets = new ArrayList<>();
         if (newDesign) {
+            // База нового дизайна — тёмная, как макет «Киоск — новый дизайн».
+            // Светлая тема накладывается отдельным слоем, когда тёмная выключена.
             sheets.add(resource(NEW_CSS));
-            if (ThemeManager.isDarkMode()) {
-                sheets.add(resource(NEW_DARK_CSS));
+            if (!ThemeManager.isDarkMode()) {
+                sheets.add(resource(NEW_LIGHT_CSS));
             }
         } else {
             sheets.add(resource(OLD_CSS));
@@ -82,6 +84,7 @@ public final class DesignManager {
     private static boolean isManagedStylesheet(String url) {
         return url.endsWith("styles.css")
                 || url.endsWith("styles-v2.css")
-                || url.endsWith("styles-v2-dark.css");
+                || url.endsWith("styles-v2-dark.css")
+                || url.endsWith("styles-v2-light.css");
     }
 }

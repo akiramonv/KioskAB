@@ -1,125 +1,230 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.kiosk.ui.controllers.MainController"
-            stylesheets="@../css/styles.css"
-            fx:id="rootPane">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.kiosk.ui.controllers.MainController"
+           fx:id="rootStack">
 
-    <!-- ШАПКА: бренд + часы + настройки -->
-    <top>
-        <VBox styleClass="header-bar">
-            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-inner">
-                <Label text="✓" styleClass="brand-logo"/>
-                <VBox spacing="1" alignment="CENTER_LEFT">
-                    <Label text="KioskApp" styleClass="brand-title"/>
-                    <Label text="%brand.subtitle" styleClass="brand-subtitle"/>
-                </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <VBox spacing="0" alignment="CENTER_RIGHT">
-                    <Label fx:id="clockLabel" text="00:00" styleClass="clock-time"/>
-                    <Label fx:id="dateLabel" text="" styleClass="clock-date"/>
-                </VBox>
-                <MenuButton fx:id="settingsMenu" text="%settings.button" styleClass="settings-menu">
-                    <items>
-                        <MenuItem fx:id="loginItem" text="%settings.login" onAction="#onLoginClicked"/>
-                        <MenuItem fx:id="logoutItem" text="%settings.logout" onAction="#onLogoutClicked"/>
-                        <MenuItem fx:id="adminItem" text="%settings.admin" onAction="#onAdminClicked"/>
-                        <SeparatorMenuItem/>
-                        <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
-                        <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
-                        <CheckMenuItem fx:id="kioskItem" text="%settings.kioskMode" onAction="#onToggleKiosk"/>
-                        <SeparatorMenuItem/>
-                        <Menu text="%settings.language">
-                            <items>
-                                <RadioMenuItem fx:id="langRuItem" text="%lang.ru" onAction="#onLangRu"/>
-                                <RadioMenuItem fx:id="langEnItem" text="%lang.en" onAction="#onLangEn"/>
-                                <RadioMenuItem fx:id="langKyItem" text="%lang.ky" onAction="#onLangKy"/>
-                            </items>
-                        </Menu>
-                    </items>
-                </MenuButton>
-            </HBox>
-        </VBox>
-    </top>
+    <BorderPane fx:id="rootPane">
 
-    <!-- ЦЕНТР: домашний экран ИЛИ список услуг -->
-    <center>
-        <StackPane>
-            <!-- ДОМАШНИЙ ЭКРАН -->
-            <ScrollPane fx:id="homeView" fitToWidth="true" styleClass="services-scroll">
-                <VBox styleClass="home-view" alignment="TOP_CENTER" spacing="16">
-                    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
-                    <Label text="%home.welcome" styleClass="home-welcome"/>
-                    <Label text="%home.subtitle" styleClass="home-subtitle"/>
-                    <FlowPane fx:id="categoryTiles" styleClass="tile-grid" hgap="18" vgap="18"
-                              alignment="CENTER" prefWrapLength="760"/>
-                    <StackPane maxWidth="640">
-                        <TextField fx:id="homeSearchField" promptText="%home.search" styleClass="search-field-lg"/>
-                    </StackPane>
-                    <HBox fx:id="featureStrip" styleClass="feature-strip" alignment="CENTER" spacing="18">
-                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
-                            <Label text="🖱" styleClass="feature-icon"/>
-                            <Label text="%feat.simple.title" styleClass="feature-title"/>
-                            <Label text="%feat.simple.desc" styleClass="feature-desc" wrapText="true"/>
-                        </VBox>
-                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
-                            <Label text="⚡" styleClass="feature-icon"/>
-                            <Label text="%feat.fast.title" styleClass="feature-title"/>
-                            <Label text="%feat.fast.desc" styleClass="feature-desc" wrapText="true"/>
-                        </VBox>
-                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
-                            <Label text="🛡" styleClass="feature-icon"/>
-                            <Label text="%feat.secure.title" styleClass="feature-title"/>
-                            <Label text="%feat.secure.desc" styleClass="feature-desc" wrapText="true"/>
-                        </VBox>
-                        <VBox styleClass="feature-item" spacing="2" alignment="CENTER_LEFT">
-                            <Label text="♿" styleClass="feature-icon"/>
-                            <Label text="%feat.access.title" styleClass="feature-title"/>
-                            <Label text="%feat.access.desc" styleClass="feature-desc" wrapText="true"/>
-                        </VBox>
-                    </HBox>
-                </VBox>
-            </ScrollPane>
-
-            <!-- ЭКРАН УСЛУГ -->
-            <VBox fx:id="servicesView" styleClass="services-view" visible="false" managed="false">
-                <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="12">
-                    <Button text="←" styleClass="icon-btn" onAction="#onBackHome"/>
-                    <Label fx:id="servicesTitle" text="" styleClass="breadcrumb"/>
+        <!-- ШАПКА: бренд + часы + настройки -->
+        <top>
+            <VBox styleClass="header-bar">
+                <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-inner">
+                    <Label text="✓" styleClass="brand-logo"/>
+                    <VBox spacing="1" alignment="CENTER_LEFT">
+                        <Label text="KioskApp" styleClass="brand-title"/>
+                        <Label text="%brand.subtitle" styleClass="brand-subtitle"/>
+                    </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="servicesSearchField" promptText="%home.search"
-                               styleClass="search-field" prefWidth="240"/>
-                    <Button text="⌂" styleClass="icon-btn" onAction="#onBackHome"/>
+                    <VBox spacing="0" alignment="CENTER_RIGHT">
+                        <Label fx:id="clockLabel" text="00:00" styleClass="clock-time"/>
+                        <Label fx:id="dateLabel" text="" styleClass="clock-date"/>
+                    </VBox>
+                    <MenuButton fx:id="settingsMenu" text="⋯" styleClass="settings-menu">
+                        <items>
+                            <MenuItem fx:id="loginItem" text="%settings.login" onAction="#onLoginClicked"/>
+                            <MenuItem fx:id="logoutItem" text="%settings.logout" onAction="#onLogoutClicked"/>
+                            <MenuItem fx:id="adminItem" text="%settings.admin" onAction="#onAdminClicked"/>
+                            <SeparatorMenuItem/>
+                            <CheckMenuItem fx:id="darkItem" text="%settings.darkTheme" onAction="#onThemeToggle"/>
+                            <CheckMenuItem fx:id="designItem" text="%settings.newDesign" onAction="#onToggleDesign"/>
+                            <CheckMenuItem fx:id="kioskItem" text="%settings.kioskMode" onAction="#onToggleKiosk"/>
+                            <SeparatorMenuItem/>
+                            <Menu text="%settings.language">
+                                <items>
+                                    <RadioMenuItem fx:id="langRuItem" text="%lang.ru" onAction="#onLangRu"/>
+                                    <RadioMenuItem fx:id="langEnItem" text="%lang.en" onAction="#onLangEn"/>
+                                    <RadioMenuItem fx:id="langKyItem" text="%lang.ky" onAction="#onLangKy"/>
+                                </items>
+                            </Menu>
+                        </items>
+                    </MenuButton>
                 </HBox>
-                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
-                    <VBox spacing="8">
-                        <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
-                        <FlowPane fx:id="servicesPane" hgap="14" vgap="14" styleClass="services-flow"/>
-                        <Label fx:id="emptyLabel" text="%services.empty" styleClass="empty-label" visible="false"/>
+            </VBox>
+        </top>
+
+        <!-- ЦЕНТР: экраны -->
+        <center>
+            <StackPane>
+
+                <!-- ДОМАШНИЙ ЭКРАН -->
+                <ScrollPane fx:id="homeView" fitToWidth="true" styleClass="services-scroll">
+                    <VBox styleClass="home-view" alignment="TOP_CENTER">
+                        <padding><Insets top="34" right="40" bottom="30" left="40"/></padding>
+                        <VBox spacing="16" maxWidth="920" alignment="TOP_LEFT">
+                            <Label text="%home.welcome" styleClass="home-welcome"/>
+                            <Label text="%home.subtitle" styleClass="home-subtitle"/>
+                            <TextField fx:id="homeSearchField" promptText="%home.search" styleClass="search-field-lg"
+                                       maxWidth="Infinity"/>
+                            <VBox fx:id="categoryList" styleClass="cat-list" spacing="10"/>
+                            <HBox fx:id="featureStrip" styleClass="feature-strip" alignment="CENTER" spacing="14">
+                                <VBox styleClass="feature-item" spacing="4" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+                                    <Label text="🖱" styleClass="feature-icon"/>
+                                    <Label text="%feat.simple.title" styleClass="feature-title"/>
+                                    <Label text="%feat.simple.desc" styleClass="feature-desc" wrapText="true"/>
+                                </VBox>
+                                <VBox styleClass="feature-item" spacing="4" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+                                    <Label text="⚡" styleClass="feature-icon"/>
+                                    <Label text="%feat.fast.title" styleClass="feature-title"/>
+                                    <Label text="%feat.fast.desc" styleClass="feature-desc" wrapText="true"/>
+                                </VBox>
+                                <VBox styleClass="feature-item" spacing="4" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+                                    <Label text="🛡" styleClass="feature-icon"/>
+                                    <Label text="%feat.secure.title" styleClass="feature-title"/>
+                                    <Label text="%feat.secure.desc" styleClass="feature-desc" wrapText="true"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
                     </VBox>
                 </ScrollPane>
-            </VBox>
-        </StackPane>
-    </center>
 
-    <!-- НИЗ: панель корзины + статус -->
-    <bottom>
-        <VBox>
-            <HBox fx:id="cartBar" styleClass="cart-bar" alignment="CENTER_LEFT" spacing="14"
-                  visible="false" managed="false">
-                <Button fx:id="cartSummaryBtn" text="" styleClass="cart-bar-summary" onAction="#onShowCart"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button text="%cart.clear" styleClass="btn-outline" onAction="#onClearCart"/>
-                <Button fx:id="payCartBtn" text="%cart.checkout" styleClass="btn-primary" onAction="#onCheckout"/>
-            </HBox>
-            <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
-                <Label fx:id="statusLabel" text="%status.ready" styleClass="status-text"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="connectionLabel" text="" styleClass="status-connected"/>
-            </HBox>
-        </VBox>
-    </bottom>
-</BorderPane>
+                <!-- ЭКРАН УСЛУГ -->
+                <VBox fx:id="servicesView" styleClass="services-view" visible="false" managed="false">
+                    <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="16">
+                        <Button text="←" styleClass="icon-btn" onAction="#onBackHome"/>
+                        <VBox spacing="0">
+                            <Label text="%home.categories" styleClass="toolbar-overline"/>
+                            <Label fx:id="servicesTitle" text="" styleClass="breadcrumb"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="servicesSearchField" promptText="%home.search"
+                                   styleClass="search-field" prefWidth="260"/>
+                        <Button text="⌂" styleClass="icon-btn" onAction="#onBackHome"/>
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
+                        <VBox spacing="8">
+                            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+                            <FlowPane fx:id="servicesPane" hgap="14" vgap="14" styleClass="services-flow"/>
+                            <Label fx:id="emptyLabel" text="%services.empty" styleClass="empty-label" visible="false"/>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+                <!-- КОРЗИНА -->
+                <VBox fx:id="cartView" styleClass="services-view" visible="false" managed="false">
+                    <HBox styleClass="content-toolbar" alignment="CENTER_LEFT" spacing="16">
+                        <Button text="←" styleClass="icon-btn" onAction="#onBackFromCart"/>
+                        <Label text="%cart.title" styleClass="screen-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="%cart.clear" styleClass="btn-danger" onAction="#onClearCart"/>
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
+                        <VBox spacing="12">
+                            <padding><Insets top="18" right="26" bottom="18" left="26"/></padding>
+                            <VBox fx:id="cartItemsBox" spacing="12"/>
+                            <Label fx:id="cartEmptyLabel" text="%cart.empty" styleClass="empty-label"
+                                   wrapText="true" visible="false" managed="false"/>
+                        </VBox>
+                    </ScrollPane>
+                    <VBox spacing="14" styleClass="cart-footer">
+                        <padding><Insets top="14" right="26" bottom="22" left="26"/></padding>
+                        <HBox styleClass="cart-total-panel" alignment="CENTER_LEFT">
+                            <Label text="%cart.total" styleClass="cart-total-label"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="cartTotalLabel" text="0.00" styleClass="cart-total-value"/>
+                        </HBox>
+                        <Button fx:id="checkoutBtn" text="%cart.checkout" styleClass="btn-white"
+                                maxWidth="Infinity" onAction="#onCheckout"/>
+                    </VBox>
+                </VBox>
+
+                <!-- ПОДТВЕРЖДЕНИЕ (ШАГ 1) -->
+                <VBox fx:id="checkoutView" styleClass="services-view" visible="false" managed="false">
+                    <VBox spacing="8" styleClass="screen-header">
+                        <padding><Insets top="24" right="26" bottom="8" left="26"/></padding>
+                        <Label text="%pay.step1" styleClass="step-pill"/>
+                        <Label text="%pay.confirmTitle" styleClass="screen-title-lg"/>
+                        <Label text="%pay.checkSubtitle" styleClass="home-subtitle"/>
+                    </VBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="services-scroll">
+                        <VBox spacing="14">
+                            <padding><Insets top="12" right="26" bottom="12" left="26"/></padding>
+                            <VBox spacing="12" styleClass="form-card">
+                                <Label text="%pay.payerData" styleClass="payment-section-header"/>
+                                <VBox spacing="6">
+                                    <Label text="%pay.fio" styleClass="field-label"/>
+                                    <TextField fx:id="payerFioField" promptText="Асанов Бакыт" styleClass="dialog-field"/>
+                                </VBox>
+                                <VBox spacing="6">
+                                    <Label text="%pay.inn" styleClass="field-label"/>
+                                    <TextField fx:id="payerInnField" promptText="14400000000000" styleClass="dialog-field"/>
+                                </VBox>
+                                <Label fx:id="payerErrorLabel" text="" styleClass="error-label"
+                                       visible="false" managed="false" wrapText="true"/>
+                            </VBox>
+                            <VBox fx:id="checkoutItemsBox" spacing="0" styleClass="form-card"/>
+                        </VBox>
+                    </ScrollPane>
+                    <HBox spacing="14" styleClass="cart-footer">
+                        <padding><Insets top="14" right="26" bottom="22" left="26"/></padding>
+                        <Button text="%pay.back" styleClass="btn-outline" maxWidth="Infinity"
+                                HBox.hgrow="ALWAYS" onAction="#onBackToCart"/>
+                        <Button fx:id="createPaymentBtn" text="%pay.create" styleClass="btn-primary" maxWidth="Infinity"
+                                HBox.hgrow="ALWAYS" onAction="#onCreatePayment"/>
+                    </HBox>
+                </VBox>
+
+                <!-- QR (ШАГ 2) -->
+                <ScrollPane fx:id="qrView" fitToWidth="true" styleClass="services-scroll"
+                            visible="false" managed="false">
+                    <VBox alignment="TOP_CENTER" spacing="14">
+                        <padding><Insets top="26" right="40" bottom="30" left="40"/></padding>
+                        <Label text="%pay.step2" styleClass="step-pill"/>
+                        <Label text="%pay.createdTitle" styleClass="screen-title-lg"/>
+                        <Label text="%pay.createdSubtitle" styleClass="home-subtitle" wrapText="true"
+                               maxWidth="640" textAlignment="CENTER" alignment="CENTER"/>
+                        <VBox styleClass="qr-receipt" alignment="TOP_CENTER" spacing="14" maxWidth="560">
+                            <ImageView fx:id="qrImageView" fitWidth="300" fitHeight="300" preserveRatio="true"/>
+                            <Label fx:id="qrErrorLabel" text="" styleClass="payment-error-text"
+                                   visible="false" managed="false"/>
+                            <Label text="%pay.scanHint" styleClass="qr-receipt-title"/>
+                            <Region styleClass="qr-divider" maxWidth="Infinity" minHeight="1"/>
+                            <VBox fx:id="qrInfoBox" spacing="8" maxWidth="Infinity"/>
+                        </VBox>
+                        <HBox fx:id="payStatusPill" styleClass="payment-status-pill, payment-status-processing"
+                              alignment="CENTER" spacing="10" maxWidth="-Infinity">
+                            <Label fx:id="payStatusDot" text="●"/>
+                            <Label fx:id="payStatusText" text=""/>
+                        </HBox>
+                        <Button text="%pay.done" styleClass="btn-white" prefWidth="520" onAction="#onQrDone"/>
+                    </VBox>
+                </ScrollPane>
+            </StackPane>
+        </center>
+
+        <!-- НИЗ: панель корзины + статус -->
+        <bottom>
+            <VBox>
+                <HBox fx:id="cartBar" styleClass="cart-bar" alignment="CENTER_LEFT" spacing="14"
+                      visible="false" managed="false">
+                    <VBox.margin><Insets top="8" right="20" bottom="10" left="20"/></VBox.margin>
+                    <Button fx:id="cartSummaryBtn" text="" styleClass="cart-bar-summary" onAction="#onShowCart"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="%cart.clear" styleClass="btn-outline" onAction="#onClearCart"/>
+                    <Button fx:id="payCartBtn" text="%cart.checkout" styleClass="btn-primary" onAction="#onShowCart"/>
+                </HBox>
+                <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="statusLabel" text="%status.ready" styleClass="status-text"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="connectionLabel" text="" styleClass="status-connected"/>
+                </HBox>
+            </VBox>
+        </bottom>
+    </BorderPane>
+
+    <!-- СЛОЙ ШТОРКИ: затемнение + панель снизу -->
+    <StackPane fx:id="overlayPane" visible="false">
+        <Region fx:id="dimRegion" styleClass="sheet-dim" onMouseClicked="#onDimClicked"/>
+        <VBox fx:id="sheetBox" StackPane.alignment="BOTTOM_CENTER" maxWidth="860" pickOnBounds="false"/>
+    </StackPane>
+
+    <!-- ТОСТ -->
+    <Label fx:id="toastLabel" text="" styleClass="toast" visible="false" mouseTransparent="true"
+           StackPane.alignment="TOP_CENTER">
+        <StackPane.margin><Insets top="110"/></StackPane.margin>
+    </Label>
+</StackPane>

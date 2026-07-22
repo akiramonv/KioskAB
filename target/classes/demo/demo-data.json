@@ -1,0 +1,72 @@
+{
+  "_comment": "Стартовые демо-данные KioskApp. Используются, когда ApiAB недоступен. Изменения сохраняются в ~/.kioskapp/demo-data.json",
+  "providers": [
+    { "id": "p1", "fullName": "Кыргызтелеком", "shortName": "КТ" },
+    { "id": "p2", "fullName": "Saima Telecom", "shortName": "Saima" },
+    { "id": "p3", "fullName": "AKNET", "shortName": "AKNET" },
+    { "id": "p4", "fullName": "O!", "shortName": "O!" },
+    { "id": "p5", "fullName": "Beeline KG", "shortName": "Beeline" },
+    { "id": "p6", "fullName": "Бишкекводоканал", "shortName": "БВК" },
+    { "id": "p7", "fullName": "Северэлектро", "shortName": "СЭ" },
+    { "id": "p8", "fullName": "Айыл Банк", "shortName": "АБ" }
+  ],
+  "categories": [
+    { "id": "c1", "name": "Интернет" },
+    { "id": "c2", "name": "Мобильная связь" },
+    { "id": "c3", "name": "Коммунальные услуги" },
+    { "id": "c4", "name": "Телевидение" },
+    { "id": "c5", "name": "Образование" },
+    { "id": "c6", "name": "Госуслуги" },
+    { "id": "c7", "name": "Штрафы" },
+    { "id": "c8", "name": "Банковские услуги" },
+    { "id": "c9", "name": "Игры и развлечения" },
+    { "id": "c10", "name": "Транспорт" }
+  ],
+  "accounts": [
+    { "id": "a1", "name": "KG2900110001", "ownerName": "Кыргызтелеком", "provId": "p1", "providerName": "Кыргызтелеком" },
+    { "id": "a2", "name": "KG2900110002", "ownerName": "Saima Telecom", "provId": "p2", "providerName": "Saima Telecom" },
+    { "id": "a3", "name": "KG2900110003", "ownerName": "AKNET", "provId": "p3", "providerName": "AKNET" },
+    { "id": "a4", "name": "KG2900110004", "ownerName": "O!", "provId": "p4", "providerName": "O!" },
+    { "id": "a5", "name": "KG2900110005", "ownerName": "Бишкекводоканал", "provId": "p6", "providerName": "Бишкекводоканал" },
+    { "id": "a6", "name": "KG2900110006", "ownerName": "Айыл Банк", "provId": "p8", "providerName": "Айыл Банк" }
+  ],
+  "services": [
+    { "id": "s1", "name": "Домашний интернет — абонплата", "price": 0, "categoryId": "c1", "categoryName": "Интернет", "provId": "p1", "providerName": "Кыргызтелеком", "accountId": "a1", "accountName": "KG2900110001", "specializations": ["sp1"] },
+    { "id": "s2", "name": "Оптоволокно AKNET", "price": 0, "categoryId": "c1", "categoryName": "Интернет", "provId": "p3", "providerName": "AKNET", "accountId": "a3", "accountName": "KG2900110003", "specializations": ["sp1"] },
+    { "id": "s3", "name": "Saima Telecom — интернет", "price": 0, "categoryId": "c1", "categoryName": "Интернет", "provId": "p2", "providerName": "Saima Telecom", "accountId": "a2", "accountName": "KG2900110002", "specializations": ["sp1"] },
+    { "id": "s4", "name": "MegaLine — пополнение", "price": 0, "categoryId": "c1", "categoryName": "Интернет", "provId": "p1", "providerName": "Кыргызтелеком", "accountId": "a1", "accountName": "KG2900110001", "specializations": ["sp1"] },
+    { "id": "s5", "name": "O! — пополнение баланса", "price": 0, "categoryId": "c2", "categoryName": "Мобильная связь", "provId": "p4", "providerName": "O!", "accountId": "a4", "accountName": "KG2900110004", "specializations": ["sp2"] },
+    { "id": "s6", "name": "Beeline KG — пополнение", "price": 0, "categoryId": "c2", "categoryName": "Мобильная связь", "provId": "p5", "providerName": "Beeline KG", "specializations": ["sp2"] },
+    { "id": "s7", "name": "MegaCom — пополнение", "price": 0, "categoryId": "c2", "categoryName": "Мобильная связь", "provId": "p4", "providerName": "O!", "specializations": ["sp2"] },
+    { "id": "s8", "name": "Холодная вода — Бишкекводоканал", "price": 0, "categoryId": "c3", "categoryName": "Коммунальные услуги", "provId": "p6", "providerName": "Бишкекводоканал", "accountId": "a5", "accountName": "KG2900110005", "specializations": [] },
+    { "id": "s9", "name": "Электроэнергия — Северэлектро", "price": 0, "categoryId": "c3", "categoryName": "Коммунальные услуги", "provId": "p7", "providerName": "Северэлектро", "specializations": [] },
+    { "id": "s10", "name": "Вывоз мусора — Тазалык", "price": 0, "categoryId": "c3", "categoryName": "Коммунальные услуги", "provId": "p6", "providerName": "Бишкекводоканал", "specializations": [] },
+    { "id": "s11", "name": "Ала-ТВ — абонплата", "price": 0, "categoryId": "c4", "categoryName": "Телевидение", "provId": "p2", "providerName": "Saima Telecom", "specializations": [] },
+    { "id": "s12", "name": "Оплата обучения — КНУ", "price": 0, "categoryId": "c5", "categoryName": "Образование", "provId": "p1", "providerName": "Кыргызтелеком", "specializations": [] },
+    { "id": "s13", "name": "Госпошлина — паспорт", "price": 600, "categoryId": "c6", "categoryName": "Госуслуги", "provId": "p8", "providerName": "Айыл Банк", "accountId": "a6", "accountName": "KG2900110006", "specializations": [] },
+    { "id": "s14", "name": "Штраф ПДД — Безопасный город", "price": 0, "categoryId": "c7", "categoryName": "Штрафы", "provId": "p8", "providerName": "Айыл Банк", "specializations": [] },
+    { "id": "s15", "name": "Пополнение карты Элкарт", "price": 0, "categoryId": "c8", "categoryName": "Банковские услуги", "provId": "p8", "providerName": "Айыл Банк", "accountId": "a6", "accountName": "KG2900110006", "specializations": [] },
+    { "id": "s16", "name": "Steam — пополнение кошелька", "price": 0, "categoryId": "c9", "categoryName": "Игры и развлечения", "provId": "p2", "providerName": "Saima Telecom", "specializations": [] },
+    { "id": "s17", "name": "Тулпар — проездной", "price": 250, "categoryId": "c10", "categoryName": "Транспорт", "provId": "p1", "providerName": "Кыргызтелеком", "specializations": [] },
+    { "id": "s18", "name": "Погашение кредита — Айыл Банк", "price": 0, "categoryId": "c8", "categoryName": "Банковские услуги", "provId": "p8", "providerName": "Айыл Банк", "specializations": [] }
+  ],
+  "specializations": [
+    { "id": "sp1", "name": "Интернет-услуги", "provId": "p1", "providerName": "Кыргызтелеком" },
+    { "id": "sp2", "name": "Мобильная связь", "provId": "p4", "providerName": "O!" }
+  ],
+  "roles": [
+    { "id": "r-user", "name": "user" },
+    { "id": "r-admin", "name": "admin" },
+    { "id": "r-super", "name": "superAdmin" }
+  ],
+  "users": [
+    { "id": "u-super", "name": "Администратор киоска", "email": "admin@kiosk.kg", "password": "admin123", "roles": ["r-super"], "specializations": [] },
+    { "id": "u-admin-kt", "name": "Админ Кыргызтелеком", "email": "kt@kiosk.kg", "password": "kt123", "provId": "p1", "providerName": "Кыргызтелеком", "roles": ["r-admin"], "specializations": [] },
+    { "id": "u-operator", "name": "Оператор зала", "email": "user@kiosk.kg", "password": "user123", "roles": ["r-user"], "specializations": ["sp1"] }
+  ],
+  "commissions": [],
+  "commissionLevels": [],
+  "payments": [
+    { "id": "D-DEMO-0001", "sum": 850.00, "fee": 12.75, "status": "success", "providerName": "Кыргызтелеком", "provId": "p1", "fio": "Демо Плательщик", "qrLink": "https://demo.kiosk/qr/D-DEMO-0001", "createdAt": "2026-07-20 14:12" }
+  ]
+}

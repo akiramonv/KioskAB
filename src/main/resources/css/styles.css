@@ -1246,3 +1246,84 @@
 .dark .cart-bar { -fx-background-color: #0d1f16; -fx-border-color: #1f5f3e; }
 .dark .cart-bar-summary { -fx-background-color: #143522; -fx-text-fill: #86efac; }
 .dark .login-brand-title { -fx-text-fill: #4ade80; }
+
+/* ---------- Шторка деталей: кнопка избранного и быстрые суммы ---------- */
+.fav-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
+    -fx-text-fill: #f59e0b;
+    -fx-font-size: 20px;
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-pref-width: 48;
+    -fx-pref-height: 48;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.fav-btn:hover { -fx-background-color: #fef3c7; }
+.fav-btn.btn-favorite-active { -fx-background-color: #fef3c7; }
+
+.amount-chip {
+    -fx-background-color: #f5f7f9;
+    -fx-border-color: #e6e9ee;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 12 0 12 0;
+    -fx-cursor: hand;
+}
+
+.amount-chip:hover {
+    -fx-border-color: #16a34a;
+    -fx-text-fill: #15803d;
+    -fx-background-color: #f0fdf4;
+}
+
+.dark .amount-chip { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; }
+.dark .amount-chip:hover { -fx-border-color: #22c55e; -fx-text-fill: #86efac; }
+.dark .fav-btn:hover, .dark .fav-btn.btn-favorite-active { -fx-background-color: #2a2410; }
+
+/* Общие элементы новой шторки деталей (разделяются обоими дизайнами) */
+.sheet-handle { -fx-background-color: #e6e9ee; -fx-background-radius: 4; }
+
+.detail-cell {
+    -fx-background-color: #f5f7f9;
+    -fx-background-radius: 12;
+    -fx-padding: 12 16 12 16;
+}
+
+.qty-btn {
+    -fx-background-color: #f5f7f9;
+    -fx-border-color: #e6e9ee;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 21;
+    -fx-background-radius: 21;
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 17px;
+    -fx-min-width: 42;
+    -fx-min-height: 42;
+    -fx-pref-width: 42;
+    -fx-pref-height: 42;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.qty-btn:hover { -fx-border-color: #16a34a; -fx-text-fill: #15803d; }
+
+.qty-field { -fx-alignment: CENTER; -fx-font-weight: bold; }
+
+.dark .sheet-handle { -fx-background-color: #1f3a2b; }
+.dark .detail-cell { -fx-background-color: #122019; }
+.dark .qty-btn { -fx-background-color: #122019; -fx-border-color: #1f3a2b; -fx-text-fill: #e6f2ea; }
+.dark .qty-btn:hover { -fx-border-color: #22c55e; -fx-text-fill: #86efac; }
+
+/* Индикатор демо-режима (ApiAB недоступен, работаем на локальных данных) */
+.status-demo { -fx-text-fill: #d97706; -fx-font-size: 12px; -fx-font-weight: bold; }
+.dark .status-demo { -fx-text-fill: #fbbf24; }
